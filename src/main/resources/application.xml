@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>spring boot参数配置</comment>
+
+    <!-- 上传文件大小限制设置 -->
+    <entry key="spring.servlet.multipart.max-file-size">450MB</entry>
+    <entry key="spring.servlet.multipart.max-request-size">450MB</entry>
+    
+    <!-- 数据库连接配置 -->
+    <entry key="spring.datasource.url"><![CDATA[jdbc:mysql://localhost:3306/guess?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&zeroDateTimeBehavior=convertToNull]]></entry>
+    <entry key="spring.datasource.username">root</entry>
+    <entry key="spring.datasource.password">910123</entry>
+    <entry key="spring.datasource.driver-class-name">com.mysql.jdbc.Driver</entry>
+
+    <!-- 日志相关配置 TRACE < DEBUG < INFO < WARN < ERROR < FATAL -->
+    <entry key="logging.file">/tmp/logs/guess/guess.log</entry>
+    <entry key="logging.level.com.yy.guess">DEBUG</entry>
+    <entry key="logging.level.org.mybatis">INFO</entry>
+    
+    <!-- jackson时间格式设置 -->
+    <entry key="spring.jackson.date-format">yyyy-MM-dd HH:mm:ss</entry>
+    <entry key="spring.jackson.time-zone">GMT+8</entry>
+    
+    <!-- 项目的相关参数配置 -->
+    <entry key="web.config.tokenExpirationTime">1296000000</entry><!-- token过期时间：单位：毫秒 -->
+    <entry key="web.config.clearDelay">43200000</entry><!-- MapCache 清理垃圾间隔，单位：毫秒 -->
+</properties>

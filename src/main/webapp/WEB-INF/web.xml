@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    version="3.1">
+
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+    
+    <filter>
+    	<filter-name>setBasePathFilter</filter-name>
+    	<filter-class>com.yy.fast4j.SetBasePathFilter</filter-class>
+    </filter>
+    <filter-mapping>
+    	<filter-name>setBasePathFilter</filter-name>
+    	<url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <listener>
+    	<listener-class>com.yy.fast4j.UserWebLoginListener</listener-class>
+    </listener>
+</web-app>

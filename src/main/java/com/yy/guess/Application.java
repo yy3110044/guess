@@ -37,31 +37,28 @@ public class Application extends SpringBootServletInitializer implements WebMvcC
 		config.setTestOnBorrow(false);//当调用borrow Object方法时，是否进行有效性检查
 		return new JedisPool(config, "localhost", 6379);
 	}
-	
+
 	/**
 	 * 配置interceptor
 	 */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new CheckUserLoginInterceptor(cache, CachePre.BOCAI_TOKEN_TO_USERID)).addPathPatterns("/user/**");
+		registry.addInterceptor(new CheckUserLoginInterceptor(cache, CachePre.GUESS_TOKEN_TO_USERID)).addPathPatterns("/user/**");
 	}
 	
 	@Autowired
 	private Cache cache;
-	
-	@Autowired
-	private JedisPool jedisPool;
-	
+
 	@Value("${web.config.tokenExpirationTime:1296000000}")
 	private long tokenExpirationTime;
 	
 	@Bean
 	public com.yy.fast4j.RedisCache redisCache() {
-		return new com.yy.fast4j.RedisCache(jedisPool);
+		return new com.yy.fast4j.RedisCache(getJedisPool());
 	}
 
 	@Bean
 	public LoginManager loginManager() {
-		return new LoginManager(CachePre.BOCAI_USERID_TO_TOKEN, CachePre.BOCAI_TOKEN_TO_USERID, tokenExpirationTime, cache);
+		return new LoginManager(CachePre.GUESS_USERID_TO_TOKEN, CachePre.GUESS_TOKEN_TO_USERID, tokenExpirationTime, cache);
 	}
 }

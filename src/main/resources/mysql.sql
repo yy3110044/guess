@@ -18,4 +18,16 @@ CREATE TABLE `guess_user` (
   UNIQUE KEY `userName` (`userName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 
+/*web配置表*/
+DROP TABLE IF EXISTS `guess_config`;
+CREATE TABLE `guess_config` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `name` varchar(128) NOT NULL COMMENT '键名',
+  `val` varchar(128) COMMENT '值',
+  `description` varchar(258) COMMENT '描述',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO guess_config VALUES(null, 'webTitle', '竞猜', '网站标题名');
+
 show tables;

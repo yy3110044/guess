@@ -24,5 +24,4 @@
     
     <!-- 项目的相关参数配置 -->
     <entry key="web.config.tokenExpirationTime">1296000000</entry><!-- token过期时间：单位：毫秒 -->
-    <entry key="web.config.clearDelay">43200000</entry><!-- MapCache 清理垃圾间隔，单位：毫秒 -->
 </properties>

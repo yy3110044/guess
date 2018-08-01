@@ -55,21 +55,11 @@ public class Application extends SpringBootServletInitializer implements WebMvcC
 	@Value("${web.config.tokenExpirationTime:1296000000}")
 	private long tokenExpirationTime;
 	
-	@Value("${web.config.clearDelay:43200000}")
-	private long clearDelay;
-	
 	@Bean
 	public com.yy.fast4j.RedisCache redisCache() {
 		return new com.yy.fast4j.RedisCache(jedisPool);
 	}
-	
-	/*
-	@Bean
-	public com.yy.fast4j.MapCache mapCache() {
-		return new com.yy.fast4j.MapCache(clearDelay);
-	}
-	*/
-	
+
 	@Bean
 	public LoginManager loginManager() {
 		return new LoginManager(CachePre.BOCAI_USERID_TO_TOKEN, CachePre.BOCAI_TOKEN_TO_USERID, tokenExpirationTime, cache);

@@ -73,4 +73,74 @@ CREATE TABLE `guess_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO guess_config VALUES(null, 'webTitle', '竞猜', '网站标题名');
 
+/*体育运动表*/
+DROP TABLE IF EXISTS `guess_sport`;
+CREATE TABLE `guess_sport` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `name` varchar(128) NOT NULL COMMENT '运动名称',
+  `logoUrl` varchar(512) COMMENT 'log图url',
+  `description` varchar(512) COMMENT '运动描述',
+  `createTime` datetime COMMENT '记录创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
+
+/*赛事表*/
+DROP TABLE IF EXISTS `guess_match`;
+CREATE TABLE `guess_match` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `sportId` int(11) NOT NULL COMMENT '体育运动id，关联sportId表id',
+  `name` varchar(128) NOT NULL COMMENT '赛事名',
+  `logoUrl` varchar(512) COMMENT 'log图url',
+  `description` varchar(512) COMMENT '赛事描述',
+  `startTime` datetime COMMENT '开始时间',
+  `endTime` datetime COMMENT '结束时间',
+  `status` enum('未开始', '进行中', '已结束') COMMENT '赛事状态',
+  `createTime` datetime COMMENT '记录创建时间',
+  PRIMARY KEY (`id`),
+  KEY `sportId` (`sportId`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
+
+/*赛事对阵表*/
+DROP TABLE IF EXISTS `guess_match_versus`;
+CREATE TABLE `guess_match_versus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `matchId` int(11) NOT NULL COMMENT '赛事id，关联match表id',
+  `leftTeamId` int(11) NOT NULL COMMENT '比赛队伍，关联team表id',
+  `rightTeamId` int(11) NOT NULL COMMENT '比赛队伍，关联team表id',
+  `startTime` datetime COMMENT '比赛开始时间',
+  `status` enum('未开始', '进行中', '已结束') COMMENT '比赛状态',
+  `boCount` tinyint COMMENT '几局定胜负',
+  `result` tinyint COMMENT '比赛结果：负数为左team赢、零为平、正数为右team赢',
+  `createTime` datetime COMMENT '记录创建时间',
+  PRIMARY KEY (`id`),
+  KEY `matchId` (`matchId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8;
+
+/*赛事对阵bo表*/
+DROP TABLE IF EXISTS `guess_match_versus_bo`;
+CREATE TABLE `guess_match_versus_bo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `versusId` int(11) NOT NULL COMMENT '对阵表id，关联versus表id',
+  `bo` tinyint COMMENT '比赛场次',
+  `status` enum('未开始', '进行中', '已结束', '未比赛') COMMENT '比赛状态',
+  `result` tinyint COMMENT '比赛结果：负数为左team赢、零为平、正数为右team赢',
+  `createTime` datetime COMMENT '记录创建时间',
+  PRIMARY KEY (`id`),
+  KEY `versusId` (`versusId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*比赛战队、队伍表*/
+DROP TABLE IF EXISTS `guess_team`;
+CREATE TABLE `guess_team` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `sportId` int(11) NOT NULL COMMENT '体育运动id，关联sportId表id',
+  `name` varchar(128) NOT NULL COMMENT '队伍名',
+  `logoUrl` varchar(512) COMMENT 'log图url',
+  `description` varchar(512) COMMENT '队伍描述',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `sportId` (`sportId`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
+
 show tables;

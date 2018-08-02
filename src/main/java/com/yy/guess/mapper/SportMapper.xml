@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.guess.mapper.SportMapper">
+    <insert id="add" parameterType="com.yy.guess.po.Sport">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into guess_sport(id, name, logoUrl, description, createTime)
+        values(#{id}, #{name}, #{logoUrl}, #{description}, #{createTime})
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        delete from guess_sport where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.yy.guess.po.Sport">
+        update guess_sport set
+        name = #{name}, logoUrl = #{logoUrl}, description = #{description}, createTime = #{createTime}
+        where id = #{id}
+    </update>
+
+    <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.Sport">
+        select id, name, logoUrl, description, createTime from guess_sport
+        <if test="useWhere">
+            where
+            <foreach collection="conditions" index="index" item="obj">
+                <choose>
+                    <when test="index == 0">${obj.field} ${obj.operator} #{obj.value}</when>
+                    <otherwise>${obj.join} ${obj.field} ${obj.operator} #{obj.value}</otherwise>
+                </choose>
+            </foreach>
+        </if>
+
+        <if test="useSort">
+            order by
+            <foreach collection="sorts" item="obj" separator=",">
+                ${obj}
+            </foreach>
+        </if>
+
+        limit 0, 1
+    </select>
+
+    <select id="findById" parameterType="int" resultType="com.yy.guess.po.Sport">
+        select id, name, logoUrl, description, createTime from guess_sport
+        where id = #{id}
+    </select>
+
+    <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.Sport">
+        select id, name, logoUrl, description, createTime from guess_sport
+        <if test="useWhere"> <!-- 添加查询条件 -->
+            where
+            <foreach collection="conditions" index="index" item="obj">
+                <choose>
+                    <when test="index == 0">${obj.field} ${obj.operator} #{obj.value}</when>
+                    <otherwise>${obj.join} ${obj.field} ${obj.operator} #{obj.value}</otherwise>
+                </choose>
+            </foreach>
+        </if>
+
+        <if test="useSort"> <!-- 添加排序 -->
+            order by
+            <foreach collection="sorts" item="obj" separator=",">
+                ${obj}
+            </foreach>
+        </if>
+
+        <if test="page != null"> <!-- 添加分页 -->
+            limit ${page.beginIndex}, ${page.pageSize}
+        </if>
+    </select>
+
+    <select id="getCount" parameterType="com.yy.fast4j.QueryCondition" resultType="int">
+        select count(*) from guess_sport
+        <if test="useWhere">
+            where
+            <foreach collection="conditions" index="index" item="obj">
+                <choose>
+                    <when test="index == 0">${obj.field} ${obj.operator} #{obj.value}</when>
+                    <otherwise>${obj.join} ${obj.field} ${obj.operator} #{obj.value}</otherwise>
+                </choose>
+            </foreach>
+        </if>
+    </select>
+    <!--****************************************************************分隔线****************************************************************-->
+</mapper>

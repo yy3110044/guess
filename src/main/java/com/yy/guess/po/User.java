@@ -1,6 +1,7 @@
 package com.yy.guess.po;
 
 import java.util.Date;
+import com.yy.guess.po.enums.UserLoginType;
 
 public class User {
 	private int id;
@@ -13,10 +14,10 @@ public class User {
 	private String phone;
 	private String email;
 	private Date registTime;
-	private Date lastLoginTime;
 	private String lastLoginIp;
+	private Date lastLoginTime;
+	private UserLoginType lastLoginType;
 	private Date createTime = new Date();
-
 	public int getId() {
 		return id;
 	}
@@ -77,17 +78,23 @@ public class User {
 	public void setRegistTime(Date registTime) {
 		this.registTime = registTime;
 	}
+	public String getLastLoginIp() {
+		return lastLoginIp;
+	}
+	public void setLastLoginIp(String lastLoginIp) {
+		this.lastLoginIp = lastLoginIp;
+	}
 	public Date getLastLoginTime() {
 		return lastLoginTime;
 	}
 	public void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
 	}
-	public String getLastLoginIp() {
-		return lastLoginIp;
+	public UserLoginType getLastLoginType() {
+		return lastLoginType;
 	}
-	public void setLastLoginIp(String lastLoginIp) {
-		this.lastLoginIp = lastLoginIp;
+	public void setLastLoginType(UserLoginType lastLoginType) {
+		this.lastLoginType = lastLoginType;
 	}
 	public Date getCreateTime() {
 		return createTime;

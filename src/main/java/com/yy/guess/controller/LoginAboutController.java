@@ -116,7 +116,7 @@ public class LoginAboutController {
 		if(au == null) {
 			return new ResponseObject(101, "用户名或密码错误");
 		}
-		
+
 		AdminUserLoginLog log = new AdminUserLoginLog();
 		log.setAdminUserId(au.getId());
 		log.setAdminUserName(au.getUserName());

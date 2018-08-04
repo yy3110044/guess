@@ -46,6 +46,7 @@ CREATE TABLE `guess_admin_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `userName` (`userName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO guess_admin_user(userName, passWord, createTime) VALUES('admin', 'e10adc3949ba59abbe56e057f20f883e', now());
 
 /*管理员登陆日志*/
 DROP TABLE IF EXISTS `guess_admin_user_login_log`;

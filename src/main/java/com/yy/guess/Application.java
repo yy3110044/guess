@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.yy.fast4j.Cache;
 import com.yy.fast4j.CheckUserLoginInterceptor;
 import com.yy.fast4j.LoginManager;
+import com.yy.guess.interceptor.CheckAdminUserLoginInterceptor;
 import com.yy.guess.util.CachePre;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -44,6 +45,7 @@ public class Application extends SpringBootServletInitializer implements WebMvcC
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new CheckUserLoginInterceptor(cache, CachePre.GUESS_TOKEN_TO_USERID)).addPathPatterns("/user/**");
+		registry.addInterceptor(new CheckAdminUserLoginInterceptor()).addPathPatterns("/administration/**");
 	}
 	
 	@Autowired

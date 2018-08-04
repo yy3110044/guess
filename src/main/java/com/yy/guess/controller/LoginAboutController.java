@@ -13,9 +13,13 @@ import com.yy.fast4j.Fast4jUtils;
 import com.yy.fast4j.LoginManager;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.ResponseObject;
+import com.yy.guess.po.AdminUser;
+import com.yy.guess.po.AdminUserLoginLog;
 import com.yy.guess.po.User;
 import com.yy.guess.po.UserLoginLog;
 import com.yy.guess.po.enums.UserLoginType;
+import com.yy.guess.service.AdminUserLoginLogService;
+import com.yy.guess.service.AdminUserService;
 import com.yy.guess.service.UserLoginLogService;
 import com.yy.guess.service.UserService;
 
@@ -31,7 +35,13 @@ public class LoginAboutController {
 	private UserService us;
 	
 	@Autowired
+	private AdminUserService aus;
+	
+	@Autowired
 	private UserLoginLogService ulls;
+	
+	@Autowired
+	private AdminUserLoginLogService aulls;
 	
 	@Autowired
 	private LoginManager loginManager;
@@ -98,5 +108,29 @@ public class LoginAboutController {
 		user.setEmail(email);
 		us.add(user);
 		return new ResponseObject(100, "注册成功");
+	}
+	
+	@RequestMapping("/adminUserLogin")
+	public ResponseObject adminUserLogin(@RequestParam String userName, @RequestParam String passWord, HttpServletRequest req) {
+		AdminUser au = aus.find(new QueryCondition().addCondition("userName", "=", userName.trim()).addCondition("passWord", "=", DigestUtils.md5Hex(passWord)));
+		if(au == null) {
+			return new ResponseObject(101, "用户名或密码错误");
+		}
+		
+		AdminUserLoginLog log = new AdminUserLoginLog();
+		log.setAdminUserId(au.getId());
+		log.setAdminUserName(au.getUserName());
+		log.setLoginIp(req.getRemoteAddr());
+		log.setLoginTime(new Date());
+		log.setUserAgent(req.getHeader("user-agent"));
+		aulls.addLog(log);
+		req.getSession().setAttribute("adminUserId", au.getId());
+		return new ResponseObject(100, "登陆成功");
+	}
+	
+	@RequestMapping("/adminUserLogout")
+	public ResponseObject adminUserLogout(HttpSession session) {
+		session.removeAttribute("adminUserId");
+		return new ResponseObject(100, "退出登陆成功");
 	}
 }

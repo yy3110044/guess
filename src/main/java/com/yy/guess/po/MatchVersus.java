@@ -11,6 +11,7 @@ public class MatchVersus {
 	private Date startTime;
 	private MatchStatus status;
 	private int boCount;
+	private int realBoCount;
 	private int result;
 	private Date createTime = new Date();
 	public int getId() {
@@ -54,6 +55,12 @@ public class MatchVersus {
 	}
 	public void setBoCount(int boCount) {
 		this.boCount = boCount;
+	}
+	public int getRealBoCount() {
+		return realBoCount;
+	}
+	public void setRealBoCount(int realBoCount) {
+		this.realBoCount = realBoCount;
 	}
 	public int getResult() {
 		return result;

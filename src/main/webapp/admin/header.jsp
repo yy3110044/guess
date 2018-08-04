@@ -14,6 +14,7 @@
 			loadData({
 				url : "adminUserLogout",
 				success : function(data){
+					$("#showMsg").html(data.msg);
 					if(data.code == 100) {
 						window.location.href = "admin/login.jsp?msg=" + encodeURI("退出成功");
 					}

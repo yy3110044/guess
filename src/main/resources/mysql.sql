@@ -73,6 +73,7 @@ CREATE TABLE `guess_config` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO guess_config VALUES(null, 'webTitle', '竞猜', '网站标题名');
+INSERT INTO guess_config VALUES(null, 'uploadUrl', 'http://aidazhou.cn/staticSourceAdmin/fileUpload', '文件上传url');
 
 /*体育运动表*/
 DROP TABLE IF EXISTS `guess_sport`;

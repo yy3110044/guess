@@ -15,7 +15,7 @@
 
     <!-- 日志相关配置 TRACE < DEBUG < INFO < WARN < ERROR < FATAL -->
     <entry key="logging.file">/tmp/logs/guess/guess.log</entry>
-    <entry key="logging.level.com.yy.guess">DEBUG</entry>
+    <entry key="logging.level.com.yy.guess">INFO</entry>
     <entry key="logging.level.org.mybatis">INFO</entry>
     
     <!-- jackson时间格式设置 -->

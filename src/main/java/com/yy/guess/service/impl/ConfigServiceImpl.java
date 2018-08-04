@@ -50,4 +50,11 @@ public class ConfigServiceImpl implements ConfigService {
         return mapper.getCount(qc);
     }
     /*****************************************************************分隔线************************************************************************/
+
+	@Override
+	public void update(Config[] configs) {
+		for(Config config : configs) {
+			mapper.updateByName(config.getName(), config.getVal());
+		}
+	}
 }

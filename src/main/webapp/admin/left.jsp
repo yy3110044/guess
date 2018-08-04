@@ -3,14 +3,18 @@
 	<div class="sdmenu" id="my_menu">
 		<div>
 			<span>网站管理</span>
-			<a href="">网站信息</a>
-			<a href="">权限列表</a>
-			<a href="">添加权限</a>
+			<a href="admin/webSite/webSiteInfo.jsp">网站信息</a>
+			<a href="admin/webSite/modifyConfig.jsp">修改参数</a>
 		</div>
 		<div>
-			<span>影片管理</span>
-			<a href="">影片列表</a>
-			<a href="">添加影片</a>
+			<span>用户管理</span>
+		</div>
+		<div>
+			<span>竞猜管理</span>
+			<a href="">项目列表</a>
+			<a href="admin/guess/sportAdd.jsp">添加项目</a>
+			<a href="">战队列表</a>
+			<a href="admin/guess/teamAdd.jsp">添加战队</a>
 		</div>
 	</div>
 </div>

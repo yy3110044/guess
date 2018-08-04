@@ -13,4 +13,6 @@ public interface ConfigService {
     List<Config> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+
+    void update(Config[] configs);//批量修改
 }

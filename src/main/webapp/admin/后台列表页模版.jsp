@@ -2,9 +2,8 @@
 <html>
 <head>
 <base href="${basePath}"/>
-<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>标题</title>
+<title>标题 - <%=com.yy.fast4j.Fast4jUtils.getBean(com.yy.fast4j.Cache.class, application).getString(com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
 <link rel="stylesheet" href="admin/css/bootstrap.css">
 <link rel="stylesheet" href="admin/css/css.css">
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -28,7 +27,7 @@
 	<table class="table table-bordered table-striped table-hover">
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
-				<input type="text" id="" placeholder="" class="laydate-icon" onclick="laydate({istime:true,format:'YYYY-MM-DD hh:mm:ss'});" style="width:140px;cursor:pointer;" readonly="readonly"/>
+				<input type="text" id="" placeholder="" class="laydate-icon" onclick="laydate({istime:true,format:'YYYY-MM-DD hh:mm:ss'});" style="width:140px;cursor:pointer;" readonly="readonly">
 				&nbsp;&nbsp;<input type="button" value="查询">
 			</td>
 		</tr>

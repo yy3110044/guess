@@ -3,7 +3,7 @@
 <head>
 <base href="${basePath}"/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>管理员登录</title>
+<title>管理员登录 - <%=com.yy.fast4j.Fast4jUtils.getBean(com.yy.fast4j.Cache.class, application).getString(com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
 <link rel="stylesheet" href="admin/css/bootstrap.css" />
 <style type="text/css">
 body{ background:#0066A8;}
@@ -31,7 +31,7 @@ var login = function(){
 			"passWord" : passWord,
 		},
 		success : function(data){
-			$("#msg").html(data.msg);
+			$("#showMsg").html(data.msg);
 			if(data.code == 100) {
 				window.location.href = "${basePath}admin/webSite/webSiteInfo.jsp";
 			}
@@ -65,7 +65,7 @@ var login = function(){
 		<tr>
 			<td height="60" valign="bottom"><input type="button" onclick="login()" value="登录" class="btn btn-block btn-login"/></td>
 		</tr>
-		<tr><td style="color:red;" id="msg"><%=com.yy.fast4j.Fast4jUtils.urlDecode(request.getParameter("msg"))%></td></tr>
+		<tr><td style="color:red;" id="showMsg"><%=com.yy.fast4j.Fast4jUtils.urlDecode(request.getParameter("msg"))%></td></tr>
 	</table>
 </div>
 <div class="copyright">建议使用IE8以上版本或谷歌浏览器</div>

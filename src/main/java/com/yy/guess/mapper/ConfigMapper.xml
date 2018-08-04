@@ -85,4 +85,8 @@
         </if>
     </select>
     <!--****************************************************************分隔线****************************************************************-->
+
+	<update id="updateByName">
+		update guess_config set val = #{val} where name = #{name}
+	</update>
 </mapper>

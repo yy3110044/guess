@@ -7,14 +7,14 @@
 <link rel="stylesheet" href="admin/css/bootstrap.css">
 <link rel="stylesheet" href="admin/css/css.css">
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="admin/js/common.js"></script>
 <script type="text/javascript">
 var modifyAdminUserPassWord = function(){
 	var oldPassWord = $("#oldPassWord").val();
 	var newPassWord1 = $("#newPassWord1").val();
 	var newPassWord2 = $("#newPassWord2").val();
 	if(newPassWord1 != newPassWord2) {
-		$("#showMsg").html("两次输入密码不一致");
+		showMsg("两次输入密码不一致");
 		return;
 	}
 	loadData({

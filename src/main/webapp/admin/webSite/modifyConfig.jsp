@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="admin/css/bootstrap.css">
 <link rel="stylesheet" href="admin/css/css.css">
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="admin/js/common.js"></script>
 <script>
 $(document).ready(function(){
 	loadData({
@@ -44,7 +44,7 @@ var modify = function(){
 				"name_val[]" : params
 			},
 			success : function(data) {
-				$("#showMsg").html(data.msg);
+				showMsg(data.msg);
 			},
 			redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
 		});

@@ -67,7 +67,7 @@ var addUploadEvent = function(obj) {
 				if(result) {
 					data.submit();
 				} else {
-					$("#showMsg").html("文件类型错误");
+					showMsg("文件类型错误");
 				}
 			} else {
 				data.submit();
@@ -155,9 +155,40 @@ var getPageStr = function(page){
 	return str;
 };
 
+//填充分页结果
+var fillResult = function(list, fields, page) {
+	$("tr.contentTr").remove();
+	var str = getContentStr({
+		"list" : list,
+		"fields" : fields
+	});
+	$("table.table-bordered").append(str);
+	$("#pageTd").html(getPageStr(page));
+};
+
 var addLoadLevel = function() {
 	$("body").append('<div class="loadingLevel_blockOverlay" style="text-align:center;z-index:2001;border:none;margin:0px;padding:0px;width:100%;height:100%;top:0px;left:0px;opacity:0.4;filter:alpha(opacity=40);cursor:default;position:fixed;background-color:rgb(255,255,255);"><img alt="刷新中..." src="images/refresh.gif" style="width:50px;height:50px;position:absolute;top:50%;"></div>');
 };
 var removeLoadLevel = function() {
 	$("div.loadingLevel_blockOverlay").remove();
+};
+
+var showMsgCount = 0;
+var showMsgInterval = null;
+var showMsg = function(msg) {
+	window.clearInterval(showMsgInterval);
+	showMsgCount = 12;
+	showMsgInterval = setInterval('showMsgFlash("' + msg + '")', 100);
+};
+var showMsgFlash = function(msg) {
+	if(showMsgCount < 0) {
+		window.clearInterval(showMsgInterval);
+		return;
+	}
+	if(showMsgCount % 2 == 0) {
+		$("#showMsg").html('<span style="color:red;">' + msg + '</span>');
+	} else {
+		$("#showMsg").html('<span style="color:green;">' + msg + '</span>');
+	}
+	showMsgCount --;
 };

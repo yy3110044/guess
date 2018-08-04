@@ -19,7 +19,7 @@ body{ background:#0066A8;}
 @media (max-height: 500px) {.tit{ margin:auto; margin-top:50px; }}
 </style>
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="admin/js/common.js"></script>
 <script type="text/javascript">
 var login = function(){
 	var userName = $.trim($("#userName").val());
@@ -31,7 +31,7 @@ var login = function(){
 			"passWord" : passWord,
 		},
 		success : function(data){
-			$("#showMsg").html(data.msg);
+			showMsg(data.msg);
 			if(data.code == 100) {
 				window.location.href = "${basePath}admin/webSite/webSiteInfo.jsp";
 			}

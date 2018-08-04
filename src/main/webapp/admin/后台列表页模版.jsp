@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="admin/css/css.css">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="laydate/laydate.js"></script>
-<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="admin/js/common.js"></script>
 </head>
 
 <body>

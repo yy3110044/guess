@@ -10,7 +10,7 @@
 <script src="js/jquery.ui.widget.js"></script>
 <script src="js/jquery.fileupload.js"></script>
 <script src="js/jquery.iframe-transport.js"></script>
-<script src="js/common.js"></script>
+<script src="admin/js/common.js"></script>
 <script>
 $(document).ready(function(){
 	addImageUploadEvent({
@@ -19,6 +19,36 @@ $(document).ready(function(){
 		"imgId" : "logoUrl"
 	});
 });
+
+var add = function() {
+	var name = $.trim($("#name").val());
+	var logoUrl = $.trim($("#logoUrl").attr("src"));
+	var description = $.trim($("#description").val());
+	if(empty(name)) {
+		showMsg("项目名不能为空");
+		return;
+	}
+	if(empty(logoUrl)) {
+		showMsg("请上传一个logo图");
+		return;
+	}
+	loadData({
+		url : "administration/sportAdd",
+		data : {
+			"name" : name,
+			"logoUrl" : logoUrl,
+			"description" : description
+		},
+		success : function(data) {
+			showMsg(data.msg);
+			if(data.code == 100) {
+				$("#name").val("");
+				$("#logoUrl").remove();
+				$("#description").val("");
+			}
+		}
+	});
+};
 </script>
 </head>
 <body>
@@ -50,7 +80,7 @@ $(document).ready(function(){
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1"></td>
-			<td colspan="3"><input type="button" value="添加" class="btn btn-info" style="width:80px;"></td>
+			<td colspan="3"><input type="button" value="添加" class="btn btn-info" style="width:80px;" onclick="add()"></td>
 		</tr>
 	</table>
 	</div> 

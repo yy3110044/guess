@@ -117,7 +117,9 @@ CREATE TABLE `guess_match_versus` (
   `result` tinyint COMMENT '比赛结果：负数为左team赢、零为平、正数为右team赢',
   `createTime` datetime COMMENT '记录创建时间',
   PRIMARY KEY (`id`),
-  KEY `matchId` (`matchId`)
+  KEY `matchId` (`matchId`),
+  KEY `leftTeamId` (`leftTeamId`),
+  KEY `rightTeamId` (`rightTeamId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8;
 
 /*赛事对阵bo表*/

@@ -12,7 +12,11 @@ import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.Sport;
+import com.yy.guess.po.Team;
+import com.yy.guess.service.MatchService;
+import com.yy.guess.service.MatchVersusService;
 import com.yy.guess.service.SportService;
+import com.yy.guess.service.TeamService;
 
 /**
  * 竞猜管理
@@ -25,6 +29,15 @@ public class GuessAdminController {
 	
 	@Autowired
 	private SportService ss;
+	
+	@Autowired
+	private TeamService ts;
+	
+	@Autowired
+	private MatchService ms;
+	
+	@Autowired
+	private MatchVersusService mvs;
 	
 	@RequestMapping("/sportAdd")
 	public ResponseObject sportAdd(@RequestParam String name, @RequestParam String logoUrl, @RequestParam String description) {
@@ -45,11 +58,78 @@ public class GuessAdminController {
 	
 	@RequestMapping("/sportList")
 	public ResponseObject sportList(@RequestParam(defaultValue="20") int pageSize,
-                                     @RequestParam(defaultValue="1") int pageNo,
-                                     @RequestParam(defaultValue="5") int showCount) {
+                                    @RequestParam(defaultValue="1") int pageNo,
+                                    @RequestParam(defaultValue="5") int showCount) {
 		QueryCondition qc = new QueryCondition();
 		qc.setPage(new Page(pageSize, pageNo, showCount));
 		List<Sport> list = ss.query(qc);
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage().setRowCount(ss.getCount(qc))));
+	}
+	
+	@RequestMapping("/sportDelete")
+	public ResponseObject sportDelete(@RequestParam int sportId) {
+		QueryCondition qc = new QueryCondition().addCondition("sportId", "=", sportId);
+		int teamCount = ts.getCount(qc);
+		int matchCount = ms.getCount(qc);
+		if(teamCount > 0 || matchCount > 0) {
+			return new ResponseObject(101, "队伍以及比赛引用了此记录，无法删除");
+		}
+		ss.delete(sportId);
+		return new ResponseObject(100, "删除成功");
+	}
+	
+	@RequestMapping("/getAllSports")
+	public ResponseObject getAllSports() {
+		return new ResponseObject(100, "返回成功", ss.query(null));
+	}
+	
+	@RequestMapping("/teamAdd")
+	public ResponseObject teamAdd(@RequestParam int sportId,
+                                  @RequestParam String name,
+                                  @RequestParam String logoUrl,
+                                  String description) {
+		Sport sport = ss.findById(sportId);
+		if(sport == null) {
+			return new ResponseObject(101, "运动项目不存在，请先添加");
+		}
+		
+		Team team = new Team();
+		team.setSportId(sportId);
+		team.setName(name);
+		team.setLogoUrl(logoUrl);
+		team.setDescription(description);
+		ts.add(team);
+		return new ResponseObject(100, "队伍添加成功");
+	}
+	
+	@RequestMapping("/teamDelete")
+	public ResponseObject teamDelete(@RequestParam int teamId) {
+		int leftTeamCount = mvs.getCount(new QueryCondition().addCondition("leftTeamId", "=", teamId));
+		int rightTeamCount = mvs.getCount(new QueryCondition().addCondition("rightTeamId", "=", teamId));
+		if(leftTeamCount > 0 || rightTeamCount > 0) {
+			return new ResponseObject(101, "对阵表引用了相关队伍，不能删除");
+		}
+		ts.delete(teamId);
+		return new ResponseObject(100, "删除成功");
+	}
+	
+	@RequestMapping(value="/teamList")
+	public ResponseObject teamList(Integer sportId,
+			                       @RequestParam(defaultValue="20") int pageSize,
+                                   @RequestParam(defaultValue="1") int pageNo,
+                                   @RequestParam(defaultValue="5") int showCount) {
+		System.out.println("sportId：" + sportId);
+		System.out.println("pageSize：" + pageSize);
+		System.out.println("pageNo：" + pageNo);
+		System.out.println("showCount：" + showCount);
+		System.out.println("---------------------------------------------------------");
+
+		QueryCondition qc = new QueryCondition();
+		if(sportId != null) {
+			qc.addCondition("sportId", "=", sportId);
+		}
+		qc.setPage(new Page(pageSize, pageNo, showCount));
+		List<Team> list = ts.query(qc);
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage().setRowCount(ts.getCount(qc))));
 	}
 }

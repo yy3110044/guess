@@ -3,7 +3,7 @@
 <head>
 <base href="${basePath}"/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>标题 - <%=com.yy.fast4j.Fast4jUtils.getBean(com.yy.fast4j.Cache.class, application).getString(com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
+<title>战队列表 - <%=com.yy.fast4j.Fast4jUtils.getBean(com.yy.fast4j.Cache.class, application).getString(com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
 <link rel="stylesheet" href="admin/css/bootstrap.css">
 <link rel="stylesheet" href="admin/css/css.css">
 <script src="js/jquery.js"></script>
@@ -15,15 +15,15 @@
 <%@include file="/admin/header.jsp"%>
 <div id="middle">
 <jsp:include page="/admin/left.jsp">
-	<jsp:param name="p" value=""/>
+	<jsp:param name="p" value="战队列表"/>
 </jsp:include>
 	<div class="right">
 	<div class="right_cont">
 	<div class="breadcrumb">当前位置：
 		<a href="javascript:;">网站管理</a><span class="divider">/</span>
-		<a href="javascript:;"></a>
+		<a href="javascript:;">战队列表</a>
 	</div>
-	<div class="title_right"><strong></strong><span style="color:red;font-size:18px;padding-left:200px;" id="showMsg"></span></div>
+	<div class="title_right"><strong>战队列表</strong><span style="color:red;font-size:18px;padding-left:200px;" id="showMsg"></span></div>
 	<table class="table table-bordered table-striped table-hover">
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">

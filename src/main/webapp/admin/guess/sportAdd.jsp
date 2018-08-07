@@ -46,7 +46,8 @@ var add = function() {
 				$("#logoUrl").remove();
 				$("#description").val("");
 			}
-		}
+		},
+		redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
 	});
 };
 </script>

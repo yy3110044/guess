@@ -10,6 +10,24 @@
 <script type="text/javascript" src="laydate/laydate.js"></script>
 <script type="text/javascript" src="admin/js/common.js"></script>
 <script>
+var del = function(sportId, e) {
+	if(!confirm('确定删除？')) {
+		return;
+	}
+	loadData({
+		url : "administration/sportDelete",
+		data : {
+			"sportId" : sportId
+		},
+		success : function(data) {
+			showMsg(data.msg);
+			if(data.code == 100) {
+				$(e).parent().parent().remove();
+			}
+		}
+	});
+};
+
 var query = function(pageSize, pageNo) {
 	loadData({
 		url : "administration/sportList",
@@ -26,7 +44,11 @@ var query = function(pageSize, pageNo) {
 						return '<img src="' + obj.logoUrl + '" style="width:70px;height:70px;">';
 					}},
 					{field : "description"},
-					{field : "createTime"}
+					{field : "createTime"},
+					{fn : function(obj){
+						var str = '<a href="javascript:;" onclick="del(' + obj.id + ', this)">删除</a>';
+						return str;
+					}}
 				], data.result.page);
 			} else {
 				showMsg(data.msg);
@@ -61,6 +83,7 @@ $(document).ready(function(){
 			<td><strong>logo图</strong></td>
 			<td><strong>简介</strong></td>
 			<td><strong>添加时间</strong></td>
+			<td><strong>操作</strong></td>
 		</tr>
 	</table>
 	<table class="margin-bottom-20 table no-border">

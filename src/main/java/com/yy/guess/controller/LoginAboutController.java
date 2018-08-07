@@ -69,8 +69,7 @@ public class LoginAboutController {
 			loginManager.webLogin(user.getId(), req.getSession());
 			return new ResponseObject(100, "登陆成功");
 		case APP:
-			loginManager.appLogin(user.getId());
-			return new ResponseObject(100, "登陆成功");
+			return new ResponseObject(100, "登陆成功", loginManager.appLogin(user.getId()));
 		default:
 			return new ResponseObject(102, "未知的登陆类型");
 		}
@@ -108,6 +107,7 @@ public class LoginAboutController {
 		user.setQq(qq);
 		user.setPhone(phone);
 		user.setEmail(email);
+		user.setRegistTime(new Date());
 		us.add(user);
 		return new ResponseObject(100, "注册成功");
 	}

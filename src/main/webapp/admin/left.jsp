@@ -13,7 +13,7 @@
 			<span>竞猜管理</span>
 			<a href="admin/guess/sportList.jsp">项目列表</a>
 			<a href="admin/guess/sportAdd.jsp">添加项目</a>
-			<a href="">战队列表</a>
+			<a href="admin/guess/teamList.jsp">战队列表</a>
 			<a href="admin/guess/teamAdd.jsp">添加战队</a>
 		</div>
 	</div>

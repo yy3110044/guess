@@ -120,12 +120,6 @@ public class GuessAdminController {
 			                       @RequestParam(defaultValue="20") int pageSize,
                                    @RequestParam(defaultValue="1") int pageNo,
                                    @RequestParam(defaultValue="5") int showCount) {
-		System.out.println("sportId：" + sportId);
-		System.out.println("pageSize：" + pageSize);
-		System.out.println("pageNo：" + pageNo);
-		System.out.println("showCount：" + showCount);
-		System.out.println("---------------------------------------------------------");
-
 		QueryCondition qc = new QueryCondition();
 		if(sportId != null) {
 			qc.addCondition("sportId", "=", sportId);

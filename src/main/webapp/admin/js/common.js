@@ -93,9 +93,10 @@ var addImageUploadEvent = function(obj) {
 	    $("#progressallSpan").html(rate + "%");
 	};
 	obj.done = function(e, data){
-		$("#progressallSpan").html('<span style="color:red;">' + data.result.msg + '</span>');
-		if(data.result.code == 100) {
-			$("#" + obj.imgId).attr("src", data.result.result.serverUrl);
+		var result = data.result[0];
+		$("#progressallSpan").html('<span style="color:red;">' + result.msg + '</span>');
+		if(result.code == 100) {
+			$("#" + obj.imgId).attr("src", result.result.serverUrl);
 		}
 	};
 	addUploadEvent(obj);

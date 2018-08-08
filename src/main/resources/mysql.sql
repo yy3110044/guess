@@ -92,6 +92,7 @@ DROP TABLE IF EXISTS `guess_match`;
 CREATE TABLE `guess_match` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `sportId` int(11) NOT NULL COMMENT '体育运动id，关联sportId表id',
+  `sportName` varchar(128) COMMENT '体育运动名',
   `name` varchar(128) NOT NULL COMMENT '赛事名',
   `logoUrl` varchar(512) COMMENT 'log图url',
   `description` varchar(512) COMMENT '赛事描述',
@@ -147,6 +148,7 @@ DROP TABLE IF EXISTS `guess_team`;
 CREATE TABLE `guess_team` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `sportId` int(11) NOT NULL COMMENT '体育运动id，关联sportId表id',
+  `sportName` varchar(128) COMMENT '体育运动名',
   `name` varchar(128) NOT NULL COMMENT '队伍名',
   `logoUrl` varchar(512) COMMENT 'log图url',
   `description` varchar(512) COMMENT '队伍描述',

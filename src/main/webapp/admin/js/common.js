@@ -35,7 +35,9 @@ var loadData = function(obj) {
 					return;
 				}
 			}
-			obj.success(data, textStatus); //请求成功后调用
+			if(obj.success != null) {
+				obj.success(data, textStatus); //请求成功后调用
+			}
 		},
 		"error" : obj.error //请求失败后调用，参数：XMLHttpRequest, textStatus, errorThrown
 	});
@@ -93,10 +95,14 @@ var addImageUploadEvent = function(obj) {
 	    $("#progressallSpan").html(rate + "%");
 	};
 	obj.done = function(e, data){
-		var result = data.result[0];
-		$("#progressallSpan").html('<span style="color:red;">' + result.msg + '</span>');
-		if(result.code == 100) {
-			$("#" + obj.imgId).attr("src", result.result.serverUrl);
+		var result = data.result;
+		if(result.length > 0) {
+			$("#progressallSpan").html('<span style="color:red;">' + result[0].msg + '</span>');
+			if(result[0].code == 100) {
+				$("#" + obj.imgId).attr("src", result[0].result.serverUrl);
+			}
+		} else {
+			$("#progressallSpan").html("返回结果为空");
 		}
 	};
 	addUploadEvent(obj);
@@ -157,14 +163,14 @@ var getPageStr = function(page){
 };
 
 //填充分页结果
-var fillResult = function(list, fields, page) {
+var fillResult = function(data, fields) {
 	$("tr.contentTr").remove();
 	var str = getContentStr({
-		"list" : list,
+		"list" : data.result.list,
 		"fields" : fields
 	});
 	$("table.table-bordered").append(str);
-	$("#pageTd").html(getPageStr(page));
+	$("#pageTd").html(getPageStr(data.result.page));
 };
 
 var addLoadLevel = function() {

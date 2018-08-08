@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into guess_match(id, sportId, name, logoUrl, description, startTime, endTime, status, createTime)
-        values(#{id}, #{sportId}, #{name}, #{logoUrl}, #{description}, #{startTime}, #{endTime}, #{status}, #{createTime})
+        insert into guess_match(id, sportId, sportName, name, logoUrl, description, startTime, endTime, status, createTime)
+        values(#{id}, #{sportId}, #{sportName}, #{name}, #{logoUrl}, #{description}, #{startTime}, #{endTime}, #{status}, #{createTime})
     </insert>
 
     <delete id="delete" parameterType="int">
@@ -17,12 +17,12 @@
 
     <update id="update" parameterType="com.yy.guess.po.Match">
         update guess_match set
-        sportId = #{sportId}, name = #{name}, logoUrl = #{logoUrl}, description = #{description}, startTime = #{startTime}, endTime = #{endTime}, status = #{status}, createTime = #{createTime}
+        sportId = #{sportId}, sportName = #{sportName}, name = #{name}, logoUrl = #{logoUrl}, description = #{description}, startTime = #{startTime}, endTime = #{endTime}, status = #{status}, createTime = #{createTime}
         where id = #{id}
     </update>
 
     <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.Match">
-        select id, sportId, name, logoUrl, description, startTime, endTime, status, createTime from guess_match
+        select id, sportId, sportName, name, logoUrl, description, startTime, endTime, status, createTime from guess_match
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -44,12 +44,12 @@
     </select>
 
     <select id="findById" parameterType="int" resultType="com.yy.guess.po.Match">
-        select id, sportId, name, logoUrl, description, startTime, endTime, status, createTime from guess_match
+        select id, sportId, sportName, name, logoUrl, description, startTime, endTime, status, createTime from guess_match
         where id = #{id}
     </select>
 
     <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.Match">
-        select id, sportId, name, logoUrl, description, startTime, endTime, status, createTime from guess_match
+        select id, sportId, sportName, name, logoUrl, description, startTime, endTime, status, createTime from guess_match
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">

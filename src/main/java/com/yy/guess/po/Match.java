@@ -6,6 +6,7 @@ import com.yy.guess.po.enums.MatchStatus;
 public class Match {
 	private int id;
 	private int sportId;
+	private String sportName;
 	private String name;
 	private String logoUrl;
 	private String description;
@@ -24,6 +25,12 @@ public class Match {
 	}
 	public void setSportId(int sportId) {
 		this.sportId = sportId;
+	}
+	public String getSportName() {
+		return sportName;
+	}
+	public void setSportName(String sportName) {
+		this.sportName = sportName;
 	}
 	public String getName() {
 		return name;

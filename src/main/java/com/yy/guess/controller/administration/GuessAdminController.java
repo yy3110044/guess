@@ -1,7 +1,9 @@
 package com.yy.guess.controller.administration;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,9 +13,12 @@ import com.yy.fast4j.Fast4jUtils;
 import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
+import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.fast4j.ResponseObject;
+import com.yy.guess.po.Match;
 import com.yy.guess.po.Sport;
 import com.yy.guess.po.Team;
+import com.yy.guess.po.enums.MatchStatus;
 import com.yy.guess.service.MatchService;
 import com.yy.guess.service.MatchVersusService;
 import com.yy.guess.service.SportService;
@@ -41,6 +46,13 @@ public class GuessAdminController {
 	@Autowired
 	private MatchVersusService mvs;
 	
+	/**
+	 * 添加运动项目
+	 * @param name
+	 * @param logoUrl
+	 * @param description
+	 * @return
+	 */
 	@RequestMapping("/sportAdd")
 	public ResponseObject sportAdd(@RequestParam String name, @RequestParam String logoUrl, @RequestParam String description) {
 		if(Fast4jUtils.empty(name, logoUrl)) {
@@ -58,6 +70,13 @@ public class GuessAdminController {
 		return new ResponseObject(100, "添加成功");
 	}
 	
+	/**
+	 * 运动项目列表
+	 * @param pageSize
+	 * @param pageNo
+	 * @param showCount
+	 * @return
+	 */
 	@RequestMapping("/sportList")
 	public ResponseObject sportList(@RequestParam(defaultValue="20") int pageSize,
                                     @RequestParam(defaultValue="1") int pageNo,
@@ -65,9 +84,14 @@ public class GuessAdminController {
 		QueryCondition qc = new QueryCondition();
 		qc.setPage(new Page(pageSize, pageNo, showCount));
 		List<Sport> list = ss.query(qc);
-		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage().setRowCount(ss.getCount(qc))));
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage(ss.getCount(qc))));
 	}
 	
+	/**
+	 * 删除运动项目
+	 * @param sportId
+	 * @return
+	 */
 	@RequestMapping("/sportDelete")
 	public ResponseObject sportDelete(@RequestParam int sportId) {
 		QueryCondition qc = new QueryCondition().addCondition("sportId", "=", sportId);
@@ -80,11 +104,23 @@ public class GuessAdminController {
 		return new ResponseObject(100, "删除成功");
 	}
 	
+	/**
+	 * 返回所有运动项目
+	 * @return
+	 */
 	@RequestMapping("/getAllSports")
 	public ResponseObject getAllSports() {
 		return new ResponseObject(100, "返回成功", ss.query(null));
 	}
 	
+	/**
+	 * 添加队伍
+	 * @param sportId
+	 * @param name
+	 * @param logoUrl
+	 * @param description
+	 * @return
+	 */
 	@RequestMapping("/teamAdd")
 	public ResponseObject teamAdd(@RequestParam int sportId,
                                   @RequestParam String name,
@@ -97,6 +133,7 @@ public class GuessAdminController {
 		
 		Team team = new Team();
 		team.setSportId(sportId);
+		team.setSportName(sport.getName());
 		team.setName(name);
 		team.setLogoUrl(logoUrl);
 		team.setDescription(description);
@@ -104,6 +141,11 @@ public class GuessAdminController {
 		return new ResponseObject(100, "队伍添加成功");
 	}
 	
+	/**
+	 * 删除队伍
+	 * @param teamId
+	 * @return
+	 */
 	@RequestMapping("/teamDelete")
 	public ResponseObject teamDelete(@RequestParam int teamId) {
 		int leftTeamCount = mvs.getCount(new QueryCondition().addCondition("leftTeamId", "=", teamId));
@@ -115,17 +157,87 @@ public class GuessAdminController {
 		return new ResponseObject(100, "删除成功");
 	}
 	
-	@RequestMapping(value="/teamList")
-	public ResponseObject teamList(Integer sportId,
+	/**
+	 * 返回队伍列表
+	 * @param sportId
+	 * @param pageSize
+	 * @param pageNo
+	 * @param showCount
+	 * @return
+	 */
+	@RequestMapping("/teamList")
+	public ResponseObject teamList(@RequestParam int sportId,
 			                       @RequestParam(defaultValue="20") int pageSize,
                                    @RequestParam(defaultValue="1") int pageNo,
                                    @RequestParam(defaultValue="5") int showCount) {
 		QueryCondition qc = new QueryCondition();
-		if(sportId != null) {
+		if(sportId > 0) {
 			qc.addCondition("sportId", "=", sportId);
 		}
 		qc.setPage(new Page(pageSize, pageNo, showCount));
 		List<Team> list = ts.query(qc);
-		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage().setRowCount(ts.getCount(qc))));
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage(ts.getCount(qc))));
+	}
+
+	/**
+	 * 添加比赛
+	 * @param sportId
+	 * @param name
+	 * @param logoUrl
+	 * @param description
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	@RequestMapping("/matchAdd")
+	public ResponseObject matchAdd(@RequestParam int sportId,
+                                   @RequestParam String name,
+                                   @RequestParam String logoUrl,
+                                   String description,
+                                   @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime,
+                                   @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endTime) {
+		Sport sport = ss.findById(sportId);
+		if(sport == null) {
+			return new ResponseObject(101, "运动项目不存在，请先添加");
+		}
+		Match match = new Match();
+		match.setSportId(sportId);
+		match.setSportName(match.getName());
+		match.setName(name);
+		match.setLogoUrl(logoUrl);
+		match.setDescription(description);
+		match.setStartTime(startTime);
+		match.setEndTime(endTime);
+		match.setStatus(MatchStatus.未开始);
+		ms.add(match);
+		return new ResponseObject(100, "添加成功");
+	}
+	
+	/**
+	 * 比赛列表
+	 * @param sportId
+	 * @param status
+	 * @param pageSize
+	 * @param pageNo
+	 * @param showCount
+	 * @return
+	 */
+	@RequestMapping("/matchList")
+	public ResponseObject matchList(@RequestParam int sportId,
+                                    MatchStatus status,
+                                    @RequestParam(defaultValue="20") int pageSize,
+                                    @RequestParam(defaultValue="1") int pageNo,
+                                    @RequestParam(defaultValue="5") int showCount) {
+		QueryCondition qc = new QueryCondition();
+		if(sportId > 0) {
+			qc.addCondition("sportId", "=", sportId);
+		}
+		if(status != null) {
+			qc.addCondition("status", "=", status);
+		}
+		qc.setPage(new Page(pageSize, pageNo, showCount));
+		qc.addSort("startTime", SortType.DESC);
+		List<Match> list = ms.query(qc);
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage(ms.getCount(qc))));
 	}
 }

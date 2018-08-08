@@ -9,6 +9,72 @@
 <script src="js/jquery.js"></script>
 <script src="laydate/laydate.js"></script>
 <script src="admin/js/common.js"></script>
+<script>
+var del = function(teamId, e) {
+	if(!confirm('确定删除？')) {
+		return;
+	}
+	loadData({
+		url : "administration/teamDelete",
+		data : {
+			"teamId" : teamId
+		},
+		success : function(data) {
+			showMsg(data.msg);
+			if(data.code == 100) {
+				$(e).parent().parent().remove();
+			}
+		}
+	});
+};
+var query = function(pageSize, pageNo) {
+	loadData({
+		url : "administration/teamList",
+		data : {
+			"sportId" : $.trim($("#sportId").val()),
+			"pageSize" : pageSize,
+			"pageNo" : pageNo
+		},
+		success : function(data) {
+			if(data.code == 100) {
+				fillResult(data, [
+					{field : "id"},
+					{field : "sportName"},
+					{field : "name"},
+					{fn : function(obj){
+						return '<a href="' + obj.logoUrl + '" target="_blank"><img src="' + obj.logoUrl + '" style="width:60px;height:60px;"></a>';
+					}},
+					{field : "description"},
+					{field : "createTime"},
+					{fn : function(obj){
+						return '<a href="javascript:;" onclick="del(' + obj.id + ', this)">删除</a>';
+					}}
+				]);
+			} else {
+				showMsg(data.msg);
+			}
+		}
+	});
+};
+$(document).ready(function(){
+	loadData({
+		url : "administration/getAllSports",
+		success : function(data) {
+			var list = data.result;
+			var str = '<option value="0">全部</option>';
+			for(var i=0; i<list.length; i++) {
+				var obj = list[i];
+				str += '<option value="' + obj.id + '">';
+				str += obj.name
+				str += '</option>';
+			}
+			$("#sportId").html(str);
+			query(20, 1);
+		},
+		redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
+	});
+});
+</script>
 </head>
 
 <body>
@@ -27,12 +93,18 @@
 	<table class="table table-bordered table-striped table-hover">
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
-				<input type="text" id="" placeholder="" class="laydate-icon" onclick="laydate({istime:true,format:'YYYY-MM-DD hh:mm:ss'});" style="width:140px;cursor:pointer;" readonly="readonly">
-				&nbsp;&nbsp;<input type="button" value="查询">
+				类型：<select id="sportId" style="width:100px;"></select>
+				&nbsp;&nbsp;<input type="button" value="查询" onclick="query(20, 1)">
 			</td>
 		</tr>
 		<tr align="center">
-			<td><strong></strong></td>
+			<td><strong>id</strong></td>
+			<td><strong>类型</strong></td>
+			<td><strong>战队名</strong></td>
+			<td><strong>logo图</strong></td>
+			<td><strong>简介</strong></td>
+			<td><strong>添加时间</strong></td>
+			<td><strong>操作</strong></td>
 		</tr>
 	</table>
 	<table class="margin-bottom-20 table no-border">

@@ -37,11 +37,11 @@ var query = function(pageSize, pageNo) {
 		},
 		success : function(data) {
 			if(data.code == 100) {
-				fillResult(data.result.list, [
+				fillResult(data, [
 					{field : "id"},
 					{field : "name"},
 					{fn : function(obj){
-						return '<img src="' + obj.logoUrl + '" style="width:70px;height:70px;">';
+						return '<a href="' + obj.logoUrl + '" target="_blank"><img src="' + obj.logoUrl + '" style="width:60px;height:60px;"></a>';
 					}},
 					{field : "description"},
 					{field : "createTime"},
@@ -49,7 +49,7 @@ var query = function(pageSize, pageNo) {
 						var str = '<a href="javascript:;" onclick="del(' + obj.id + ', this)">删除</a>';
 						return str;
 					}}
-				], data.result.page);
+				]);
 			} else {
 				showMsg(data.msg);
 			}

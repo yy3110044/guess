@@ -178,6 +178,17 @@ public class GuessAdminController {
 		List<Team> list = ts.query(qc);
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage(ts.getCount(qc))));
 	}
+	
+	/**
+	 * 返回某个运动项目下的所有队伍
+	 * @param sportId
+	 * @return
+	 */
+	@RequestMapping("/getAllTeamsBySportId")
+	public ResponseObject getAllTeamsBySportId(@RequestParam int sportId) {
+		List<Team> list = ts.query(new QueryCondition().addCondition("sportId", "=", sportId));
+		return new ResponseObject(100, "返回成功", list);
+	}
 
 	/**
 	 * 添加比赛

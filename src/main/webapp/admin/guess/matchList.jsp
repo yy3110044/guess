@@ -10,6 +10,39 @@
 <script src="laydate/laydate.js"></script>
 <script src="admin/js/common.js"></script>
 <script>
+var getTeamSelect = function(teamList, selectId) {
+	var str = '<select id="' + selectId + '">';
+	for(var i=0; i<teamList.length; i++) {
+		var obj = teamList[i];
+		str += '<option value="' + obj.id + '">' + obj.name + '</option>';
+	}
+	str += '</select>';
+	return str;
+};
+
+var addVersus = function(matchId, sportId, e){
+	loadData({
+		url : "administration/getAllTeamsBySportId",
+		data : {
+			"sportId" : sportId
+		},
+		success : function(data) {
+			if(data.code == 100) {
+				$("tr.modifyTr").remove();
+
+				var str = '<tr class="modifyTr"><td colspan="99" style="padding:8px;">';
+				str += '<div>比赛队伍：' + getTeamSelect(data.result, "versus_leftTeamId") + '&nbsp;对阵&nbsp;' + getTeamSelect(data.result, "versus_rightTeamId") + '</div>';
+				str += '<div style="margin-top:4px;">开始时间：<input type="text" id="versus_startTime" placeholder="比赛开始时间" class="laydate-icon" onclick="laydate({istime:true,format:\'YYYY-MM-DD hh:mm:ss\'});" style="width:140px;cursor:pointer;" readonly="readonly"></div>';
+				str += '<div style="margin-top:4px;">比赛状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "versus_status", null, null)%></div>';
+				str += '</td></tr>';
+				$(e).parent().parent().after(str);
+			} else {
+				showMsg(data.msg);
+			}
+		}
+	});
+};
+
 var query = function(pageSize, pageNo){
 	var sportId = $.trim($("#sportId").val());
 	var status = $.trim($("#status").val());
@@ -34,7 +67,9 @@ var query = function(pageSize, pageNo){
 					{field : "status"},
 					{field : "createTime"},
 					{fn : function(obj){
-						return '<a>删除</a>';
+						var str = '<a href="javascript:;">删除</a>';
+						str += '&nbsp;<a href="javascript:;" onclick="addVersus(' + obj.id + ', ' + obj.sportId + ', this)">添加对阵</a>';
+						return str;
 					}}
 				]);
 			} else {
@@ -47,16 +82,20 @@ $(document).ready(function(){
 	loadData({
 		url : "administration/getAllSports",
 		success : function(data) {
-			var list = data.result;
-			var str = '<option value="0">全部</option>';
-			for(var i=0; i<list.length; i++) {
-				var obj = list[i];
-				str += '<option value="' + obj.id + '">';
-				str += obj.name
-				str += '</option>';
+			if(data.code == 100) {
+				var list = data.result;
+				var str = '<option value="0">全部</option>';
+				for(var i=0; i<list.length; i++) {
+					var obj = list[i];
+					str += '<option value="' + obj.id + '">';
+					str += obj.name
+					str += '</option>';
+				}
+				$("#sportId").html(str);
+				query(20, 1);
+			} else {
+				showMsg(data.msg);
 			}
-			$("#sportId").html(str);
-			query(20, 1);
 		},
 		redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
 	});
@@ -81,13 +120,13 @@ $(document).ready(function(){
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
 				类型：<select id="sportId" style="width:100px;"></select>
-				&nbsp;&nbsp;状态：<select id="status" style="width:100px;"><option>全部</option><%for(com.yy.guess.po.enums.MatchStatus status : com.yy.guess.po.enums.MatchStatus.values()){out.write("<option>" + status.name() + "</option>");}%></select>
+				&nbsp;&nbsp;状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "status", "width:100px;", new String[]{"全部"})%>
 				&nbsp;&nbsp;<input type="button" value="查询" onclick="query(20, 1)">
 			</td>
 		</tr>
 		<tr align="center">
 			<td><strong>id</strong></td>
-			<td><strong>类型</strong></td>
+			<td><strong>项目类型</strong></td>
 			<td><strong>名称</strong></td>
 			<td><strong>logo图</strong></td>
 			<td><strong>简介</strong></td>

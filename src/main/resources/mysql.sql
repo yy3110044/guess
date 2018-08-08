@@ -98,7 +98,7 @@ CREATE TABLE `guess_match` (
   `description` varchar(512) COMMENT '赛事描述',
   `startTime` datetime COMMENT '开始时间',
   `endTime` datetime COMMENT '结束时间',
-  `status` enum('未开始', '进行中', '已结束') COMMENT '赛事状态',
+  `status` enum('未开始', '进行中', '已结束', '未比赛') COMMENT '赛事状态',
   `createTime` datetime COMMENT '记录创建时间',
   PRIMARY KEY (`id`),
   KEY `sportId` (`sportId`)
@@ -112,7 +112,7 @@ CREATE TABLE `guess_match_versus` (
   `leftTeamId` int(11) NOT NULL COMMENT '比赛队伍，关联team表id',
   `rightTeamId` int(11) NOT NULL COMMENT '比赛队伍，关联team表id',
   `startTime` datetime COMMENT '比赛开始时间',
-  `status` enum('未开始', '进行中', '已结束') COMMENT '比赛状态',
+  `status` enum('未开始', '进行中', '已结束', '未比赛') COMMENT '比赛状态',
   `boCount` tinyint COMMENT '几局定胜负',
   `realBoCount` tinyint COMMENT '实际比赛局数',
   `result` tinyint COMMENT '比赛结果：负数为左team赢、零为平、正数为右team赢',

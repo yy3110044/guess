@@ -6,5 +6,5 @@ package com.yy.guess.po.enums;
  *
  */
 public enum UserLoginType {
-	WEB, APP
+	WEB, APP;
 }

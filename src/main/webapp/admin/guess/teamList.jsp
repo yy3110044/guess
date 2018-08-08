@@ -99,7 +99,7 @@ $(document).ready(function(){
 		</tr>
 		<tr align="center">
 			<td><strong>id</strong></td>
-			<td><strong>类型</strong></td>
+			<td><strong>项目类型</strong></td>
 			<td><strong>战队名</strong></td>
 			<td><strong>logo图</strong></td>
 			<td><strong>简介</strong></td>

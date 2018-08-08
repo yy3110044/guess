@@ -98,7 +98,7 @@ var add = function(){
 	<div style="width:900px; margin:auto">
 	<table class="table table-bordered">
 		<tr>
-			<td width="12%" align="right" nowrap="nowrap" bgcolor="#f1f1f1">战队类型：</td>
+			<td width="12%" align="right" nowrap="nowrap" bgcolor="#f1f1f1">项目类型：</td>
 			<td><select id="sportId"></select></td>
 		</tr>
 		<tr>
@@ -123,7 +123,7 @@ var add = function(){
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">状态：</td>
-			<td><select id="status"><%for(com.yy.guess.po.enums.MatchStatus status : com.yy.guess.po.enums.MatchStatus.values()){out.write("<option>" + status.name() + "</option>");}%></select></td>
+			<td><%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "status", null, null)%></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1"></td>

@@ -195,20 +195,21 @@ public class GuessAdminController {
                                    @RequestParam String logoUrl,
                                    String description,
                                    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime,
-                                   @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endTime) {
+                                   @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endTime,
+                                   @RequestParam MatchStatus status) {
 		Sport sport = ss.findById(sportId);
 		if(sport == null) {
 			return new ResponseObject(101, "运动项目不存在，请先添加");
 		}
 		Match match = new Match();
 		match.setSportId(sportId);
-		match.setSportName(match.getName());
+		match.setSportName(sport.getName());
 		match.setName(name);
 		match.setLogoUrl(logoUrl);
 		match.setDescription(description);
 		match.setStartTime(startTime);
 		match.setEndTime(endTime);
-		match.setStatus(MatchStatus.未开始);
+		match.setStatus(status);
 		ms.add(match);
 		return new ResponseObject(100, "添加成功");
 	}

@@ -15,6 +15,8 @@
 			<a href="admin/guess/sportAdd.jsp">添加项目</a>
 			<a href="admin/guess/teamList.jsp">战队列表</a>
 			<a href="admin/guess/teamAdd.jsp">添加战队</a>
+			<a href="admin/guess/matchList.jsp">赛事列表</a>
+			<a href="admin/guess/matchAdd.jsp">添加赛事</a>
 		</div>
 	</div>
 </div>

@@ -1,7 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%><!DOCTYPE html>
 <html>
 <head>
-<base href="${basePath}"/>
+<base href="${basePath}">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>标题 - <%=com.yy.fast4j.Fast4jUtils.getBean(com.yy.fast4j.Cache.class, application).getString(com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
 <link rel="stylesheet" href="admin/css/bootstrap.css">

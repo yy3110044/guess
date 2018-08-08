@@ -43,7 +43,7 @@ var add = function() {
 			showMsg(data.msg);
 			if(data.code == 100) {
 				$("#name").val("");
-				$("#logoUrl").remove();
+				$("#logoUrl").removeAttr("src");
 				$("#description").val("");
 			}
 		},

@@ -77,6 +77,11 @@ $(document).ready(function(){
 	</div>
 	<div class="title_right"><strong>项目列表</strong><span style="color:red;font-size:18px;padding-left:200px;" id="showMsg"></span></div>
 	<table class="table table-bordered table-striped table-hover">
+		<tr>
+			<td colspan="99" style="padding:3px;line-height:30px;">
+				<a href="admin/guess/sportAdd.jsp" target="_blank">添加项目</a>
+			</td>
+		</tr>
 		<tr align="center">
 			<td><strong>id</strong></td>
 			<td><strong>名称</strong></td>

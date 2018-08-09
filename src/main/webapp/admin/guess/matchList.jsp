@@ -10,39 +10,22 @@
 <script src="laydate/laydate.js"></script>
 <script src="admin/js/common.js"></script>
 <script>
-var getTeamSelect = function(teamList, selectId) {
-	var str = '<select id="' + selectId + '">';
-	for(var i=0; i<teamList.length; i++) {
-		var obj = teamList[i];
-		str += '<option value="' + obj.id + '">' + obj.name + '</option>';
-	}
-	str += '</select>';
-	return str;
-};
-
-var addVersus = function(matchId, sportId, e){
-	loadData({
-		url : "administration/getAllTeamsBySportId",
-		data : {
-			"sportId" : sportId
-		},
-		success : function(data) {
-			if(data.code == 100) {
-				$("tr.modifyTr").remove();
-
-				var str = '<tr class="modifyTr"><td colspan="99" style="padding:8px;">';
-				str += '<div>比赛队伍：' + getTeamSelect(data.result, "versus_leftTeamId") + '&nbsp;对阵&nbsp;' + getTeamSelect(data.result, "versus_rightTeamId") + '</div>';
-				str += '<div style="margin-top:4px;">开始时间：<input type="text" id="versus_startTime" placeholder="比赛开始时间" class="laydate-icon" onclick="laydate({istime:true,format:\'YYYY-MM-DD hh:mm:ss\'});" style="width:140px;cursor:pointer;" readonly="readonly"></div>';
-				str += '<div style="margin-top:4px;">比赛状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "versus_status", null, null)%></div>';
-				str += '</td></tr>';
-				$(e).parent().parent().after(str);
-			} else {
+var del = function(matchId, e) {
+	if(confirm('确定删除？')) {
+		loadData({
+			url : "administration/matchDelete",
+			data : {
+				"matchId" : matchId
+			},
+			success : function(data) {
 				showMsg(data.msg);
+				if(data.code == 100) {
+					$(e).parent().parent().remove();
+				}
 			}
-		}
-	});
+		});
+	}
 };
-
 var query = function(pageSize, pageNo){
 	var sportId = $.trim($("#sportId").val());
 	var status = $.trim($("#status").val());
@@ -67,8 +50,10 @@ var query = function(pageSize, pageNo){
 					{field : "status"},
 					{field : "createTime"},
 					{fn : function(obj){
-						var str = '<a href="javascript:;">删除</a>';
-						str += '&nbsp;<a href="javascript:;" onclick="addVersus(' + obj.id + ', ' + obj.sportId + ', this)">添加对阵</a>';
+						var str = '';
+						str += '<a href="admin/guess/matchVersusList.jsp?matchId=' + obj.id + '" target="_blank">查看对阵</a>';
+						str += '&nbsp;<a href="admin/guess/matchVersusAdd.jsp?matchId=' + obj.id + '" target="_blank">添加对阵</a>';
+						str += '&nbsp;<a href="javascript:;" onclick="del(' + obj.id + ', this)">删除</a>';
 						return str;
 					}}
 				]);
@@ -119,9 +104,10 @@ $(document).ready(function(){
 	<table class="table table-bordered table-striped table-hover">
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
-				类型：<select id="sportId" style="width:100px;"></select>
+				项目类型：<select id="sportId" style="width:100px;"></select>
 				&nbsp;&nbsp;状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "status", "width:100px;", new String[]{"全部"})%>
 				&nbsp;&nbsp;<input type="button" value="查询" onclick="query(20, 1)">
+				&nbsp;&nbsp;<a href="admin/guess/matchAdd.jsp" target="_blank">添加赛事</a>
 			</td>
 		</tr>
 		<tr align="center">

@@ -4,8 +4,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.yy.guess.mapper.MatchVersusBoMapper;
 import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.po.MatchVersus;
+import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.service.MatchVersusService;
 import com.yy.fast4j.QueryCondition;
 
@@ -14,6 +17,9 @@ import com.yy.fast4j.QueryCondition;
 public class MatchVersusServiceImpl implements MatchVersusService {
     @Autowired
     private MatchVersusMapper mapper;
+    
+    @Autowired
+    private MatchVersusBoMapper mvbm;
 
     @Override
     public void add(MatchVersus obj) {
@@ -50,4 +56,19 @@ public class MatchVersusServiceImpl implements MatchVersusService {
         return mapper.getCount(qc);
     }
     /*****************************************************************分隔线************************************************************************/
+
+	@Override
+	public void add(MatchVersus obj, List<MatchVersusBo> boList) {
+		mapper.add(obj);
+		for(MatchVersusBo bo : boList) {
+			bo.setVersusId(obj.getId());
+		}
+		mvbm.addList(boList);
+	}
+
+	@Override
+	public void deleteVersus(int id) {
+		mapper.delete(id);
+		mvbm.deleteByVersusId(id);
+	}
 }

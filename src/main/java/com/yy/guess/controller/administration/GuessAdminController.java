@@ -1,5 +1,6 @@
 package com.yy.guess.controller.administration;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.Match;
+import com.yy.guess.po.MatchVersus;
+import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.Sport;
 import com.yy.guess.po.Team;
 import com.yy.guess.po.enums.MatchStatus;
@@ -189,6 +192,27 @@ public class GuessAdminController {
 		List<Team> list = ts.query(new QueryCondition().addCondition("sportId", "=", sportId));
 		return new ResponseObject(100, "返回成功", list);
 	}
+	
+	/**
+	 * 根据match id返回相对应的运动项目和项目下的所有team
+	 * @param matchId
+	 * @return
+	 */
+	@RequestMapping("/getSportAndTeamsByMatchId")
+	public ResponseObject getSportAndTeamsByMatchId(@RequestParam int matchId) {
+		Match match = ms.findById(matchId);
+		if(match == null) {
+			return new ResponseObject(101, "赛事不存在");
+		}
+		
+		Sport sport = ss.findById(match.getSportId());
+		if(sport == null) {
+			return new ResponseObject(102, "项目不存在");
+		}
+		
+		List<Team> teamList = ts.query(new QueryCondition().addCondition("sportId", "=", sport.getId()));
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("sport", sport).set("teamList", teamList).set("match", match));
+	}
 
 	/**
 	 * 添加比赛
@@ -251,5 +275,125 @@ public class GuessAdminController {
 		qc.addSort("startTime", SortType.DESC);
 		List<Match> list = ms.query(qc);
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage(ms.getCount(qc))));
+	}
+	
+	/**
+	 * 删除赛事
+	 * @param matchId
+	 * @return
+	 */
+	@RequestMapping("/matchDelete")
+	public ResponseObject matchDelete(@RequestParam int matchId) {
+		int count = mvs.getCount(new QueryCondition().addCondition("matchId", "=", matchId));
+		if(count > 0) {
+			return new ResponseObject(101, "请先删除此赛事下的所有对阵");
+		}
+		ms.delete(matchId);
+		return new ResponseObject(100, "删除成功");
+	}
+	
+	/**
+	 * 返回某个运动下的所有比赛
+	 * @param sportId
+	 * @return
+	 */
+	@RequestMapping("/getAllMatchsBySportId")
+	public ResponseObject getAllMatchsBySportId(@RequestParam int sportId) {
+		List<Match> list = ms.query(new QueryCondition().addCondition("sportId", "=", sportId));
+		return new ResponseObject(100, "返回成功", list);
+	}
+	
+	/**
+	 * 添加对阵
+	 * @param matchId
+	 * @param leftTeamId
+	 * @param rightTeamId
+	 * @param startTime
+	 * @param status
+	 * @param boCount
+	 * @return
+	 */
+	@RequestMapping("/matchVersusAdd")
+	public ResponseObject matchVersusAdd(@RequestParam int matchId,
+                                          String name,
+			                              @RequestParam int leftTeamId,
+                                          @RequestParam int rightTeamId,
+                                          @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime,
+                                          @RequestParam MatchStatus status,
+                                          @RequestParam int boCount) {
+		Match match = ms.findById(matchId);
+		if(match == null) {
+			return new ResponseObject(101, "赛事不存在");
+		}
+		Team leftTeam = ts.findById(leftTeamId), rightTeam = ts.findById(rightTeamId);
+		if(leftTeam == null || rightTeam == null) {
+			return new ResponseObject(102, "比赛队伍不存在");
+		}
+		if(leftTeamId == rightTeamId) {
+			return new ResponseObject(103, "两边队伍不能一样");
+		}
+		if(boCount <= 0) {
+			return new ResponseObject(104, "比赛局数必须大于等于1");
+		}
+
+		MatchVersus mv = new MatchVersus();
+		mv.setName(name);
+		mv.setMatchId(matchId);
+		mv.setMatchName(match.getName());
+		mv.setLeftTeamId(leftTeamId);
+		mv.setLeftTeamName(leftTeam.getName());
+		mv.setRightTeamId(rightTeamId);
+		mv.setRightTeamName(rightTeam.getName());
+		mv.setStartTime(startTime);
+		mv.setStatus(status);
+		mv.setBoCount(boCount);
+		List<MatchVersusBo> boList = new ArrayList<MatchVersusBo>();
+		for(int i=1; i<=boCount; i++) {
+			MatchVersusBo mvb = new MatchVersusBo();
+			mvb.setBo(i);
+			mvb.setStatus(status);
+			boList.add(mvb);
+		}
+		mvs.add(mv, boList);
+		return new ResponseObject(100, "添加成功");
+	}
+	
+	/**
+	 * 返回对阵列表
+	 * @param matchId
+	 * @param status
+	 * @param pageSize
+	 * @param pageNo
+	 * @param showCount
+	 * @return
+	 */
+	@RequestMapping("/matchVersusList")
+	public ResponseObject matchVersusList(@RequestParam int matchId,
+                                           MatchStatus status,
+                                           @RequestParam(defaultValue="20") int pageSize,
+                                           @RequestParam(defaultValue="1") int pageNo,
+                                           @RequestParam(defaultValue="5") int showCount) {
+		QueryCondition qc = new QueryCondition();
+		if(matchId != 0) {
+			qc.addCondition("matchId", "=", matchId);
+		}
+		if(status != null) {
+			qc.addCondition("status", "=", status);
+		}
+		qc.setPage(new Page(pageSize, pageNo, showCount));
+		qc.addSort("startTime", SortType.DESC);
+		List<MatchVersus> list = mvs.query(qc);
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", qc.getPage(mvs.getCount(qc))));
+	}
+	
+	/**
+	 * 删除对阵
+	 * @param versusId
+	 * @return
+	 */
+	@RequestMapping("/matchVersusDelete")
+	public ResponseObject matchVersusDelete(@RequestParam int versusId) {
+		mvs.deleteVersus(versusId);
+		return new ResponseObject(100, "删除成功");
 	}
 }

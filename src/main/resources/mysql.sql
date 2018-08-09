@@ -108,9 +108,13 @@ CREATE TABLE `guess_match` (
 DROP TABLE IF EXISTS `guess_match_versus`;
 CREATE TABLE `guess_match_versus` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `name` varchar(128) COMMENT '对阵名，例如：小组赛、半绝赛',
   `matchId` int(11) NOT NULL COMMENT '赛事id，关联match表id',
+  `matchName` varchar(128) NOT NULL COMMENT '赛事名',
   `leftTeamId` int(11) NOT NULL COMMENT '比赛队伍，关联team表id',
+  `leftTeamName` varchar(128) NOT NULL COMMENT '比赛队伍名',
   `rightTeamId` int(11) NOT NULL COMMENT '比赛队伍，关联team表id',
+  `rightTeamName` varchar(128) NOT NULL COMMENT '比赛队伍名',
   `startTime` datetime COMMENT '比赛开始时间',
   `status` enum('未开始', '进行中', '已结束', '未比赛') COMMENT '比赛状态',
   `boCount` tinyint COMMENT '几局定胜负',

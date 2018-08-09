@@ -85,4 +85,16 @@
         </if>
     </select>
     <!--****************************************************************分隔线****************************************************************-->
+    
+    <insert id="addList" parameterType="java.util.Collection">
+		insert into guess_match_versus_bo(id, versusId, bo, status, result, firstKillTeam, firstKillTime, tenthKillTeam, tenthKillTime, leftTeamKillCount, rightTeamKillCount, matchTime, createTime)
+		values
+		<foreach collection="boList" item="obj" separator=",">
+			(#{obj.id}, #{obj.versusId}, #{obj.bo}, #{obj.status}, #{obj.result}, #{obj.firstKillTeam}, #{obj.firstKillTime}, #{obj.tenthKillTeam}, #{obj.tenthKillTime}, #{obj.leftTeamKillCount}, #{obj.rightTeamKillCount}, #{obj.matchTime}, #{obj.createTime})
+		</foreach>
+    </insert>
+    
+    <delete id="deleteByVersusId" parameterType="int">
+    	delete from guess_match_versus_bo where versusId = #{versusId}
+    </delete>
 </mapper>

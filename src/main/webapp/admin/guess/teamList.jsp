@@ -93,8 +93,9 @@ $(document).ready(function(){
 	<table class="table table-bordered table-striped table-hover">
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
-				类型：<select id="sportId" style="width:100px;"></select>
+				项目类型：<select id="sportId" style="width:100px;"></select>
 				&nbsp;&nbsp;<input type="button" value="查询" onclick="query(20, 1)">
+				&nbsp;&nbsp;<a href="admin/guess/teamAdd.jsp" target="_blank">添加战队</a>
 			</td>
 		</tr>
 		<tr align="center">

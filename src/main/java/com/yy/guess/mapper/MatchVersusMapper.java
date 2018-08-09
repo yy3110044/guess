@@ -15,4 +15,6 @@ public interface MatchVersusMapper {
     List<MatchVersus> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+    
+    List<String> getDistinctName(int matchId);
 }

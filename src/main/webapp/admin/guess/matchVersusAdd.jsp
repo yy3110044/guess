@@ -57,6 +57,22 @@ $(document).ready(function(){
 			},
 			redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
 		});
+		loadData({
+			url : "administration/getDistinctMatchVersusName",
+			data : {
+				"matchId" : paramMatchId
+			},
+			success : function(data) {
+				var list = data.result;
+				if(list.length > 0) {
+					var str = '<option>选择名称</option>';
+					for(var i=0; i<list.length; i++) {
+						str += '<option>' + list[i] + '</option>';
+					}
+					$("#nameSelect").html(str);
+				}
+			}
+		});
 	}
 });
 
@@ -131,8 +147,26 @@ var sportIdChange = function(){
 						str += '<option value="' + obj.id + '">' + obj.name + '</option>';
 					}
 					$("#matchId").html(str);
+					var matchId = $.trim($("#matchId").val());
+					loadData({
+						url : "administration/getDistinctMatchVersusName",
+						data : {
+							"matchId" : matchId
+						},
+						success : function(data) {
+							var list = data.result;
+							if(list.length > 0) {
+								var str = '<option>选择名称</option>';
+								for(var i=0; i<list.length; i++) {
+									str += '<option>' + list[i] + '</option>';
+								}
+								$("#nameSelect").html(str);
+							}
+						}
+					});
 				} else {
 					$("#matchId").empty();
+					$("#nameSelect").empty();
 				}
 			}
 		});
@@ -155,6 +189,14 @@ var sportIdChange = function(){
 	} else {
 		$("#matchId").empty();
 		$("#leftTeamId,#rightTeamId").empty();
+		$("#nameSelect").empty();
+	}
+};
+
+var nameSelectChange = function(){
+	var name = $.trim($("#nameSelect").val());
+	if(name != '选择名称') {
+		$("#name").val(name);
 	}
 };
 </script>
@@ -184,7 +226,10 @@ var sportIdChange = function(){
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">比赛名称：</td>
-			<td><input type="text" id="name" placeholder="如：小组赛、半绝赛，没有则不填" style="width:200px;"></td>
+			<td>
+				<input type="text" id="name" placeholder="如：小组赛、半绝赛，没有则不填" style="width:200px;">
+				<select id="nameSelect" onclick="nameSelectChange()"></select>
+			</td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">比赛队伍：</td>

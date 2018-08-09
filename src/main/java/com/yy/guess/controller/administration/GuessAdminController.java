@@ -396,4 +396,8 @@ public class GuessAdminController {
 		mvs.deleteVersus(versusId);
 		return new ResponseObject(100, "删除成功");
 	}
+	@RequestMapping("/getDistinctMatchVersusName")
+	public ResponseObject getDistinctMatchVersusName(@RequestParam int matchId) {
+		return new ResponseObject(100, "返回成功", mvs.getDistinctName(matchId));
+	}
 }

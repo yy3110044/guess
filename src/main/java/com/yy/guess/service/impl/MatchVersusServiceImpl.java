@@ -71,4 +71,11 @@ public class MatchVersusServiceImpl implements MatchVersusService {
 		mapper.delete(id);
 		mvbm.deleteByVersusId(id);
 	}
+
+	@Override
+	public List<String> getDistinctName(int matchId) {
+		List<String> list = mapper.getDistinctName(matchId);
+		list.remove("");//移除空字符串
+		return list;
+	}
 }

@@ -85,4 +85,8 @@
         </if>
     </select>
     <!--****************************************************************分隔线****************************************************************-->
+    
+    <select id="getDistinctName" parameterType="int" resultType="String">
+		select distinct(name) from guess_match_versus where matchId = #{matchId}
+    </select>
 </mapper>

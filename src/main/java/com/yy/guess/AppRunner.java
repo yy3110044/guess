@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import com.yy.fast4j.Cache;
+import com.yy.guess.component.GuessSettleComponent;
 import com.yy.guess.po.Config;
 import com.yy.guess.service.ConfigService;
 import com.yy.guess.util.CachePre;
@@ -23,6 +24,9 @@ public class AppRunner implements CommandLineRunner, ApplicationRunner, Ordered 
 	
 	@Autowired
 	private Cache cache;
+	
+	@Autowired
+	private GuessSettleComponent guessSettleComponent;
 
 	/**
 	 * 实现Ordered接口，可以实现，不同的操作按顺序启动
@@ -45,6 +49,7 @@ public class AppRunner implements CommandLineRunner, ApplicationRunner, Ordered 
 	@Override
 	public void run(String... args) throws Exception {
 		loadConfigToCache();
+		guessSettleComponent.start();
 	}
 	//加载Config到Cache
 	private void loadConfigToCache() {

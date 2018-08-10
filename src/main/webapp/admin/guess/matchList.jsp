@@ -105,7 +105,7 @@ $(document).ready(function(){
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
 				项目类型：<select id="sportId" style="width:100px;"></select>
-				&nbsp;&nbsp;状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "status", "width:100px;", new String[]{"全部"})%>
+				&nbsp;&nbsp;状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "status", "width:100px;", null, new String[]{"全部"})%>
 				&nbsp;&nbsp;<input type="button" value="查询" onclick="query(20, 1)">
 				&nbsp;&nbsp;<a href="admin/guess/matchAdd.jsp" target="_blank">添加赛事</a>
 			</td>

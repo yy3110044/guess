@@ -23,6 +23,7 @@ import com.yy.guess.po.Sport;
 import com.yy.guess.po.Team;
 import com.yy.guess.po.enums.MatchStatus;
 import com.yy.guess.service.MatchService;
+import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
 import com.yy.guess.service.SportService;
 import com.yy.guess.service.TeamService;
@@ -48,6 +49,9 @@ public class GuessAdminController {
 	
 	@Autowired
 	private MatchVersusService mvs;
+	
+	@Autowired
+	private MatchVersusBoService mvbs;
 	
 	/**
 	 * 添加运动项目
@@ -315,12 +319,12 @@ public class GuessAdminController {
 	 */
 	@RequestMapping("/matchVersusAdd")
 	public ResponseObject matchVersusAdd(@RequestParam int matchId,
-                                          String name,
-			                              @RequestParam int leftTeamId,
-                                          @RequestParam int rightTeamId,
-                                          @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime,
-                                          @RequestParam MatchStatus status,
-                                          @RequestParam int boCount) {
+                                         String name,
+			                             @RequestParam int leftTeamId,
+                                         @RequestParam int rightTeamId,
+                                         @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime,
+                                         @RequestParam MatchStatus status,
+                                         @RequestParam int boCount) {
 		Match match = ms.findById(matchId);
 		if(match == null) {
 			return new ResponseObject(101, "赛事不存在");
@@ -359,6 +363,18 @@ public class GuessAdminController {
 	}
 	
 	/**
+	 * 返回对阵
+	 * @param versusId
+	 * @return
+	 */
+	@RequestMapping("/getMatchVersus")
+	public ResponseObject getMatchVersus(@RequestParam int versusId) {
+		MatchVersus versus = mvs.findById(versusId);
+		List<MatchVersusBo> boList = mvbs.query(new QueryCondition().addCondition("versusId", "=", versusId).addSort("bo", SortType.ASC));
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("versus", versus).set("boList", boList));
+	}
+	
+	/**
 	 * 返回对阵列表
 	 * @param matchId
 	 * @param status
@@ -369,10 +385,10 @@ public class GuessAdminController {
 	 */
 	@RequestMapping("/matchVersusList")
 	public ResponseObject matchVersusList(@RequestParam int matchId,
-                                           MatchStatus status,
-                                           @RequestParam(defaultValue="20") int pageSize,
-                                           @RequestParam(defaultValue="1") int pageNo,
-                                           @RequestParam(defaultValue="5") int showCount) {
+                                          MatchStatus status,
+                                          @RequestParam(defaultValue="20") int pageSize,
+                                          @RequestParam(defaultValue="1") int pageNo,
+                                          @RequestParam(defaultValue="5") int showCount) {
 		QueryCondition qc = new QueryCondition();
 		if(matchId != 0) {
 			qc.addCondition("matchId", "=", matchId);

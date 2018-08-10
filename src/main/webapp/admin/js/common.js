@@ -39,7 +39,12 @@ var loadData = function(obj) {
 				obj.success(data, textStatus); //请求成功后调用
 			}
 		},
-		"error" : obj.error //请求失败后调用，参数：XMLHttpRequest, textStatus, errorThrown
+		"error" : function(XMLHttpRequest, textStatus, errorThrown){
+			showMsg(textStatus);
+			if(obj.error != null) {
+				obj.error(XMLHttpRequest, textStatus, errorThrown);
+			}
+		}
 	});
 };
 

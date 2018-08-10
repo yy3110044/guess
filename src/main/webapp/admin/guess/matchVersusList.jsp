@@ -89,16 +89,121 @@ var query = function(pageSize, pageNo) {
 				{field : "status"},
 				{field : "boCount"},
 				{field : "realBoCount"},
-				{field : "result"},
+				{fn : function(obj){
+					if(obj.status == '已结束') {
+						if(obj.result > 0) {
+							return obj.rightTeamName + "胜";
+						} else if(obj.result < 0) {
+							return obj.leftTeamName + "胜";
+						} else {
+							return "平";
+						}
+					} else {
+						return "";
+					}
+				}},
 				{field : "createTime"},
 				{fn : function(obj){
 					var str = '';
-					str += '<a href="javascript:;" onclick="del(' + obj.id + ', this)">删除</a>';
+					str += '<a href="javascript:;" onclick="detail(' + obj.id + ', this)">详情</a>';
+					str += '&nbsp;<a href="javascript:;" onclick="del(' + obj.id + ', this)">删除</a>';
 					return str;
 				}}
 			]);
 		}
 	});
+};
+
+var parseHour = function(seconds) {
+	return parseInt(seconds / 60 / 60, 10);
+};
+var parseMinute = function(seconds) {
+	return parseInt(seconds / 60 % 60, 10);
+};
+var parseSecond = function(seconds) {
+	return parseInt(seconds % 60, 10);
+};
+
+var detail = function(versusId, e) {
+	if($(e).parent().parent().next().hasClass("detailTr")) {
+		$("tr.detailTr").remove();
+		return;
+	}
+	loadData({
+		url : "administration/getMatchVersus",
+		data : {
+			"versusId" : versusId
+		},
+		success : function(data) {
+			if(data.code == 100) {
+				var versus = data.result.versus;
+				var boList = data.result.boList;
+
+				var str = '<tr class="contentTr detailTr"><td colspan="99">';
+				str += '<div style="margin-top:8px;font-weight:bold;font-size:16px;">' + versus.matchName + '&nbsp;' + versus.name + '&nbsp;' + versus.leftTeamName + '&nbsp;VS&nbsp;' + versus.rightTeamName + '</div>';
+				str += '<div style="margin-top:8px;border:1px dashed blue;padding:4px;" id="versus' + versus.id + '" class="detailDiv">';
+				str += '<div style="margin-top:4px;">开始时间：<input type="text" class="startTime" value="' + versus.startTime + '" placeholder="比赛开始时间" class="laydate-icon" onclick="laydate({istime:true,format:\'YYYY-MM-DD hh:mm:ss\'});" style="width:140px;cursor:pointer;" readonly="readonly"></div>';
+				str += '<div style="margin-top:4px;">比赛局数：<input type="number" class="boCount" value="' + versus.boCount + '" min="1"></div>';
+				str += '<div style="margin-top:4px;">实际局数：<input type="number" class="realBoCount" value="' + versus.realBoCount + '" min="0"></div>';
+				str += '<div style="margin-top:4px;">比赛状态：<select class="status" data-value="' + versus.status + '" onchange="detailStatusChange(this)"><%=com.yy.fast4j.Fast4jUtils.getSelectOptionHtmlStr(com.yy.guess.po.enums.MatchStatus.class)%></select></div>';
+				str += '<div style="margin-top:4px;' + (versus.status != '已结束' ? 'display:none;' : '') + '">比赛结果：<select class="result"><option value="-1"' + (versus.result < 0 ? ' selected="selected"' : '') + '>' + versus.leftTeamName + '胜</option><option value="0"' + (versus.result == 0 ? ' selected="selected"' : '') + '>平</option><option value="1"' + (versus.result > 0 ? ' selected="selected"' : '') + '>' + versus.rightTeamName + '胜</option></select></div>';
+				str += '<div style="margin-top:4px;"><input type="button" value="修改" onclick="modifyVersus(' + versus.id + ')"></div>';
+				str += '</div>';
+				for(var i=0; i<boList.length; i++) {
+					var obj = boList[i];
+					str += '<div id="versusBo' + obj.id + '" style="margin-top:8px;border:1px dashed blue;padding:4px;" class="detailDiv">';
+					str += '<div style="margin-top:4px;font-weight:bold;font-size:16px;">第' + obj.bo + '局</div>';
+					str += '<div style="margin-top:4px;">首杀：<select class="firstKillTeam"><option value="-1"' + (obj.firstKillTeam < 0 ? ' selected="selected"' : '') + '>' + versus.leftTeamName + '</option><option value="0"' + (obj.firstKillTeam == 0 ? ' selected="selected"' : '') + '>无</option><option value="1"' + (obj.firstKillTeam > 0 ? ' selected="selected"' : '') + '>' + versus.rightTeamName + '</option></select></div>';
+					str += '<div style="margin-top:4px;">首杀时间：<input class="firstKillTimeHour" type="number" value="' + parseHour(obj.firstKillTime) + '" min="0" style="width:50px;">小时&nbsp;<input class="firstKillTimeMinute" type="number" value="' + parseMinute(obj.firstKillTime) + '" min="0" style="width:50px;">分&nbsp;<input class="firstKillTimeSecond" type="number" value="' + parseSecond(obj.firstKillTime) + '" min="0" style="width:50px;">秒</div>';
+					str += '<div style="margin-top:4px;">十杀：<select><option' + (obj.tenthKillTeam < 0 ? ' selected="selected"' : '') + '>' + versus.leftTeamName + '</option><option' + (obj.tenthKillTeam == 0 ? ' selected="selected"' : '') + '>无</option><option' + (obj.tenthKillTeam > 0 ? ' selected="selected"' : '') + '>' + versus.rightTeamName + '</option></select></div>';
+					str += '<div style="margin-top:4px;">十杀时间：<input type="number" value="' + parseHour(obj.tenthKillTime) + '" min="0" style="width:50px;">小时&nbsp;<input type="number" value="' + parseMinute(obj.tenthKillTime) + '" min="0" style="width:50px;">分&nbsp;<input type="number" value="' + parseSecond(obj.tenthKillTime) + '" min="0" style="width:50px;">秒</div>';
+					str += '<div style="margin-top:4px;">比分：' + versus.leftTeamName + '<input type="number" value="' + obj.leftTeamKillCount + '" min="0" style="width:50px;">&nbsp;&nbsp;VS&nbsp;&nbsp;<input type="number" value="' + obj.rightTeamKillCount + '" min="0" style="width:50px;">' + versus.rightTeamName + '</div>';
+					str += '<div style="margin-top:4px;">比赛时长：<input type="number" value="' + parseHour(obj.matchTime) + '" min="0" style="width:50px;">小时&nbsp;<input type="number" value="' + parseMinute(obj.matchTime) + '" min="0" style="width:50px;">分&nbsp;<input type="number" value="' + parseSecond(obj.matchTime) + '" min="0" style="width:50px;">秒</div>';
+					str += '<div style="margin-top:4px;">比赛状态：<select class="status" data-value="' + obj.status + '" onchange="detailStatusChange(this)"><%=com.yy.fast4j.Fast4jUtils.getSelectOptionHtmlStr(com.yy.guess.po.enums.MatchStatus.class)%></select></div>';
+					str += '<div style="margin-top:4px;' + (obj.status != '已结束' ? 'display:none;' : '') + '">比赛结果：<select><option value="-1"' + (obj.result < 0 ? ' selected="selected"' : '') + '>' + versus.leftTeamName + '胜</option><option value="0"' + (obj.result == 0 ? ' selected="selected"' : '') + '>平</option><option value="1"' + (obj.result > 0 ? ' selected="selected"' : '') + '>' + versus.rightTeamName + '胜</option></select></div>';
+					str += '<div style="margin-top:4px;"><input type="button" value="修改" onclick="modifyVersusBo(' + obj.id + ')"></div>';
+					str += '</div>';
+				}
+				str += '<script>';
+				str += '$(document).ready(function(){';
+				str += '	$("div.detailDiv .status").each(function(){';
+				str += '		$(this).val($(this).attr("data-value"));';
+				str += '	});';
+				str += '});';
+				str += '</'+'script>';
+				str += '</td></tr>';
+				$("tr.detailTr").remove();
+				$(e).parent().parent().after(str);
+			} else {
+				showMsg(data.msg);
+			}
+		}
+	});
+};
+
+var modifyVersus = function(versusIdNumber) {
+	var versusId = "versus" + versusIdNumber;
+	var startTime = $.trim($("#" + versusId).find(".startTime").val());
+	var boCount = $.trim($("#" + versusId).find(".boCount").val());
+	var realBoCount = $.trim($("#" + versusId).find(".realBoCount").val());
+	var status = $.trim($("#" + versusId).find(".status").val());
+	var result = $.trim($("#" + versusId).find(".result").val());
+};
+
+var modifyVersusBo = function(versusBoIdNumber) {
+	var versusBoId = "versusBo" + versusBoIdNumber;
+	var firstKillTeam = $.trim($("#" + versusBoId).find(".firstKillTeam").val());
+	var firstKillTime = 
+	alert(firstKillTeam);
+};
+
+var detailStatusChange = function(e) {
+	var status = $(e).val();
+	if("已结束" == status) {
+		$(e).parent().next().slideDown();
+	} else {
+		$(e).parent().next().slideUp();
+	}
 };
 
 var sportIdChange = function(){
@@ -110,17 +215,21 @@ var sportIdChange = function(){
 				"sportId" : sportId
 			},
 			success : function(data){
-				var list = data.result;
-				var str = '';
-				if(list.length > 0) {
-					for(var i=0; i<list.length; i++) {
-						var obj = list[i];
-						str += '<option value="' + obj.id + '">' + obj.name + '</option>';
+				if(data.code == 100) {
+					var list = data.result;
+					var str = '';
+					if(list.length > 0) {
+						for(var i=0; i<list.length; i++) {
+							var obj = list[i];
+							str += '<option value="' + obj.id + '">' + obj.name + '</option>';
+						}
+					} else {
+						str += '<option value="-1">无</option>';
 					}
+					$("#matchId").html(str);
 				} else {
-					str += '<option value="-1">无</option>';
+					showMsg(data.msg);
 				}
-				$("#matchId").html(str);
 			}
 		});
 	} else {
@@ -148,7 +257,7 @@ var sportIdChange = function(){
 			<td colspan="99" style="padding:3px;line-height:30px;">
 				类型：<select id="sportId" style="width:100px;" onchange="sportIdChange()"></select>
 				&nbsp;&nbsp;赛事：<select id="matchId"><option value="0">全部</option></select>
-				&nbsp;&nbsp;状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "status", "width:100px;", new String[]{"全部"})%>
+				&nbsp;&nbsp;状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "status", "width:100px;", null, new String[]{"全部"})%>
 				&nbsp;&nbsp;<input type="button" value="查询" onclick="query(20, 1)">
 				&nbsp;&nbsp;<a href="admin/guess/matchVersusAdd.jsp" target="_blank">添加对阵</a>
 			</td>

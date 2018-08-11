@@ -18,4 +18,5 @@ public interface MatchVersusService {
     void add(MatchVersus obj, List<MatchVersusBo> boList);
     void deleteVersus(int id);
     List<String> getDistinctName(int matchId);
+    void update(MatchVersus obj, List<MatchVersusBo> boList);
 }

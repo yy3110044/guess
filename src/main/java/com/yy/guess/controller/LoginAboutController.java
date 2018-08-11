@@ -1,5 +1,6 @@
 package com.yy.guess.controller;
 
+import java.util.Arrays;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -81,26 +82,48 @@ public class LoginAboutController {
 		loginManager.webLogout(session);
 		return new ResponseObject(100, "退出登陆成功");
 	}
-	
+
+	//用户名允许的字符
+	private static final char[] userNameChar = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+	static {
+		Arrays.sort(userNameChar);//排下序，用于二分查找
+	}
 	@RequestMapping("/userRegistry")
 	public ResponseObject userRegistry(@RequestParam String userName,
-                                        @RequestParam String passWord,
-                                        String nickName,
-                                        String qq,
-                                        String phone,
-                                        String email,
-                                        HttpSession session) {
+                                       @RequestParam String passWord,
+                                       String nickName,
+                                       String qq,
+                                       String phone,
+                                       String email,
+                                       String superUserName,
+                                       HttpSession session) {
 		if(Fast4jUtils.empty(userName, passWord)) {
 			return new ResponseObject(101, "用户名或密码不能为空");
 		}
 		
 		userName = userName.trim();
+		for(char c : userName.toCharArray()) {
+			if(Arrays.binarySearch(userNameChar, c) < 0) {
+				return new ResponseObject(102, "用户名只能是字母、和数字");
+			}
+		}
+		
 		User user = us.find(new QueryCondition().addCondition("userName", "=", userName));
 		if(user != null) {
-			return new ResponseObject(102, "此用户名已被注册");
+			return new ResponseObject(103, "此用户名已被注册");
 		}
 		
 		user = new User();
+		
+		if(!Fast4jUtils.empty(superUserName)) {
+			User superUser = us.find(new QueryCondition().addCondition("userName", "=", superUserName));
+			if(superUser == null) {
+				return new ResponseObject(104, "推荐用户不存在");
+			} else {
+				user.setSuperUserId(superUser.getId());
+			}
+		}
+		
 		user.setUserName(userName);
 		user.setPassWord(DigestUtils.md5Hex(passWord));
 		user.setNickName(nickName);

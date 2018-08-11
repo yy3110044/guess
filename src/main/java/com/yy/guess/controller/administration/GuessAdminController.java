@@ -403,6 +403,99 @@ public class GuessAdminController {
 	}
 	
 	/**
+	 *  更新对阵
+	 * @param id
+	 * @param startTime
+	 * @param boCount
+	 * @param realBoCount
+	 * @param status
+	 * @param result
+	 * @return
+	 */
+	@RequestMapping("/matchVersusUpdate")
+	public ResponseObject matchVersusUpdate(@RequestParam int id,
+                                            @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime,
+                                            @RequestParam int boCount,
+                                            @RequestParam int realBoCount,
+                                            @RequestParam MatchStatus status,
+                                            @RequestParam int result) {
+		MatchVersus versus = mvs.findById(id);
+		if(versus == null) {
+			return new ResponseObject(101, "对阵不存在");
+		}
+		
+		if(boCount < 1) {
+			return new ResponseObject(102, "比赛局数不能小于1");
+		}
+		
+		if(realBoCount < 0) {
+			return new ResponseObject(103, "实际局数不能小于0");
+		}
+		
+		if(realBoCount > boCount) {
+			return new ResponseObject(104, "实际局数不能大于比赛局数");
+		}
+		
+		versus.setRealBoCount(realBoCount);
+		versus.setStartTime(startTime);
+		versus.setStatus(status);
+		if(MatchStatus.已结束 == status) {
+			versus.setResult(result);
+		}
+		if(boCount != versus.getBoCount()) { //更改了boCount
+			versus.setBoCount(boCount);
+			List<MatchVersusBo> boList = new ArrayList<MatchVersusBo>();
+			for(int i=1; i<=boCount; i++) {
+				MatchVersusBo mvb = new MatchVersusBo();
+				mvb.setBo(i);
+				mvb.setStatus(MatchStatus.未开始);
+				mvb.setVersusId(versus.getId());
+				boList.add(mvb);
+			}
+			mvs.update(versus, boList);
+		} else { //没有更改boCount
+			mvs.update(versus);
+		}
+		return new ResponseObject(100, "修改成功");
+	}
+	@RequestMapping("/matchVersusBoUpdate")
+	public ResponseObject matchVersusBoUpdate(@RequestParam int id,
+                                              @RequestParam int firstKillTeam,
+                                              @RequestParam int firstKillTime,
+                                              @RequestParam int tenthKillTeam,
+                                              @RequestParam int tenthKillTime,
+                                              @RequestParam int leftTeamKillCount,
+                                              @RequestParam int rightTeamKillCount,
+                                              @RequestParam int matchTime,
+                                              @RequestParam MatchStatus status,
+                                              @RequestParam int result) {
+		MatchVersusBo versusBo = mvbs.findById(id);
+		if(versusBo == null) {
+			return new ResponseObject(101, "对阵不存在");
+		}
+		if(firstKillTime < 0 || tenthKillTime < 0 || matchTime < 0) {
+			return new ResponseObject(102, "时间不能为负");
+		}
+		if(leftTeamKillCount < 0 || rightTeamKillCount < 0) {
+			return new ResponseObject(103, "击杀(比分)数不能为负");
+		}
+		
+		versusBo.setFirstKillTeam(firstKillTeam);
+		versusBo.setFirstKillTime(firstKillTime);
+		versusBo.setTenthKillTeam(tenthKillTeam);
+		versusBo.setTenthKillTime(tenthKillTime);
+		versusBo.setLeftTeamKillCount(leftTeamKillCount);
+		versusBo.setRightTeamKillCount(rightTeamKillCount);
+		versusBo.setMatchTime(matchTime);
+		versusBo.setStatus(status);
+		if(MatchStatus.已结束 == status) {
+			versusBo.setResult(result);
+		}
+		mvbs.update(versusBo);
+		return new ResponseObject(100, "修改成功");
+	}
+	
+	/**
 	 * 删除对阵
 	 * @param versusId
 	 * @return

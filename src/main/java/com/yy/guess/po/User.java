@@ -17,6 +17,8 @@ public class User {
 	private String lastLoginIp;
 	private Date lastLoginTime;
 	private UserLoginType lastLoginType;
+	private int superUserId;
+	private double rebateRate;
 	private Date createTime = new Date();
 	public int getId() {
 		return id;
@@ -95,6 +97,18 @@ public class User {
 	}
 	public void setLastLoginType(UserLoginType lastLoginType) {
 		this.lastLoginType = lastLoginType;
+	}
+	public int getSuperUserId() {
+		return superUserId;
+	}
+	public void setSuperUserId(int superUserId) {
+		this.superUserId = superUserId;
+	}
+	public double getRebateRate() {
+		return rebateRate;
+	}
+	public void setRebateRate(double rebateRate) {
+		this.rebateRate = rebateRate;
 	}
 	public Date getCreateTime() {
 		return createTime;

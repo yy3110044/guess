@@ -14,9 +14,12 @@ CREATE TABLE `guess_user` (
   `lastLoginIp` varchar(128) COMMENT '最后登陆ip',
   `lastLoginTime` datetime COMMENT '最后登陆时间',
   `lastLoginType` enum('WEB', 'APP') COMMENT '最后登陆类型',
+  `superUserId` int(11) COMMENT '父用户ID，0代表顶级用户',
+  `rebateRate` decimal(14, 5) COMMENT '返点率',
   `createTime` datetime COMMENT '记录创建时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `userName` (`userName`)
+  UNIQUE KEY `userName` (`userName`),
+  KEY `superUserId` (`superUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 
 /*用户登陆日志*/

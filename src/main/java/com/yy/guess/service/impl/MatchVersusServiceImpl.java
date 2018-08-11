@@ -78,4 +78,12 @@ public class MatchVersusServiceImpl implements MatchVersusService {
 		list.remove("");//移除空字符串
 		return list;
 	}
+	
+	//更新versus，并重新生成versusbo
+	@Override
+	public void update(MatchVersus obj, List<MatchVersusBo> boList) {
+		mapper.update(obj);
+		mvbm.deleteByVersusId(obj.getId());
+		mvbm.addList(boList);
+	}
 }

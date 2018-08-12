@@ -46,7 +46,7 @@ public class UserAdminController {
 	}
 	
 	@RequestMapping("/userList")
-	public ResponseObject userList(int userId,
+	public ResponseObject userList(Integer userId,
                                    String userName,
                                    @RequestParam(defaultValue="id") String sortField,
                                    @RequestParam(defaultValue="DESC") SortType sortType,
@@ -54,7 +54,7 @@ public class UserAdminController {
                                    @RequestParam(defaultValue="1") int pageNo,
                                    @RequestParam(defaultValue="5") int showCount) {
 		QueryCondition qc = new QueryCondition();
-		if(userId > 0) {
+		if(userId != null) {
 			qc.addCondition("id", "=", userId);
 		}
 		if(!Fast4jUtils.empty(userName)) {
@@ -66,5 +66,14 @@ public class UserAdminController {
 		List<User> list = us.query(qc);
 		Page page = qc.getPage(us.getCount(qc));
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
+	}
+	
+	//返回下级用户数
+	@RequestMapping("/getSubordinateCount")
+	public ResponseObject getSubordinateCount(@RequestParam int superUserId) {
+		QueryCondition qc = new QueryCondition();
+		qc.addCondition("superUserId", "=", superUserId);
+		int count = us.getCount(qc);
+		return new ResponseObject(100, "返回成功", count);
 	}
 }

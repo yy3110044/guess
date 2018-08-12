@@ -8,6 +8,10 @@
 		</div>
 		<div>
 			<span>用户管理</span>
+			<a href="admin/user/userList.jsp">用户列表</a>
+			<!--
+			<a href="admin/user/userTreeList.jsp">用户代理</a>
+			-->
 		</div>
 		<div>
 			<span>竞猜管理</span>

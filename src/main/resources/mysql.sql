@@ -22,6 +22,13 @@ CREATE TABLE `guess_user` (
   KEY `superUserId` (`superUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 
+/*交易流水表*/
+DROP TABLE IF EXISTS `guess_trading_flow`;
+CREATE TABLE `guess_trading_flow` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*用户登陆日志*/
 DROP TABLE IF EXISTS `guess_user_login_log`;
 CREATE TABLE `guess_user_login_log` (

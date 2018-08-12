@@ -44,6 +44,14 @@ public class UserAdminController {
 		Page page = qc.getPage(us.getCount(qc));
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
 	}
+	//返回下级用户数
+	@RequestMapping("/getSubordinateCount")
+	public ResponseObject getSubordinateCount(@RequestParam int superUserId) {
+		QueryCondition qc = new QueryCondition();
+		qc.addCondition("superUserId", "=", superUserId);
+		int count = us.getCount(qc);
+		return new ResponseObject(100, "返回成功", count);
+	}
 	
 	@RequestMapping("/userList")
 	public ResponseObject userList(Integer userId,
@@ -68,12 +76,14 @@ public class UserAdminController {
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
 	}
 	
-	//返回下级用户数
-	@RequestMapping("/getSubordinateCount")
-	public ResponseObject getSubordinateCount(@RequestParam int superUserId) {
-		QueryCondition qc = new QueryCondition();
-		qc.addCondition("superUserId", "=", superUserId);
-		int count = us.getCount(qc);
-		return new ResponseObject(100, "返回成功", count);
+	//删除用户
+	@RequestMapping("/userDelete")
+	public ResponseObject userDelete(@RequestParam int userId) {
+		int subordinateCount = us.getCount(new QueryCondition().addCondition("superUserId", "=", userId));
+		if(subordinateCount > 0) {
+			return new ResponseObject(101, "此用户还有下级用户不能删除");
+		}
+		us.delete(userId);
+		return new ResponseObject(100, "删除成功");
 	}
 }

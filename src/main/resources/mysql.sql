@@ -18,7 +18,7 @@ CREATE TABLE `guess_user` (
   `rebateRate` decimal(4, 4) COMMENT '返点率',
   `createTime` datetime COMMENT '记录创建时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `userName` (`userName`),
+  UNIQUE KEY `userName` (`userName`)
   KEY `superUserId` (`superUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 
@@ -26,6 +26,14 @@ CREATE TABLE `guess_user` (
 DROP TABLE IF EXISTS `guess_trading_flow`;
 CREATE TABLE `guess_trading_flow` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*投注归档，投注结算后保存的归档*/
+DROP TABLE IF EXISTS `guess_bet_archive`;
+CREATE TABLE `guess_bet_archive` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `versusId` int(11) NOT NULL COMMENT '对阵id',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

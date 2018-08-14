@@ -1,3 +1,7 @@
+DROP DATABASE IF EXISTS `guess`;
+CREATE DATABASE `guess`;
+USE `guess`;
+
 /*用户表*/
 DROP TABLE IF EXISTS `guess_user`;
 CREATE TABLE `guess_user` (

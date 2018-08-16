@@ -22,24 +22,9 @@ CREATE TABLE `guess_user` (
   `rebateRate` decimal(4, 4) COMMENT '返点率',
   `createTime` datetime COMMENT '记录创建时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `userName` (`userName`)
+  UNIQUE KEY `userName` (`userName`),
   KEY `superUserId` (`superUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
-
-/*交易流水表*/
-DROP TABLE IF EXISTS `guess_trading_flow`;
-CREATE TABLE `guess_trading_flow` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*投注归档，投注结算后保存的归档*/
-DROP TABLE IF EXISTS `guess_bet_archive`;
-CREATE TABLE `guess_bet_archive` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  `versusId` int(11) NOT NULL COMMENT '对阵id',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*用户登陆日志*/
 DROP TABLE IF EXISTS `guess_user_login_log`;
@@ -154,7 +139,7 @@ DROP TABLE IF EXISTS `guess_match_versus_bo`;
 CREATE TABLE `guess_match_versus_bo` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `versusId` int(11) NOT NULL COMMENT '对阵表id，关联versus表id',
-  `bo` tinyint COMMENT '比赛场次',
+  `bo` tinyint COMMENT '比赛场次，从1开始',
   `status` enum('未开始', '进行中', '已结束', '未比赛') COMMENT '比赛状态',
   `result` tinyint COMMENT '比赛结果：负数为左team赢、零为平、正数为右team赢',
   `firstKillTeam` tinyint COMMENT '首杀(一血)队伍：负数为左team拿，零为无，正数为右team拿',
@@ -168,6 +153,38 @@ CREATE TABLE `guess_match_versus_bo` (
   PRIMARY KEY (`id`),
   KEY `versusId` (`versusId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*玩法(投注)类型表*/
+DROP TABLE IF EXISTS `guess_play_type`;
+CREATE TABLE `guess_play_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `versusId` int(11) COMMENT '对阵id',
+  `playType` varchar(64) COMMENT '玩法类型',
+  `bo` tinyint COMMENT '比赛场次，从1开始，0代表总对阵',
+  `params` varchar(128) COMMENT '此玩法用到的参数，json格式',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `versusId` (`versusId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*交易流水表*/
+/*
+DROP TABLE IF EXISTS `guess_trading_flow`;
+CREATE TABLE `guess_trading_flow` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+*/
+
+/*投注归档，投注结算后保存的归档*/
+/*
+DROP TABLE IF EXISTS `guess_bet_archive`;
+CREATE TABLE `guess_bet_archive` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `versusId` int(11) NOT NULL COMMENT '对阵id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+*/
 
 /*比赛战队、队伍表*/
 DROP TABLE IF EXISTS `guess_team`;

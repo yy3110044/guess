@@ -14,7 +14,7 @@ import com.yy.guess.po.enums.MatchStatus;
 public class WinnerGuessPlayTemplate implements GuessPlayTemplate {
 	WinnerGuessPlayTemplate() {
 	}
-	
+
 	@Override
 	public int getResult(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType, GuessPlayType type) {
 		if(this.isSupport(type)) {

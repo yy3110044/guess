@@ -1,6 +1,8 @@
 package com.yy.guess.playTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.PlayType;
@@ -11,24 +13,37 @@ import com.yy.guess.po.PlayType;
  *
  */
 public class KillerGuessPlayTemplate implements GuessPlayTemplate {
+	private Map<String, TemplateParamInfo> templateParamInfoMap;
+	KillerGuessPlayTemplate() {
+		templateParamInfoMap = new HashMap<String, TemplateParamInfo>();
+		templateParamInfoMap.put("killNumber", new TemplateParamInfo("killNumber", "Enum", "竞猜第几杀", new String[]{"首杀(一血)", "十杀"}));
+	}
+	
 	@Override
-	public int getResult(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType, GuessPlayType type) {
-		if(this.isSupport(type)) {
-			switch(type) {
-			case 第一局首杀: return boList.get(0).getFirstKillTeam();
-			case 第二局首杀: return boList.get(1).getFirstKillTeam();
-			case 第三局首杀: return boList.get(2).getFirstKillTeam();
-			case 第四局首杀: return boList.get(3).getFirstKillTeam();
-			case 第五局首杀: return boList.get(4).getFirstKillTeam();
-			case 第一局十杀: return boList.get(0).getTenthKillTeam();
-			case 第二局十杀: return boList.get(1).getTenthKillTeam();
-			case 第三局十杀: return boList.get(2).getTenthKillTeam();
-			case 第四局十杀: return boList.get(3).getTenthKillTeam();
-			case 第五局十杀: return boList.get(4).getTenthKillTeam();
-			default: throw new RuntimeException("不支持的玩法");
-			}
+	public String getDescription() {
+		return "竞猜首杀和十杀的队伍";
+	}
+	
+	@Override
+	public Map<String, TemplateParamInfo> getTemplateParamInfoMap() {
+		return templateParamInfoMap;
+	}
+
+	@Override
+	public int getResult(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType) {
+		Map<String, String> map = this.getParamMap(playType.getParamStr());
+		String killNumber = map.get("killNumber");
+		if("首杀(一血)".equals(killNumber)) {
+			return boList.get(playType.getBo() - 1).getFirstKillTeam();
+		} else if("十杀".equals(killNumber)) {
+			return boList.get(playType.getBo() - 1).getTenthKillTeam();
 		} else {
-			throw new RuntimeException("不支持的玩法");
+			throw new RuntimeException("killNumber错误：" + killNumber);
 		}
+	}
+
+	@Override
+	public int getSupport() {
+		return 1;
 	}
 }

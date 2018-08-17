@@ -1,86 +1,63 @@
 package com.yy.guess.playTemplate;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import com.yy.fast4j.Fast4jUtils;
-import com.yy.fast4j.JsonResultMap;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.PlayType;
 
+/**
+ * 玩法模版接口
+ * @author yy
+ *
+ */
 public interface GuessPlayTemplate {
-	//返回此模版支持的玩法
-	default List<GuessPlayType> getSupportGuessPlayTypes() {
-		GuessPlayType[] guessPlayTypes = GuessPlayType.values();
-		List<GuessPlayType> list = new ArrayList<GuessPlayType>();
-		for(GuessPlayType guessPlayType : guessPlayTypes) {
-			GuessPlayTemplate gpt = guessPlayType.getPlayTemplate();
-			if(gpt != null && gpt.getClass() == this.getClass()) {
-				list.add(guessPlayType);
-			}
-		}
-		return list;
-	}
-	
-	//此模版是否支持这个玩法
-	default boolean isSupport(GuessPlayType guessPlayType) {
-		GuessPlayTemplate gpt = guessPlayType.getPlayTemplate();
-		if(gpt == null) {
-			return false;
-		} else {
-			return this.getClass() == gpt.getClass();
-		}
-	}
-
 	//返回描述
 	default String getDescription() {
 		return "";
 	}
 
 	//返回左队伍名
-	default String getLeftName(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType, GuessPlayType type) {
+	default String getLeftGuessName(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType) {
 		return versus.getLeftTeamName();
 	}
 
 	//返回右队伍名
-	default String getRightName(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType, GuessPlayType type) {
+	default String getRightGuessName(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType) {
 		return versus.getRightTeamName();
 	}
 
+	//返回支持：-1代表支持所有、0代表只支持总对阵、1代表只支持bo对阵
+	int getSupport();
+	
 	//返回结果
-	int getResult(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType, GuessPlayType type);
+	int getResult(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType);
 	
 	//返回此模版需要的参数Map，不需要参数则返回null
-	default Map<String, TemplateParamInfo<?>> getTemplateParamInfoMap() {
+	default Map<String, TemplateParamInfo> getTemplateParamInfoMap() {
 		return null;
 	}
-	
+
 	//返回此模版需要的参数，不需要参数则返回null
-	default Collection<TemplateParamInfo<?>> getTemplateParamInfos() {
-		Map<String, TemplateParamInfo<?>> paramInfoMap = this.getTemplateParamInfoMap();
+	default Collection<TemplateParamInfo> getTemplateParamInfos() {
+		Map<String, TemplateParamInfo> paramInfoMap = this.getTemplateParamInfoMap();
 		if(paramInfoMap != null) {
 			return paramInfoMap.values();
 		} else {
 			return null;
 		}
 	}
-	
+
 	//检验参数map是否符合要求
-	default boolean checkParamMap(JsonResultMap map) {
-		Collection<TemplateParamInfo<?>> paramInfos = this.getTemplateParamInfos();
+	default boolean checkParamMap(Map<String, String> map) {
+		Collection<TemplateParamInfo> paramInfos = this.getTemplateParamInfos();
 		if(paramInfos != null) { //参数不为空，说明需要参数
-			for(TemplateParamInfo<?> paramInfo : paramInfos) {
-				Object value = map.get(paramInfo.getName());
-				if(value == null) { //没有这个参数
-					if(paramInfo.isRequired()) { //些参数是必须的确没有，返回false
-						return false;
-					}
-				} else {
-					if(value.getClass() != paramInfo.getTypeClass()) {
-						return false;
-					}
+			for(TemplateParamInfo paramInfo : paramInfos) {
+				String value = map.get(paramInfo.getName());
+				if(!paramInfo.checkValue(value)) {
+					return false;
 				}
 			}
 			return true;
@@ -90,15 +67,15 @@ public interface GuessPlayTemplate {
 	}
 	
 	//设置默认值
-	default void setDefaultValue(JsonResultMap map) {
-		Collection<TemplateParamInfo<?>> paramInfos = this.getTemplateParamInfos();
+	default void setDefaultValue(Map<String, String> map) {
+		Collection<TemplateParamInfo> paramInfos = this.getTemplateParamInfos();
 		if(paramInfos != null) {
-			for(TemplateParamInfo<?> paramInfo : paramInfos) {
-				Object defaultValue = paramInfo.getDefaultValue();
+			for(TemplateParamInfo paramInfo : paramInfos) {
+				String defaultValue = paramInfo.getDefaultValue();
 				if(defaultValue != null) {
-					Object value = map.get(paramInfo.getName());
+					String value = map.get(paramInfo.getName());
 					if(value == null) {
-						map.set(paramInfo.getName(), defaultValue);
+						map.put(paramInfo.getName(), defaultValue);
 					}
 				}
 			}
@@ -106,17 +83,17 @@ public interface GuessPlayTemplate {
 	}
 	
 	//根据参数名返回TemplateParamInfo对象，没有则返回null
-	default TemplateParamInfo<?> getTemplateParamInfo(String name) {
-		Map<String, TemplateParamInfo<?>> paramInfoMap = this.getTemplateParamInfoMap();
+	default TemplateParamInfo getTemplateParamInfo(String name) {
+		Map<String, TemplateParamInfo> paramInfoMap = this.getTemplateParamInfoMap();
 		if(paramInfoMap != null) {
 			return paramInfoMap.get(name);
 		} else {
 			return null;
 		}
 	}
-	
+
 	//返回json参数字符串，如果没有参数返回null
-	default String getParamJsonStr(JsonResultMap map) {
+	default String getParamJsonStr(Map<String, String> map) {
 		if(!this.checkParamMap(map)) {
 			throw new RuntimeException("参数不符合要求");
 		}
@@ -126,10 +103,11 @@ public interface GuessPlayTemplate {
 		
 		return Fast4jUtils.ObjecttoJson(map);
 	}
-	
+
 	//返回参数map，如果没有参数返回null
-	default JsonResultMap getParamMap(String jsonStr) {
-		JsonResultMap map = Fast4jUtils.jsonToObject(jsonStr, JsonResultMap.class);
+	default Map<String, String> getParamMap(String jsonStr) {
+		@SuppressWarnings("unchecked")
+		Map<String, String> map = Fast4jUtils.jsonToObject(jsonStr, Map.class);
 		
 		if(!this.checkParamMap(map)) {
 			throw new RuntimeException("参数不符合要求");

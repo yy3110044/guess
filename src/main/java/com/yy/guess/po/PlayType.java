@@ -1,14 +1,14 @@
 package com.yy.guess.po;
 
 import java.util.Date;
-import com.yy.guess.playTemplate.GuessPlayType;
 
 public class PlayType {
 	private int id;
 	private int versusId;
-	private GuessPlayType playType;
+	private String playName;
 	private int bo;
-	private String params;
+	private String paramStr;
+	private String templateClass;
 	private Date createTime = new Date();
 	public int getId() {
 		return id;
@@ -22,11 +22,11 @@ public class PlayType {
 	public void setVersusId(int versusId) {
 		this.versusId = versusId;
 	}
-	public GuessPlayType getPlayType() {
-		return playType;
+	public String getPlayName() {
+		return playName;
 	}
-	public void setPlayType(GuessPlayType playType) {
-		this.playType = playType;
+	public void setPlayName(String playName) {
+		this.playName = playName;
 	}
 	public int getBo() {
 		return bo;
@@ -34,11 +34,17 @@ public class PlayType {
 	public void setBo(int bo) {
 		this.bo = bo;
 	}
-	public String getParams() {
-		return params;
+	public String getParamStr() {
+		return paramStr;
 	}
-	public void setParams(String params) {
-		this.params = params;
+	public void setParamStr(String paramStr) {
+		this.paramStr = paramStr;
+	}
+	public String getTemplateClass() {
+		return templateClass;
+	}
+	public void setTemplateClass(String templateClass) {
+		this.templateClass = templateClass;
 	}
 	public Date getCreateTime() {
 		return createTime;

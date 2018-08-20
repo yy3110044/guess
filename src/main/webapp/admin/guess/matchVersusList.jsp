@@ -187,6 +187,7 @@ var viewPlayType = function(versusId, e){
 					str += '<option value="' + obj.className + '">' + obj.description + '</option>';
 				}
 				str += '</select></div>';
+				str += '<div style="margin-top:4px;"><input id="addPlayTypeName" placeholder="输入一个名称" type="text"></div>';
 				str += '<div style="margin-top:4px;"><select id="addPlayTypeBo"></select></div>';
 				str += '<div style="margin-top:4px;"><input type="button" value="添加玩法" onclick="addPlayType(' + versus.id + ')"></div>';
 				str += '</div>';
@@ -216,10 +217,15 @@ var viewPlayType = function(versusId, e){
 	});
 };
 var addPlayType = function(versusId){
+	var name = $.trim($("#addPlayTypeName").val());
 	var className = $.trim($("#addPlayTypeClassName").val());
 	var bo = $.trim($("#addPlayTypeBo").val());
 	if(empty(className)) {
 		showMsg("请选择玩法");
+		return;
+	}
+	if(empty(name)) {
+		showMsg("请输入一个名称");
 		return;
 	}
 	if(empty(bo)) {
@@ -270,10 +276,11 @@ var addPlayType = function(versusId){
 				"versusId" : versusId,
 				"bo" : bo,
 				"templateClass" : className,
+				"name" : name,
 				"params[]" : params
 			},
 			success : function(data){
-				
+				alert(data.msg);
 			}
 		});
 	} else {
@@ -284,6 +291,7 @@ var playTypeChange = function(boCount){
 	var className = $.trim($("#addPlayTypeClassName").val());
 	if(empty(className)) {
 		$("#addPlayTypeBo").html("");
+		$("#addPlayTypeName").val("");
 		$("div.addPlayTypeParamDiv").remove();
 	} else {
 		loadData({
@@ -293,6 +301,8 @@ var playTypeChange = function(boCount){
 				if(data.code == 100) {
 					var support = data.result.support;
 					var templateParamInfos = data.result.templateParamInfos;
+					
+					$("#addPlayTypeName").val(data.result.description);
 					
 					if(templateParamInfos != null && templateParamInfos.length > 0) { //有参数
 						var paramInfosDiv = '<div style="margin-top:4px;" class="addPlayTypeParamDiv">';

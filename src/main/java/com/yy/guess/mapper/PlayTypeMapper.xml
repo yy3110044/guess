@@ -89,4 +89,12 @@
     <delete id="deleteByVersusId" parameterType="int">
     	delete from guess_play_type where versusId = #{versusId}
     </delete>
+    
+    <insert id="addList" parameterType="java.util.Collection">
+		insert into guess_play_type(id, versusId, name, bo, paramStr, templateClass, createTime)
+		values
+		<foreach collection="ptList" item="obj" separator=",">
+			(#{obj.id}, #{obj.versusId}, #{obj.name}, #{obj.bo}, #{obj.paramStr}, #{obj.templateClass}, #{obj.createTime})
+		</foreach>
+    </insert>
 </mapper>

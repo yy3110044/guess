@@ -2,7 +2,9 @@ package com.yy.guess.controller.administration;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -602,6 +604,7 @@ public class GuessAdminController {
 	@RequestMapping("/addPlayType")
 	public ResponseObject addPlayType(@RequestParam int versusId,
                                       @RequestParam int bo,
+                                      @RequestParam String name,
                                       @RequestParam String templateClass,
                                       HttpServletRequest req) {
 		String[] params = req.getParameterValues("params[]");
@@ -618,14 +621,78 @@ public class GuessAdminController {
 			return new ResponseObject(103, "bo超出范围");
 		}
 		
-		if(bo < 0) { //应用到所有
-			
-		} else if(bo > 0) { //只应用到bo
-			
-		} else { //只应用到总盘口
-			
+		//参数字符串
+		String paramStr = null;
+		if(params != null && params.length > 0) {
+			Map<String, String> paramMap = new LinkedHashMap<String, String>();
+			for(String param : params) {
+				String[] strs = param.split("\\|");
+				paramMap.put(strs[0], strs[1]);
+			}
+			paramStr = template.getParamJsonStr(paramMap);
 		}
 		
 		
+		List<PlayType> ptList = new ArrayList<PlayType>();
+		if(bo < 0) { //应用到所有
+			if(template.getSupport() >= 0) {
+				return new ResponseObject(104, "玩法模版不支持");
+			}
+			PlayType versusPy = new PlayType();//总盘口玩法
+			versusPy.setVersusId(versus.getId());
+			versusPy.setName(name);
+			versusPy.setBo(0);
+			versusPy.setParamStr(paramStr);
+			versusPy.setTemplateClass(template.getClass().getName());
+			ptList.add(versusPy);
+			for(int i=0; i<boList.size(); i++) { //bo
+				MatchVersusBo versusBo = boList.get(i);
+				PlayType boPy = new PlayType();
+				boPy.setVersusId(versus.getId());
+				boPy.setName(name);
+				boPy.setBo(versusBo.getBo());
+				boPy.setParamStr(paramStr);
+				boPy.setTemplateClass(template.getClass().getName());
+				ptList.add(boPy);
+			}
+		} else if(bo > 0) { //只应用到bo
+			if(template.getSupport() < 1) {
+				return new ResponseObject(104, "玩法模版不支持");
+			}
+			for(int i=0; i<boList.size(); i++) { //bo
+				MatchVersusBo versusBo = boList.get(i);
+				PlayType boPy = new PlayType();
+				boPy.setVersusId(versus.getId());
+				boPy.setName(name);
+				boPy.setBo(versusBo.getBo());
+				boPy.setParamStr(paramStr);
+				boPy.setTemplateClass(template.getClass().getName());
+				ptList.add(boPy);
+			}
+		} else { //只应用到总盘口
+			if(template.getSupport() != 0) {
+				return new ResponseObject(104, "玩法模版不支持");
+			}
+			PlayType versusPy = new PlayType();//总盘口玩法
+			versusPy.setVersusId(versus.getId());
+			versusPy.setName(name);
+			versusPy.setBo(0);
+			versusPy.setParamStr(paramStr);
+			versusPy.setTemplateClass(template.getClass().getName());
+			ptList.add(versusPy);
+		}
+		
+		QueryCondition existsQc = new QueryCondition();
+		existsQc.addCondition("versusId", "=", versus.getId());
+		existsQc.addCondition("templateClass", "=", templateClass);
+		existsQc.addCondition("paramStr", "=", paramStr);
+		for(PlayType pt : ptList) {
+			existsQc.addCondition("bo", "=", pt.getBo());
+			if(pts.find(existsQc) != null) {
+				return new ResponseObject(105, "已添加相同的玩法，请不要重复添加");
+			}
+		}
+		pts.addList(ptList);
+		return new ResponseObject(100, "添加成功");
 	}
 }

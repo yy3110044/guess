@@ -13,4 +13,6 @@ public interface PlayTypeService {
     List<PlayType> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+    
+    void addList(List<PlayType> ptList);
 }

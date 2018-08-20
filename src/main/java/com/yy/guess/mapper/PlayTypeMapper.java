@@ -2,6 +2,8 @@ package com.yy.guess.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import com.yy.guess.po.PlayType;
 import com.yy.fast4j.QueryCondition;
 
@@ -17,4 +19,5 @@ public interface PlayTypeMapper {
     /*****************************************************************分隔线************************************************************************/
     
     void deleteByVersusId(int versusId);
+    void addList(@Param("ptList") List<PlayType> ptList);
 }

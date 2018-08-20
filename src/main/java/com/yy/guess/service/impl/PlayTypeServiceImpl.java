@@ -50,4 +50,9 @@ public class PlayTypeServiceImpl implements PlayTypeService {
         return mapper.getCount(qc);
     }
     /*****************************************************************分隔线************************************************************************/
+
+	@Override
+	public void addList(List<PlayType> ptList) {
+		mapper.addList(ptList);
+	}
 }

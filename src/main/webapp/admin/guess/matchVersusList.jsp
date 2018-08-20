@@ -119,8 +119,8 @@ var query = function(pageSize, pageNo) {
 				}},
 				{fn : function(obj, tdId, index){
 					var str = '';
-					str += '<a href="javascript:;" onclick="detail(' + obj.id + ', this)">详情</a>';
-					str += '&nbsp;<a href="javascript:;" onclick="viewPlayType(' + obj.id + ', this)">玩法</a>';
+					str += '<a href="javascript:;" onclick="detail(' + obj.id + ', this)" id="versusDetailA' + obj.id + '">详情</a>';
+					str += '&nbsp;<a href="javascript:;" onclick="viewPlayType(' + obj.id + ', this)" id="viewPlayTypeA' + obj.id + '">玩法</a>';
 					str += '&nbsp;<a href="javascript:;" onclick="del(' + obj.id + ', this)">删除</a>';
 					if(index == (listLength - 1)) {
 						str += '<script>';
@@ -203,6 +203,7 @@ var viewPlayType = function(versusId, e){
 					str += '<div class="versusPlayTypeDiv" data-versusId="' + versus.id + '" data-bo="' + obj.bo + '"></div>';
 					str += '</div>';
 				}
+				str += '<div style="margin-top:8px;"><input onclick="$(this).parent().parent().parent().remove()" type="button" value="关闭"></div>';
 
 				str += '<script>';
 				str += '$(document).ready(function(){loadPlayType();});';
@@ -280,7 +281,10 @@ var addPlayType = function(versusId){
 				"params[]" : params
 			},
 			success : function(data){
-				alert(data.msg);
+				showMsg(data.msg);
+				if(data.code == 100) {
+					viewPlayType(versusId, document.getElementById("viewPlayTypeA" + versusId));
+				}
 			}
 		});
 	} else {
@@ -334,7 +338,7 @@ var playTypeChange = function(boCount){
 					
 					var playTypeBoOption = '<option value="-1">应用到所有</option>';
 					if(-1 == support) { //支持所有
-						playTypeBoOption += '<option value="0">应用到总盘口</option>';
+						playTypeBoOption += '<option value="0">应用到主盘口</option>';
 						for(var i=1; i<=boCount; i++) {
 							playTypeBoOption += '<option value="' + i + '">应用到第' + i + '局</option>';
 						}
@@ -373,7 +377,7 @@ var loadPlayType = function(){
 					if(boList.length > 0) {
 						for(var i=0; i<boList.length; i++) {
 							var obj = boList[i];
-							str += '<div>' + (i + 1) + '、名称：' + obj.name + '，参数：' + (empty(obj.paramStr) ? '' : obj.paramStr) + '，模版：' + obj.templateClass + '。</div>';
+							str += '<div>' + (i + 1) + '、名称：' + obj.name + '，参数：' + (empty(obj.paramStr) ? '' : obj.paramStr) + '，模版：' + obj.templateClass + '。&nbsp;&nbsp;<a href="javascript:;" onclick="deletePlayType(' + obj.id + ', this)">删除</a></div>';
 						}
 					} else {
 						str += '<div style="color:red;">未添加</div>';
@@ -386,14 +390,24 @@ var loadPlayType = function(){
 		});
 	});
 };
+var deletePlayType = function(playTypeId, e){
+	if(confirm("确定删除？")) {
+		loadData({
+			url : "administration/playTypeDelete",
+			data : {"playTypeId" : playTypeId},
+			success : function(data){
+				showMsg(data.msg);
+				if(data.code == 100) {
+					$(e).parent().remove();
+				}
+			}
+		});
+	}
+};
 
 
 
 var detail = function(versusId, e) {
-	if($(e).parent().parent().next().hasClass("detailTr")) {
-		$("tr.detailTr").remove();
-		return;
-	}
 	loadData({
 		url : "administration/getMatchVersus",
 		data : {"versusId" : versusId},
@@ -406,7 +420,7 @@ var detail = function(versusId, e) {
 				str += '<div style="margin-top:8px;font-weight:bold;font-size:16px;">' + versus.matchName + '&nbsp;' + versus.name + '&nbsp;' + versus.leftTeamName + '&nbsp;VS&nbsp;' + versus.rightTeamName + '</div>';
 				str += '<div style="margin-top:8px;border:1px dashed blue;padding:4px;" id="versus' + versus.id + '" class="detailDiv">';
 				str += '<div style="margin-top:4px;">开始时间：<input type="text" class="startTime" value="' + versus.startTime + '" placeholder="比赛开始时间" class="laydate-icon" onclick="laydate({istime:true,format:\'YYYY-MM-DD hh:mm:ss\'});" style="width:140px;cursor:pointer;" readonly="readonly"></div>';
-				str += '<div style="margin-top:4px;">比赛局数：<input type="number" class="boCount" value="' + versus.boCount + '" min="1"></div>';
+				str += '<div style="margin-top:4px;">比赛局数：<input type="number" class="boCount" value="' + versus.boCount + '" data-oldBoCount="' + versus.boCount + '" min="1"></div>';
 				str += '<div style="margin-top:4px;">实际局数：<input type="number" class="realBoCount" value="' + versus.realBoCount + '" min="0"></div>';
 				str += '<div style="margin-top:4px;">比赛状态：<select class="status" data-value="' + versus.status + '" onchange="detailStatusChange(this)"><%=com.yy.fast4j.Fast4jUtils.getSelectOptionHtmlStr(com.yy.guess.po.enums.MatchStatus.class)%></select></div>';
 				str += '<div style="margin-top:4px;' + (versus.status != '已结束' ? 'display:none;' : '') + '">比赛结果：<select class="result"><option value="-1"' + (versus.result < 0 ? ' selected="selected"' : '') + '>' + versus.leftTeamName + '胜</option><option value="0"' + (versus.result == 0 ? ' selected="selected"' : '') + '>平</option><option value="1"' + (versus.result > 0 ? ' selected="selected"' : '') + '>' + versus.rightTeamName + '胜</option></select></div>';
@@ -427,6 +441,7 @@ var detail = function(versusId, e) {
 					str += '<div style="margin-top:4px;"><input type="button" value="修改" onclick="modifyVersusBo(' + obj.id + ')"></div>';
 					str += '</div>';
 				}
+				str += '<div style="margin-top:8px;"><input onclick="$(this).parent().parent().parent().remove()" type="button" value="关闭"></div>';
 				str += '<script>';
 				str += '$(document).ready(function(){';
 				str += '	$("div.detailDiv .status").each(function(){';
@@ -467,7 +482,13 @@ var modifyVersus = function(versusIdNumber) {
 	var versusId = "versus" + versusIdNumber;
 	
 	var startTime = $.trim($("#" + versusId).find(".startTime").val());
+	var oldBoCount = $.trim($("#" + versusId).find(".boCount").attr("data-oldBoCount"));
 	var boCount = $.trim($("#" + versusId).find(".boCount").val());
+	if(oldBoCount != boCount) { //更改了boCount
+		if(!confirm("更改了比赛局数，将会删除此对阵下的玩法，确定删除吗？")) {
+			return;
+		}
+	}
 	var realBoCount = $.trim($("#" + versusId).find(".realBoCount").val());
 	var status = $.trim($("#" + versusId).find(".status").val());
 	var result = $.trim($("#" + versusId).find(".result").val());
@@ -484,7 +505,7 @@ var modifyVersus = function(versusIdNumber) {
 		success : function(data){
 			showMsg(data.msg);
 			if(data.code == 100) {
-				
+
 			}
 		}
 	});

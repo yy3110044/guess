@@ -635,9 +635,6 @@ public class GuessAdminController {
 		
 		List<PlayType> ptList = new ArrayList<PlayType>();
 		if(bo < 0) { //应用到所有
-			if(template.getSupport() >= 0) {
-				return new ResponseObject(104, "玩法模版不支持");
-			}
 			PlayType versusPy = new PlayType();//总盘口玩法
 			versusPy.setVersusId(versus.getId());
 			versusPy.setName(name);
@@ -656,21 +653,18 @@ public class GuessAdminController {
 				ptList.add(boPy);
 			}
 		} else if(bo > 0) { //只应用到bo
-			if(template.getSupport() < 1) {
+			if(template.getSupport() == 0) {
 				return new ResponseObject(104, "玩法模版不支持");
 			}
-			for(int i=0; i<boList.size(); i++) { //bo
-				MatchVersusBo versusBo = boList.get(i);
-				PlayType boPy = new PlayType();
-				boPy.setVersusId(versus.getId());
-				boPy.setName(name);
-				boPy.setBo(versusBo.getBo());
-				boPy.setParamStr(paramStr);
-				boPy.setTemplateClass(template.getClass().getName());
-				ptList.add(boPy);
-			}
+			PlayType boPy = new PlayType();
+			boPy.setVersusId(versus.getId());
+			boPy.setName(name);
+			boPy.setBo(bo);
+			boPy.setParamStr(paramStr);
+			boPy.setTemplateClass(template.getClass().getName());
+			ptList.add(boPy);
 		} else { //只应用到总盘口
-			if(template.getSupport() != 0) {
+			if(template.getSupport() > 0) {
 				return new ResponseObject(104, "玩法模版不支持");
 			}
 			PlayType versusPy = new PlayType();//总盘口玩法
@@ -685,7 +679,9 @@ public class GuessAdminController {
 		QueryCondition existsQc = new QueryCondition();
 		existsQc.addCondition("versusId", "=", versus.getId());
 		existsQc.addCondition("templateClass", "=", templateClass);
-		existsQc.addCondition("paramStr", "=", paramStr);
+		if(paramStr != null) {
+			existsQc.addCondition("paramStr", "=", paramStr);
+		}
 		for(PlayType pt : ptList) {
 			existsQc.addCondition("bo", "=", pt.getBo());
 			if(pts.find(existsQc) != null) {
@@ -694,5 +690,11 @@ public class GuessAdminController {
 		}
 		pts.addList(ptList);
 		return new ResponseObject(100, "添加成功");
+	}
+	
+	@RequestMapping("/playTypeDelete")
+	public ResponseObject playTypeDelete(@RequestParam int playTypeId) {
+		pts.delete(playTypeId);
+		return new ResponseObject(100, "删除成功");
 	}
 }

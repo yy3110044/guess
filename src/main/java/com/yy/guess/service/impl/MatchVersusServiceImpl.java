@@ -84,11 +84,12 @@ public class MatchVersusServiceImpl implements MatchVersusService {
 		return list;
 	}
 	
-	//更新versus，并重新生成versusbo
+	//更新versus，删除playtpe，并重新生成versusbo
 	@Override
 	public void update(MatchVersus obj, List<MatchVersusBo> boList) {
 		mapper.update(obj);
 		mvbm.deleteByVersusId(obj.getId());
 		mvbm.addList(boList);
+		ptm.deleteByVersusId(obj.getId());
 	}
 }

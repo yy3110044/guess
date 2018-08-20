@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into guess_play_type(id, versusId, playName, bo, paramStr, templateClass, createTime)
-        values(#{id}, #{versusId}, #{playName}, #{bo}, #{paramStr}, #{templateClass}, #{createTime})
+        insert into guess_play_type(id, versusId, name, bo, paramStr, templateClass, createTime)
+        values(#{id}, #{versusId}, #{name}, #{bo}, #{paramStr}, #{templateClass}, #{createTime})
     </insert>
 
     <delete id="delete" parameterType="int">
@@ -17,12 +17,12 @@
 
     <update id="update" parameterType="com.yy.guess.po.PlayType">
         update guess_play_type set
-        versusId = #{versusId}, playName = #{playName}, bo = #{bo}, paramStr = #{paramStr}, templateClass = #{templateClass}, createTime = #{createTime}
+        versusId = #{versusId}, name = #{name}, bo = #{bo}, paramStr = #{paramStr}, templateClass = #{templateClass}, createTime = #{createTime}
         where id = #{id}
     </update>
 
     <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.PlayType">
-        select id, versusId, playName, bo, paramStr, templateClass, createTime from guess_play_type
+        select id, versusId, name, bo, paramStr, templateClass, createTime from guess_play_type
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -44,12 +44,12 @@
     </select>
 
     <select id="findById" parameterType="int" resultType="com.yy.guess.po.PlayType">
-        select id, versusId, playName, bo, paramStr, templateClass, createTime from guess_play_type
+        select id, versusId, name, bo, paramStr, templateClass, createTime from guess_play_type
         where id = #{id}
     </select>
 
     <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.PlayType">
-        select id, versusId, playName, bo, paramStr, templateClass, createTime from guess_play_type
+        select id, versusId, name, bo, paramStr, templateClass, createTime from guess_play_type
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -85,4 +85,8 @@
         </if>
     </select>
     <!--****************************************************************分隔线****************************************************************-->
+    
+    <delete id="deleteByVersusId" parameterType="int">
+    	delete from guess_play_type where versusId = #{versusId}
+    </delete>
 </mapper>

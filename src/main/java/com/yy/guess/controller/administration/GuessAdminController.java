@@ -3,6 +3,11 @@ package com.yy.guess.controller.administration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,15 +21,19 @@ import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.fast4j.ResponseObject;
+import com.yy.guess.playTemplate.GuessPlayTemplate;
+import com.yy.guess.playTemplate.GuessPlayTemplateFactory;
 import com.yy.guess.po.Match;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
+import com.yy.guess.po.PlayType;
 import com.yy.guess.po.Sport;
 import com.yy.guess.po.Team;
 import com.yy.guess.po.enums.MatchStatus;
 import com.yy.guess.service.MatchService;
 import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
+import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.service.SportService;
 import com.yy.guess.service.TeamService;
 
@@ -52,6 +61,9 @@ public class GuessAdminController {
 	
 	@Autowired
 	private MatchVersusBoService mvbs;
+	
+	@Autowired
+	private PlayTypeService pts;
 	
 	/**
 	 * 添加运动项目
@@ -508,5 +520,112 @@ public class GuessAdminController {
 	@RequestMapping("/getDistinctMatchVersusName")
 	public ResponseObject getDistinctMatchVersusName(@RequestParam int matchId) {
 		return new ResponseObject(100, "返回成功", mvs.getDistinctName(matchId));
+	}
+	
+	//返回模版信息
+	@RequestMapping("/getAllGuessPlayTemplate")
+	public ResponseObject getAllGuessPlayTemplate() {
+		Set<Entry<String, GuessPlayTemplate>> entrySet = GuessPlayTemplateFactory.getAllTemplate();
+		List<JsonResultMap> list = new ArrayList<JsonResultMap>();
+		for(Entry<String, GuessPlayTemplate> entry : entrySet) {
+			JsonResultMap map = new JsonResultMap();
+			GuessPlayTemplate value = entry.getValue();
+			map.put("className", entry.getKey());
+			map.put("description", value.getDescription());
+			map.put("support", value.getSupport());
+			map.put("templateParamInfos", value.getTemplateParamInfos());
+			list.add(map);
+		}
+		return new ResponseObject(100, "返回成功", list);
+	}
+	@RequestMapping("/getGuessPlayTemplateByClassName")
+	public ResponseObject getGuessPlayTemplateByClassName(@RequestParam String className) {
+		GuessPlayTemplate template = GuessPlayTemplateFactory.getGuessPlayTemplate(className);
+		JsonResultMap map = new JsonResultMap();
+		map.put("className", template.getClass().getName());
+		map.put("description", template.getDescription());
+		map.put("support", template.getSupport());
+		map.put("templateParamInfos", template.getTemplateParamInfos());
+		return new ResponseObject(100, "返回成功", map);
+	}
+
+	//返回某个对阵下的竞猜玩法数
+	@RequestMapping("/getPlayTypeCount")
+	public ResponseObject getPlayTypeCount(@RequestParam int versusId, Integer bo) {
+		QueryCondition qc = new QueryCondition();
+		qc.addCondition("versusId", "=", versusId);
+		if(bo != null) {
+			qc.addCondition("bo", "=", bo);
+		}
+		int count = pts.getCount(qc);
+		return new ResponseObject(100, "返回成功", count);
+	}
+	
+	//返回某个对阵下的所有竞猜玩法
+	@RequestMapping("/getPlayType")
+	public ResponseObject getPlayType(@RequestParam int versusId, Integer bo) {
+		QueryCondition qc = new QueryCondition();
+		qc.addCondition("versusId", "=", versusId);
+		if(bo != null) {
+			qc.addCondition("bo", "=", bo);
+		}
+		List<PlayType> list = pts.query(qc);
+		return new ResponseObject(100, "返回成功", list);
+	}
+	
+	//返回所有玩法类型，以对阵
+	@RequestMapping("/getGuessPlayTemplateAndMatchVersus")
+	public ResponseObject getGuessPlayTemplateAndMatchVersus(@RequestParam int versusId) {
+		JsonResultMap result = new JsonResultMap();
+
+		MatchVersus versus = mvs.findById(versusId);
+		List<MatchVersusBo> boList = mvbs.query(new QueryCondition().addCondition("versusId", "=", versusId).addSort("bo", SortType.ASC));
+		Set<Entry<String, GuessPlayTemplate>> entrySet = GuessPlayTemplateFactory.getAllTemplate();
+		List<JsonResultMap> templateList = new ArrayList<JsonResultMap>();
+		for(Entry<String, GuessPlayTemplate> entry : entrySet) {
+			JsonResultMap map = new JsonResultMap();
+			GuessPlayTemplate value = entry.getValue();
+			map.put("className", entry.getKey());
+			map.put("description", value.getDescription());
+			map.put("support", value.getSupport());
+			map.put("templateParamInfos", value.getTemplateParamInfos());
+			templateList.add(map);
+		}
+		
+		result.put("versus", versus);
+		result.put("boList", boList);
+		result.put("templateList", templateList);
+		return new ResponseObject(100, "返回成功", result);
+	}
+	
+	//添加玩法
+	@RequestMapping("/addPlayType")
+	public ResponseObject addPlayType(@RequestParam int versusId,
+                                      @RequestParam int bo,
+                                      @RequestParam String templateClass,
+                                      HttpServletRequest req) {
+		String[] params = req.getParameterValues("params[]");
+		MatchVersus versus = mvs.findById(versusId);
+		if(versus == null) {
+			return new ResponseObject(101, "对阵不存在");
+		}
+		GuessPlayTemplate template = GuessPlayTemplateFactory.getGuessPlayTemplate(templateClass);
+		if(template == null) {
+			return new ResponseObject(102, "玩法模版不存在：" + templateClass);
+		}
+		List<MatchVersusBo> boList = mvbs.query(new QueryCondition().addCondition("versusId", "=", versusId).addSort("bo", SortType.ASC));
+		if(bo > boList.size()) {
+			return new ResponseObject(103, "bo超出范围");
+		}
+		
+		if(bo < 0) { //应用到所有
+			
+		} else if(bo > 0) { //只应用到bo
+			
+		} else { //只应用到总盘口
+			
+		}
+		
+		
 	}
 }

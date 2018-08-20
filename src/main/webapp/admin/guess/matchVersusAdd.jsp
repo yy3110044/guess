@@ -6,6 +6,9 @@
 <title>添加对阵 - <%=com.yy.fast4j.Fast4jUtils.getBean(com.yy.fast4j.Cache.class, application).getString(com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
 <link rel="stylesheet" href="admin/css/bootstrap.css">
 <link rel="stylesheet" href="admin/css/css.css">
+<style type="text/css">
+div.item{margin-top:5px;}
+</style>
 <script src="js/jquery.js"></script>
 <script src="laydate/laydate.js"></script>
 <script src="admin/js/common.js"></script>

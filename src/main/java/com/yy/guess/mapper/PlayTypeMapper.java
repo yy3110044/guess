@@ -15,4 +15,6 @@ public interface PlayTypeMapper {
     List<PlayType> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+    
+    void deleteByVersusId(int versusId);
 }

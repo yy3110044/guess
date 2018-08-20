@@ -159,7 +159,7 @@ DROP TABLE IF EXISTS `guess_play_type`;
 CREATE TABLE `guess_play_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `versusId` int(11) COMMENT '对阵id',
-  `playName` varchar(64) COMMENT '玩法名',
+  `name` varchar(64) COMMENT '玩法名',
   `bo` tinyint COMMENT '对应比赛场次，从1开始，0代表总对阵',
   `paramStr` varchar(128) COMMENT '此玩法需要用到的参数，json格式字符串',
   `templateClass` varchar(128) COMMENT '模版类class',

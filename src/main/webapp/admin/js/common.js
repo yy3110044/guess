@@ -124,7 +124,7 @@ var getContentStr = function(param) {
 			var tdId = parseInt(Math.random() * 10000000000000000, 10);
 			str += '<td id="' + tdId + '">';
 			if(field.fn != null) { //方法不为空，执行方法，并返回
-				str += field.fn(obj, tdId);
+				str += field.fn(obj, tdId, i);
 			} else { //直接返回字段值
 				str += obj[field.field] == null ? '' : obj[field.field];
 			}

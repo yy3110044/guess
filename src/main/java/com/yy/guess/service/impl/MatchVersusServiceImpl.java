@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.yy.guess.mapper.MatchVersusBoMapper;
 import com.yy.guess.mapper.MatchVersusMapper;
+import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.service.MatchVersusService;
@@ -20,6 +21,9 @@ public class MatchVersusServiceImpl implements MatchVersusService {
     
     @Autowired
     private MatchVersusBoMapper mvbm;
+    
+    @Autowired
+    private PlayTypeMapper ptm;
 
     @Override
     public void add(MatchVersus obj) {
@@ -70,6 +74,7 @@ public class MatchVersusServiceImpl implements MatchVersusService {
 	public void deleteVersus(int id) {
 		mapper.delete(id);
 		mvbm.deleteByVersusId(id);
+		ptm.deleteByVersusId(id);
 	}
 
 	@Override

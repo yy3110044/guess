@@ -5,7 +5,7 @@ import java.util.Date;
 public class PlayType {
 	private int id;
 	private int versusId;
-	private String playName;
+	private String name;
 	private int bo;
 	private String paramStr;
 	private String templateClass;
@@ -22,11 +22,11 @@ public class PlayType {
 	public void setVersusId(int versusId) {
 		this.versusId = versusId;
 	}
-	public String getPlayName() {
-		return playName;
+	public String getName() {
+		return name;
 	}
-	public void setPlayName(String playName) {
-		this.playName = playName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public int getBo() {
 		return bo;

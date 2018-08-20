@@ -80,6 +80,7 @@ var query = function(pageSize, pageNo) {
 			"pageNo" : pageNo
 		},
 		success : function(data) {
+			var listLength = data.result.list.length;
 			fillResult(data, [
 				{field : "id"},
 				{field : "matchName"},
@@ -114,13 +115,45 @@ var query = function(pageSize, pageNo) {
 				}},
 				{field : "createTime"},
 				{fn : function(obj){
+					return '<span class="guessPlayTypeCount" data-versusId="' + obj.id + '"></span>';
+				}},
+				{fn : function(obj, tdId, index){
 					var str = '';
 					str += '<a href="javascript:;" onclick="detail(' + obj.id + ', this)">详情</a>';
+					str += '&nbsp;<a href="javascript:;" onclick="viewPlayType(' + obj.id + ', this)">玩法</a>';
 					str += '&nbsp;<a href="javascript:;" onclick="del(' + obj.id + ', this)">删除</a>';
+					if(index == (listLength - 1)) {
+						str += '<script>';
+						str += '$(document).ready(function(){loadGuessPlayTypeCount()});';
+						str += '</' + 'script>';
+					}
 					return str;
 				}}
 			]);
 		}
+	});
+};
+
+//读取玩法数
+var loadGuessPlayTypeCount = function(){
+	$("span.guessPlayTypeCount").each(function(){
+		var ts = $(this);
+		var versusId = ts.attr("data-versusId");
+		loadData({
+			url : "administration/getPlayTypeCount",
+			data : {"versusId" : versusId},
+			success : function(data) {
+				if(data.code == 100) {
+					if(data.result > 0) {
+						ts.html(data.result);
+					} else {
+						ts.html('<span style="color:red;">未添加</span>');
+					}
+				} else {
+					showMsg(data.msg);
+				}
+			}
+		});
 	});
 };
 
@@ -134,6 +167,218 @@ var parseSecond = function(seconds) {
 	return parseInt(seconds % 60, 10);
 };
 
+//查看玩法
+var viewPlayType = function(versusId, e){
+	loadData({
+		url : "administration/getGuessPlayTemplateAndMatchVersus",
+		data : {"versusId" : versusId},
+		success : function(data){
+			if(data.code == 100) {
+				var versus = data.result.versus;
+				var boList = data.result.boList;
+				var templateList = data.result.templateList;
+				
+				var str = '<tr class="contentTr detailTr"><td colspan="99">';
+				
+				str += '<div style="margin-top:8px;border:1px dashed blue;padding:4px;border-radius:5px;">';
+				str += '<div><select id="addPlayTypeClassName" onchange="playTypeChange(' + versus.boCount + ')"><option value="">├选择玩法┤</option>';
+				for(var i=0; i<templateList.length; i++) {
+					var obj = templateList[i];
+					str += '<option value="' + obj.className + '">' + obj.description + '</option>';
+				}
+				str += '</select></div>';
+				str += '<div style="margin-top:4px;"><select id="addPlayTypeBo"></select></div>';
+				str += '<div style="margin-top:4px;"><input type="button" value="添加玩法" onclick="addPlayType(' + versus.id + ')"></div>';
+				str += '</div>';
+
+				str += '<div style="margin-top:8px;border:1px dashed blue;padding:4px;border-radius:5px;">';
+				str += '<div>主盘口：</div>';
+				str += '<div class="versusPlayTypeDiv" data-versusId="' + versus.id + '" data-bo="0"></div>';
+				str += '</div>';
+				for(var i=0; i<boList.length; i++) {
+					var obj = boList[i];
+					str += '<div style="margin-top:8px;border:1px dashed blue;padding:4px;border-radius:5px;">';
+					str += '<div>第' + obj.bo + '局：</div>';
+					str += '<div class="versusPlayTypeDiv" data-versusId="' + versus.id + '" data-bo="' + obj.bo + '"></div>';
+					str += '</div>';
+				}
+
+				str += '<script>';
+				str += '$(document).ready(function(){loadPlayType();});';
+				str += '</'+'script>';
+				str += '</td></tr>';
+				$("tr.detailTr").remove();
+				$(e).parent().parent().after(str);
+			} else {
+				showMsg(data.msg);
+			}
+		}
+	});
+};
+var addPlayType = function(versusId){
+	var className = $.trim($("#addPlayTypeClassName").val());
+	var bo = $.trim($("#addPlayTypeBo").val());
+	if(empty(className)) {
+		showMsg("请选择玩法");
+		return;
+	}
+	if(empty(bo)) {
+		showMsg("请选择应用范围");
+		return;
+	}
+
+	var params = new Array();
+	var checkParam = true;
+	var checkMsg = '';
+	$("div.addPlayTypeParamDiv .addPlayTypeParamElements").each(function(){
+		var ts = $(this);
+		var name = ts.attr("name");
+		var value = ts.val();
+		var required = ts.attr("data-required");
+		var type = ts.attr("data-type");
+		if(empty(value)) {
+			if("true" == required) { //这个参数是必须的
+				checkParam = false;
+				checkMsg = name + "参数不能为空";
+				return;
+			}
+		} else {
+			if("String" == type) {
+				
+			} else if("Integer" == type) {
+				if(isNaN(value)) {
+					checkParam = false;
+					checkMsg = name + "参数必须是一个整数";
+					return;
+				}
+			} else if("Double" == type) {
+				if(isNaN(value)) {
+					checkParam = false;
+					checkMsg = name + "参数必须是一个数字";
+					return;
+				}
+			} else if("Enum" == type) {
+				
+			}
+		}
+		params.push(name + "|" + value);
+	});
+	if(checkParam) {
+		loadData({
+			url : "administration/addPlayType",
+			data : {
+				"versusId" : versusId,
+				"bo" : bo,
+				"templateClass" : className,
+				"params[]" : params
+			},
+			success : function(data){
+				
+			}
+		});
+	} else {
+		showMsg(checkMsg);
+	}
+};
+var playTypeChange = function(boCount){
+	var className = $.trim($("#addPlayTypeClassName").val());
+	if(empty(className)) {
+		$("#addPlayTypeBo").html("");
+		$("div.addPlayTypeParamDiv").remove();
+	} else {
+		loadData({
+			url : "administration/getGuessPlayTemplateByClassName",
+			data : {"className" : className},
+			success : function(data){
+				if(data.code == 100) {
+					var support = data.result.support;
+					var templateParamInfos = data.result.templateParamInfos;
+					
+					if(templateParamInfos != null && templateParamInfos.length > 0) { //有参数
+						var paramInfosDiv = '<div style="margin-top:4px;" class="addPlayTypeParamDiv">';
+						for(var i=0; i<templateParamInfos.length; i++) {
+							var obj = templateParamInfos[i];
+							paramInfosDiv += '<div style="margin-top:4px;">' + obj.description + '：';
+							if("String" == obj.type) {
+								paramInfosDiv += '<input name="' + obj.name + '" type="text" value="' + (empty(obj.defaultValue) ? '' : obj.defaultValue) + '" data-required="' + obj.required + '" data-type="' + obj.type + '" class="addPlayTypeParamElements">';
+							} else if("Integer" == obj.type) {
+								paramInfosDiv += '<input name="' + obj.name + '" type="number" value="' + (empty(obj.defaultValue) ? '' : obj.defaultValue) + '" data-required="' + obj.required + '" data-type="' + obj.type + '" class="addPlayTypeParamElements">';
+							} else if("Double" == obj.type) {
+								paramInfosDiv += '<input name="' + obj.name + '" type="number" value="' + (empty(obj.defaultValue) ? '' : obj.defaultValue) + '" step="0.000001" data-required="' + obj.required + '" data-type="' + obj.type + '" class="addPlayTypeParamElements">';
+							} else if("Enum" == obj.type) {
+								paramInfosDiv += '<select name="' + obj.name + '" data-required="' + obj.required + '" data-type="' + obj.type + '" class="addPlayTypeParamElements">';
+								for(var j=0; j<obj.enumElement.length; j++) {
+									var element = obj.enumElement[j];
+									paramInfosDiv += '<option value="' + element + '"' + (obj.defaultValue==element ? ' selected="selected"' : '') + '>' + element + '</option>';
+								}
+								paramInfosDiv += '</select>';
+							}
+							paramInfosDiv += '</div>';
+						}
+						paramInfosDiv += '</div>';
+						$("div.addPlayTypeParamDiv").remove();
+						$("#addPlayTypeBo").parent().after(paramInfosDiv);
+					} else { //无参数
+						$("div.addPlayTypeParamDiv").remove();
+					}
+					
+					var playTypeBoOption = '<option value="-1">应用到所有</option>';
+					if(-1 == support) { //支持所有
+						playTypeBoOption += '<option value="0">应用到总盘口</option>';
+						for(var i=1; i<=boCount; i++) {
+							playTypeBoOption += '<option value="' + i + '">应用到第' + i + '局</option>';
+						}
+					} else if(0 == support) { //支持总对阵
+						playTypeBoOption += '<option value="0">应用到总盘口</option>';
+					} else if(1 == support) { //支持bo对阵
+						for(var i=1; i<=boCount; i++) {
+							playTypeBoOption += '<option value="' + i + '">应用到第' + i + '局</option>';
+						}
+					} else {
+						showMsg("玩法有误：support=" + support);
+					}
+					$("#addPlayTypeBo").html(playTypeBoOption);
+				} else {
+					showMsg(data.msg);
+				}
+			}
+		});
+	}
+};
+var loadPlayType = function(){
+	$("div.versusPlayTypeDiv").each(function(){
+		var ts = $(this);
+		var versusId = ts.attr("data-versusId");
+		var bo = ts.attr("data-bo");
+		loadData({
+			url : "administration/getPlayType",
+			data : {
+				"versusId" : versusId,
+				"bo" : bo
+			},
+			success : function(data){
+				if(data.code == 100) {
+					var boList = data.result;
+					var str = '';
+					if(boList.length > 0) {
+						for(var i=0; i<boList.length; i++) {
+							var obj = boList[i];
+							str += '<div>' + (i + 1) + '、名称：' + obj.name + '，参数：' + (empty(obj.paramStr) ? '' : obj.paramStr) + '，模版：' + obj.templateClass + '。</div>';
+						}
+					} else {
+						str += '<div style="color:red;">未添加</div>';
+					}
+					ts.html(str);
+				} else {
+					showMsg(data.msg);
+				}
+			}
+		});
+	});
+};
+
+
+
 var detail = function(versusId, e) {
 	if($(e).parent().parent().next().hasClass("detailTr")) {
 		$("tr.detailTr").remove();
@@ -141,9 +386,7 @@ var detail = function(versusId, e) {
 	}
 	loadData({
 		url : "administration/getMatchVersus",
-		data : {
-			"versusId" : versusId
-		},
+		data : {"versusId" : versusId},
 		success : function(data) {
 			if(data.code == 100) {
 				var versus = data.result.versus;
@@ -351,6 +594,7 @@ var sportIdChange = function(){
 			<td><strong>实际比赛局数</strong></td>
 			<td><strong>比赛结果</strong></td>
 			<td><strong>创建时间</strong></td>
+			<td><strong>玩法</strong></td>
 			<td><strong>操作</strong></td>
 		</tr>
 	</table>

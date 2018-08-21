@@ -168,36 +168,29 @@ CREATE TABLE `guess_play_type` (
   KEY `versusId` (`versusId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*交易流水表*/
-/*
-DROP TABLE IF EXISTS `guess_trading_flow`;
-CREATE TABLE `guess_trading_flow` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-*/
-
-/*投注归档，投注结算后保存的归档*/
-/*
-DROP TABLE IF EXISTS `guess_bet_archive`;
-CREATE TABLE `guess_bet_archive` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  `versusId` int(11) NOT NULL COMMENT '对阵id',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-*/
-/*投注表*/
+/*下注表*/
 DROP TABLE IF EXISTS `guess_bet`;
 CREATE TABLE `guess_bet` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `versusId` int(11) COMMENT '对阵id',
   `playTypeId` int(11) COMMENT '玩法id',
   `userId` int(11) COMMENT '下注用户 id',
+  `userName` varchar(128) COMMENT '下注用户名',
   `betDirection` enum('LEFT', 'RIGHT') COMMENT '下注的哪一方',
   `amount` decimal(15, 6) COMMENT '下注金额',
   `createTime` datetime COMMENT '创建时间',
+  KEY `versusId` (`versusId`),
+  KEY `userId` (`userId`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*交易流水表*/
+DROP TABLE IF EXISTS `guess_trading_flow`;
+CREATE TABLE `guess_trading_flow` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 /*比赛战队、队伍表*/
 DROP TABLE IF EXISTS `guess_team`;

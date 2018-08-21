@@ -186,6 +186,18 @@ CREATE TABLE `guess_bet_archive` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 */
+/*投注表*/
+DROP TABLE IF EXISTS `guess_bet`;
+CREATE TABLE `guess_bet` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `versusId` int(11) COMMENT '对阵id',
+  `playTypeId` int(11) COMMENT '玩法id',
+  `userId` int(11) COMMENT '下注用户 id',
+  `betDirection` enum('LEFT', 'RIGHT') COMMENT '下注的哪一方',
+  `amount` decimal(15, 6) COMMENT '下注金额',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*比赛战队、队伍表*/
 DROP TABLE IF EXISTS `guess_team`;

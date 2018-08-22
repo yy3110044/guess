@@ -1,0 +1,53 @@
+package com.yy.guess.service.impl;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import com.yy.guess.mapper.BetMapper;
+import com.yy.guess.po.Bet;
+import com.yy.guess.service.BetService;
+import com.yy.fast4j.QueryCondition;
+
+@Repository("betService")
+@Transactional
+public class BetServiceImpl implements BetService {
+    @Autowired
+    private BetMapper mapper;
+
+    @Override
+    public void add(Bet obj) {
+        mapper.add(obj);
+    }
+
+    @Override
+    public void delete(int id) {
+        mapper.delete(id);
+    }
+
+    @Override
+    public void update(Bet obj) {
+        mapper.update(obj);
+    }
+
+    @Override
+    public Bet find(QueryCondition qc) {
+        return mapper.find(qc);
+    }
+
+    @Override
+    public Bet findById(int id) {
+        return mapper.findById(id);
+    }
+
+    @Override
+    public List<Bet> query(QueryCondition qc) {
+        return mapper.query(qc);
+    }
+
+    @Override
+    public int getCount(QueryCondition qc) {
+        return mapper.getCount(qc);
+    }
+    /*****************************************************************分隔线************************************************************************/
+}

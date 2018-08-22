@@ -3,7 +3,7 @@
 <head>
 <base href="${basePath}"/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>管理员登录 - <%=com.yy.fast4j.Fast4jUtils.getBean(com.yy.fast4j.Cache.class, application).getString(com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
+<title>管理员登录 - <%=com.yy.fast4j.RedisUtil.getObject(application, com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
 <link rel="stylesheet" href="admin/css/bootstrap.css" />
 <style type="text/css">
 body{ background:#0066A8;}

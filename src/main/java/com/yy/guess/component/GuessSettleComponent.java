@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GuessSettleComponent {
 	private ScheduledExecutorService service;
-	private long delay = 30L; //延迟，单位：秒
+	private long delay = 1L; //延迟，单位：秒
 	
 	public GuessSettleComponent() {
 		service = Executors.newSingleThreadScheduledExecutor();
@@ -32,7 +32,6 @@ public class GuessSettleComponent {
 	private class GuessSettleRunable implements Runnable {
 		@Override
 		public void run() {
-			
 		}
 	}
 }

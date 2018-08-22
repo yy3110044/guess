@@ -50,4 +50,10 @@ public class UserServiceImpl implements UserService {
         return mapper.getCount(qc);
     }
     /*****************************************************************分隔线************************************************************************/
+
+	@Override
+	public double getBalance(int userId) {
+		Double balance = mapper.getBalance(userId);
+		return balance != null ? balance : 0;
+	}
 }

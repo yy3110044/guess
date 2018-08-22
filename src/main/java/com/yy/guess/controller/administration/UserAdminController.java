@@ -14,6 +14,8 @@ import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.User;
+import com.yy.guess.po.enums.TradeType;
+import com.yy.guess.service.TradeFlowService;
 import com.yy.guess.service.UserService;
 
 /**
@@ -27,6 +29,9 @@ import com.yy.guess.service.UserService;
 public class UserAdminController {
 	@Autowired
 	private UserService us;
+	
+	@Autowired
+	private TradeFlowService tfs;
 	
 	@RequestMapping("/userTreeList")
 	public ResponseObject userTreeList(@RequestParam(defaultValue="0") int superUserId,
@@ -85,5 +90,15 @@ public class UserAdminController {
 		}
 		us.delete(userId);
 		return new ResponseObject(100, "删除成功");
+	}
+	
+	//修改用户余额
+	@RequestMapping("/updateBalance")
+	public ResponseObject updateBalance(@RequestParam double amount,
+                                        @RequestParam TradeType type,
+                                        String description,
+                                        @RequestParam int userId) {
+		Object[] result = tfs.updateBalance(amount, type, description, userId);
+		return new ResponseObject((Integer)result[0], (String)result[1]);
 	}
 }

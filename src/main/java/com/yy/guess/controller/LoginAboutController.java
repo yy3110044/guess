@@ -48,9 +48,12 @@ public class LoginAboutController {
 	
 	@Autowired
 	private LoginManager loginManager;
-
+	
 	@RequestMapping("/userLogin")
-	public ResponseObject userLogin(@RequestParam String userName, @RequestParam String passWord, @RequestParam UserLoginType loginType, HttpServletRequest req) {
+	public ResponseObject userLogin(@RequestParam String userName,
+                                    @RequestParam String passWord,
+                                    @RequestParam UserLoginType loginType,
+                                    HttpServletRequest req) {
 		User user = us.find(new QueryCondition().addCondition("userName", "=", userName).addCondition("passWord", "=", DigestUtils.md5Hex(passWord)));
 		if(user == null) {
 			return new ResponseObject(101, "用户名或密码错误");

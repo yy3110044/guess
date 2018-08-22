@@ -13,4 +13,6 @@ public interface UserService {
     List<User> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+
+    double getBalance(int userId);
 }

@@ -8,8 +8,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import com.yy.fast4j.Cache;
+import com.yy.fast4j.RedisUtil;
 import com.yy.guess.component.GuessSettleComponent;
 import com.yy.guess.po.Config;
 import com.yy.guess.service.ConfigService;
@@ -23,7 +24,7 @@ public class AppRunner implements CommandLineRunner, ApplicationRunner, Ordered 
 	private ConfigService cs;
 	
 	@Autowired
-	private Cache cache;
+	private RedisTemplate<String, Object> redisTemplate;
 	
 	@Autowired
 	private GuessSettleComponent guessSettleComponent;
@@ -56,7 +57,7 @@ public class AppRunner implements CommandLineRunner, ApplicationRunner, Ordered 
 		logger.info("加载Config到缓存");
 		List<Config> list = cs.query(null);
 		for(Config config : list) {
-			cache.set(CachePre.GUESS_CONFIG, config.getName(), config.getVal());
+			RedisUtil.set(redisTemplate, CachePre.GUESS_CONFIG, config.getName(), config.getVal());
 			logger.debug(config.getName() + "=>" + config.getVal());
 		}
 	}

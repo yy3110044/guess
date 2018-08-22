@@ -3,7 +3,7 @@
 <head>
 <base href="${basePath}">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>用户列表 - <%=com.yy.fast4j.Fast4jUtils.getBean(com.yy.fast4j.Cache.class, application).getString(com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
+<title>用户列表 - <%=com.yy.fast4j.RedisUtil.getObject(application, com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
 <link rel="stylesheet" href="admin/css/bootstrap.css">
 <link rel="stylesheet" href="admin/css/css.css">
 <script src="js/jquery.js"></script>
@@ -48,7 +48,8 @@ var query = function(pageSize, pageNo) {
 					}},
 					{fn : function(obj){
 						var str = '';
-						str += '<a>删除</a>';
+						str += '<a href="javascript:;" onclick="updateBalance(' + obj.id + ', this)">修改余额</a>';
+						str += '&nbsp;<a>删除</a>';
 						return str;
 					}}
 				]);
@@ -58,6 +59,14 @@ var query = function(pageSize, pageNo) {
 		},
 		redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
 	});
+};
+
+//修改余额
+var updateBalance = function(userId, e){
+	var str = '';
+	str += '<tr class="contentTr detailTr"><td colspan="99">';
+	str += '';
+	str += '</td></tr>';
 };
 </script>
 </head>

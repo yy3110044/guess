@@ -18,7 +18,8 @@ public class CheckAdminUserLoginInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		Integer adminUserId = (Integer)request.getSession().getAttribute("adminUserId");
 		if(adminUserId == null) {
-			response.setContentType("application/json;charset=utf-8");
+			response.setHeader("Access-Control-Allow-Origin", "*");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(Fast4jUtils.ObjecttoJson(new ResponseObject(200, "您还未登陆，请先登陆")));
 			return false;
 		} else {

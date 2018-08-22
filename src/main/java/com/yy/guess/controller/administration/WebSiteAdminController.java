@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.yy.fast4j.Cache;
+import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.AdminUser;
 import com.yy.guess.po.Config;
@@ -32,7 +33,7 @@ public class WebSiteAdminController {
 	private ConfigService cs;
 	
 	@Autowired
-	private Cache cache;
+	private RedisTemplate<String, Object> redisTemplate;
 
 	
 	@RequestMapping("/getWebsiteInfo")
@@ -68,7 +69,7 @@ public class WebSiteAdminController {
 				configs[i].setName(strs[0]);
 				configs[i].setVal(strs[1]);
 				
-				cache.set(CachePre.GUESS_CONFIG, configs[i].getName(), configs[i].getVal());
+				RedisUtil.set(redisTemplate, CachePre.GUESS_CONFIG, configs[i].getName(), configs[i].getVal());
 			}
 			cs.update(configs);
 			return new ResponseObject(100, "修改成功");

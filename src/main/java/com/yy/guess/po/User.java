@@ -19,6 +19,7 @@ public class User {
 	private UserLoginType lastLoginType;
 	private int superUserId;
 	private double rebateRate;
+	private double subordinateDefaultRebateRate;
 	private Date createTime = new Date();
 	public int getId() {
 		return id;
@@ -109,6 +110,12 @@ public class User {
 	}
 	public void setRebateRate(double rebateRate) {
 		this.rebateRate = rebateRate;
+	}
+	public double getSubordinateDefaultRebateRate() {
+		return subordinateDefaultRebateRate;
+	}
+	public void setSubordinateDefaultRebateRate(double subordinateDefaultRebateRate) {
+		this.subordinateDefaultRebateRate = subordinateDefaultRebateRate;
 	}
 	public Date getCreateTime() {
 		return createTime;

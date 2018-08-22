@@ -124,6 +124,7 @@ public class LoginAboutController {
 				return new ResponseObject(104, "推荐用户不存在");
 			} else {
 				user.setSuperUserId(superUser.getId());
+				user.setRebateRate(superUser.getSubordinateDefaultRebateRate());
 			}
 		}
 		

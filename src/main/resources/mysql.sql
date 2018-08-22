@@ -20,6 +20,7 @@ CREATE TABLE `guess_user` (
   `lastLoginType` enum('WEB', 'APP') COMMENT '最后登陆类型',
   `superUserId` int(11) COMMENT '父用户ID，0代表顶级用户',
   `rebateRate` decimal(4, 4) COMMENT '返点率',
+  `subordinateDefaultRebateRate` decimal(4, 4) COMMENT '下级注册时默认返点(不能大于自己的返点)',
   `createTime` datetime COMMENT '记录创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `userName` (`userName`),
@@ -81,8 +82,8 @@ CREATE TABLE `guess_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 INSERT INTO guess_config VALUES(null, 'webTitle', '竞猜', '网站标题名');
 INSERT INTO guess_config VALUES(null, 'uploadUrl', 'http://aidazhou.cn/staticSourceAdmin/fileUpload', '文件上传url');
-INSERT INTO guess_config VALUES(null, 'userRebateRateMin', '0.1', '用户返点率上限');
-INSERT INTO guess_config VALUES(null, 'userRebateRateMax', '0', '用户返点率下限');
+INSERT INTO guess_config VALUES(null, 'userRebateRateMax', '0.1', '用户返点率上限');
+INSERT INTO guess_config VALUES(null, 'userRebateRateMin', '0', '用户返点率下限');
 
 /*体育运动表*/
 DROP TABLE IF EXISTS `guess_sport`;
@@ -198,7 +199,7 @@ CREATE TABLE `guess_trade_flow` (
   `userName` varchar(128) COMMENT '用户名',
   `preBalance` decimal(15, 6) COMMENT '变动前余额',
   `amount` decimal(15, 6) COMMENT '变动金额',
-  `type` enum('下注 ', '退款', '返点', '兑奖', '充值', '提现', '其它') COMMENT '类型',
+  `type` enum('下注 ', '退款', '返点', '返奖', '充值', '提现', '其它') COMMENT '类型',
   `description` varchar(256) COMMENT '描述',
   `createTime` datetime COMMENT '创建时间',
   KEY `userId` (`userId`),

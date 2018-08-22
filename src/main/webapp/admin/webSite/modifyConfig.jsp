@@ -34,7 +34,7 @@ var modify = function(){
 	if(confirm('确定修改？')) {
 		var params = new Array();
 		$("input.configInput").each(function(){
-			var name = $(this).attr("name");
+			var name = $.trim($(this).attr("name"));
 			var val = $.trim($(this).val());
 			params.push(name + "=>" + val);
 		});

@@ -10,6 +10,8 @@
 <script src="laydate/laydate.js"></script>
 <script src="admin/js/common.js"></script>
 <script>
+var userRebateRateMin = parseFloat('<%=com.yy.fast4j.RedisUtil.getObject(application, com.yy.guess.util.CachePre.GUESS_CONFIG, "userRebateRateMin")%>');
+var userRebateRateMax = parseFloat('<%=com.yy.fast4j.RedisUtil.getObject(application, com.yy.guess.util.CachePre.GUESS_CONFIG, "userRebateRateMax")%>');
 $(document).ready(function(){
 	query(20, 1);
 });
@@ -47,9 +49,13 @@ var query = function(pageSize, pageNo) {
 						return (obj.rebateRate * 100).toFixed(2) + "%";
 					}},
 					{fn : function(obj){
+						return (obj.subordinateDefaultRebateRate * 100).toFixed(2) + "%";
+					}},
+					{fn : function(obj){
 						var str = '';
-						str += '<a href="javascript:;" onclick="updateBalance(' + obj.id + ', this)">修改余额</a>';
-						str += '&nbsp;<a>删除</a>';
+						str += '<a href="javascript:;" onclick="updateInfo(' + obj.id + ', this)">修改资料</a>';
+						str += '&nbsp;<a href="javascript:;" onclick="updateRebateRate(' + obj.id + ', this)">修改返点</a>';
+						str += '&nbsp;<a href="javascript:;" onclick="updateBalance(' + obj.id + ', this)">修改余额</a>';
 						return str;
 					}}
 				]);
@@ -61,12 +67,175 @@ var query = function(pageSize, pageNo) {
 	});
 };
 
+//修改返点
+var updateRebateRate = function(userId, e){
+	loadData({
+		url : "administration/userDetail",
+		data : {"userId" : userId},
+		success : function(data) {
+			if(data.code == 100) {
+				loadData({
+					url : "administration/userDetail",
+					data : {"userId" : data.result.superUserId},
+					success : function(data2) {
+						if(data2.code == 100) {
+							var str = '';
+							str += '<tr class="contentTr detailTr"><td colspan="99" style="padding:4px;">';
+							str += '输入返点：<input type="text" id="updateRebateRate_rebateRate" value="' + (data.result.rebateRate * 100).toFixed(2) + '" style="width:40px;">%';
+							var rateMax = 0;
+							if(data2.result == null) {
+								rateMax = userRebateRateMax;
+							} else {
+								rateMax = data2.result.rebateRate < userRebateRateMax ? data2.result.rebateRate : userRebateRateMax;
+							}
+							str += '&nbsp;&nbsp;<span style="color:red;">范围' + (userRebateRateMin * 100).toFixed(2) + '% ~ ' + (rateMax * 100).toFixed(2) + '%<span>';
+							str += '&nbsp;&nbsp;<input type="button" value="更改" onclick="updateRebateRate2(' + userId + ', ' + userRebateRateMin + ', ' + rateMax + ')">';
+							str += '&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().parent().remove()">';
+							str += '</td></tr>';
+							$("tr.detailTr").remove();
+							$(e).parent().parent().after(str);
+						} else {
+							showMsg(data2.msg);
+						}
+					}
+				});
+			} else {
+				showMsg(data.msg);
+			}
+		},
+		redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
+	});
+};
+var updateRebateRate2 = function(userId, rateMin, rateMax) {
+	var rebateRate = $.trim($("#updateRebateRate_rebateRate").val());
+	if(empty(rebateRate)) {
+		showMsg("请输入返点");
+		return;
+	}
+	if(isNaN(rebateRate)) {
+		showMsg("返点必须是一个数字");
+		return;
+	}
+	var rebateRateStr = parseFloat(rebateRate).toFixed(2);
+	
+	var newRebateRate = parseFloat(rebateRateStr) / 100;
+	if(newRebateRate < rateMin || newRebateRate > rateMax) {
+		showMsg("不在范围内");
+		return;
+	}
+	
+	if(confirm("确定修改？")) {
+		loadData({
+			url : "administration/updateRebateRate",
+			data : {
+				"userId" : userId,
+				"rebateRate" : newRebateRate
+			},
+			success : function(data) {
+				showMsg(data.msg);
+				if(data.code == 100) {
+					$("#updateRebateRate_rebateRate").val(rebateRateStr);
+				}
+			}
+		});
+	}
+};
+
+//修改资料
+var updateInfo = function(userId, e) {
+	loadData({
+		url : "administration/userDetail",
+		data : {"userId" : userId},
+		success : function(data) {
+			if(data.code == 100) {
+				var obj = data.result;
+				var str = '';
+				str += '<tr class="contentTr detailTr"><td colspan="99" style="padding:4px;">';
+				str += '<div style="margin-top:4px;">昵称：<input type="text" id="updateInfo_nickName" value="' + obj.nickName + '"></div>';
+				str += '<div style="margin-top:4px;">QQ：<input type="text" id="updateInfo_qq" value="' + obj.qq + '"></div>';
+				str += '<div style="margin-top:4px;">手机：<input type="text" id="updateInfo_phone" value="' + obj.phone + '"></div>';
+				str += '<div style="margin-top:4px;">邮箱：<input type="text" id="updateInfo_email" value="' + obj.email + '"></div>';
+				str += '<div style="margin-top:4px;"><input type="button" value="修改" onclick="updateInfo2(' + userId + ')">&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().parent().remove()"></div>';
+				str += '</td></tr>';
+				$("tr.detailTr").remove();
+				$(e).parent().parent().after(str);
+			} else {
+				showMsg(data.msg);
+			}
+		},
+		redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
+	});
+};
+var updateInfo2 = function(userId) {
+	var nickName = $.trim($("#updateInfo_nickName").val());
+	var qq = $.trim($("#updateInfo_qq").val());
+	var phone = $.trim($("#updateInfo_phone").val());
+	var email = $.trim($("#updateInfo_email").val());
+	if(confirm("确定修改？")) {
+		loadData({
+			url : "administration/updateInfo",
+			data : {
+				"userId" : userId,
+				"nickName" : nickName,
+				"qq" : qq,
+				"phone" : phone,
+				"email" : email
+			},
+			success : function(data) {
+				showMsg(data.msg);
+			},
+			redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
+		});
+	}
+};
+
 //修改余额
 var updateBalance = function(userId, e){
 	var str = '';
-	str += '<tr class="contentTr detailTr"><td colspan="99">';
-	str += '';
+	str += '<tr class="contentTr detailTr"><td colspan="99" style="padding:4px;">';
+	str += '更改金额：<input id="updateBalance_amount" type="number" step="0.000001" style="width:100px;">';
+	str += '&nbsp;&nbsp;类型：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.TradeType.class, "updateBalance_type", "width:60px;", "其它")%>';
+	str += '&nbsp;&nbsp;备注：<input type="text" id="updateBalance_description">';
+	str += '&nbsp;&nbsp;<input type="button" value="更改" onclick="updateBalance2(' + userId + ')">';
+	str += '&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().remove()">';
 	str += '</td></tr>';
+	$("tr.detailTr").remove();
+	$(e).parent().parent().after(str);
+};
+var updateBalance2 = function(userId){
+	var amount = $.trim($("#updateBalance_amount").val());
+	var type = $.trim($("#updateBalance_type").val());
+	var description = $.trim($("#updateBalance_description").val());
+	if(empty(amount) || isNaN(amount)) {
+		showMsg("金额必须是一个数字");
+		return;
+	}
+	if(parseFloat(amount) == 0) {
+		showMsg("金额不能为零");
+		return;
+	}
+	if(empty(type)) {
+		showMsg("请选择类型");
+		return;
+	}
+	if(!confirm('确定更改吗？')) return;
+	loadData({
+		url : "administration/updateBalance",
+		data : {
+			"amount" : amount,
+			"type" : type,
+			"description" : description,
+			"userId" : userId
+		},
+		success : function(data) {
+			showMsg(data.msg);
+			if(data.code == 100) {
+				$("#updateBalance_amount").val("");
+				$("#updateBalance_description").val("");
+			}
+		},
+		redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
+	});
 };
 </script>
 </head>
@@ -107,6 +276,7 @@ var updateBalance = function(userId, e){
 			<td><strong>登陆时间</strong></td>
 			<td><strong>登陆类型</strong></td>
 			<td><strong>返点</strong></td>
+			<td><strong>下级默认返点</strong></td>
 			<td><strong>操作</strong></td>
 		</tr>
 	</table>

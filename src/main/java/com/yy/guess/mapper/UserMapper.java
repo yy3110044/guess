@@ -4,7 +4,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-
 import com.yy.guess.po.User;
 import com.yy.fast4j.QueryCondition;
 
@@ -24,4 +23,14 @@ public interface UserMapper {
     
     @Update("update guess_user set balance = balance + #{amount} where id = #{userId}")
     void plusBalance(double amount, int userId);//加余额
+    
+    @Update("update guess_user set nickName = #{nickName}, qq = #{qq}, phone = #{phone}, email = #{email} where id = #{userId}")
+    void updateInfo(String nickName, String qq, String phone, String email, int userId);
+
+    @Update("update guess_user set rebateRate = #{rebateRate} where id = #{userId}")
+    void updateRebateRate(double rebateRate, int userId);
+    
+    //根据rebateRate修改下级默认返点，一般根updateRebateRate()方法一起用
+    @Update("update guess_user set subordinateDefaultRebateRate = #{rebateRate} where id = #{userId} and subordinateDefaultRebateRate > #{rebateRate}")
+    void updateSubordinateDefaultRebateRate(double rebateRate, int userId);
 }

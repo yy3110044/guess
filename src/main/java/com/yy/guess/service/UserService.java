@@ -15,4 +15,6 @@ public interface UserService {
     /*****************************************************************分隔线************************************************************************/
 
     double getBalance(int userId);
+    void updateInfo(String nickName, String qq, String phone, String email, int userId);
+    void updateRebateRate(double rebateRate, int userId);
 }

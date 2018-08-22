@@ -2,6 +2,7 @@ package com.yy.guess.controller.administration;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,12 +12,14 @@ import com.yy.fast4j.Fast4jUtils;
 import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
+import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.User;
 import com.yy.guess.po.enums.TradeType;
 import com.yy.guess.service.TradeFlowService;
 import com.yy.guess.service.UserService;
+import com.yy.guess.util.CachePre;
 
 /**
  * 会员管理
@@ -32,6 +35,9 @@ public class UserAdminController {
 	
 	@Autowired
 	private TradeFlowService tfs;
+	
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
 	
 	@RequestMapping("/userTreeList")
 	public ResponseObject userTreeList(@RequestParam(defaultValue="0") int superUserId,
@@ -81,6 +87,12 @@ public class UserAdminController {
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
 	}
 	
+	//用户详情
+	@RequestMapping("/userDetail")
+	public ResponseObject userDetail(@RequestParam int userId) {
+		return new ResponseObject(100, "返回成功", us.findById(userId));
+	}
+	
 	//删除用户
 	@RequestMapping("/userDelete")
 	public ResponseObject userDelete(@RequestParam int userId) {
@@ -100,5 +112,37 @@ public class UserAdminController {
                                         @RequestParam int userId) {
 		Object[] result = tfs.updateBalance(amount, type, description, userId);
 		return new ResponseObject((Integer)result[0], (String)result[1]);
+	}
+	
+	//修改返点
+	@RequestMapping("/updateRebateRate")
+	public ResponseObject updateRebateRate(@RequestParam double rebateRate,
+                                           @RequestParam int userId) {
+		double userRebateRateMax = Double.parseDouble(RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "userRebateRateMax"));
+		double userRebateRateMin = Double.parseDouble(RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "userRebateRateMin"));
+		
+		User user = us.findById(userId);
+		User superUser = us.findById(user.getSuperUserId());
+		
+		if(superUser != null) {
+			userRebateRateMax = superUser.getRebateRate() < userRebateRateMax ? superUser.getRebateRate() : userRebateRateMax;
+		}
+		
+		if(rebateRate > userRebateRateMax || rebateRate < userRebateRateMin) {
+			return new ResponseObject(101, "不在范围内");
+		}
+		us.updateRebateRate(rebateRate, userId);
+		return new ResponseObject(100, "修改成功");
+	}
+	
+	//修改用户信息
+	@RequestMapping("/updateInfo")
+	public ResponseObject updateInfo(@RequestParam int userId,
+                                     String nickName,
+                                     String qq,
+                                     String phone,
+                                     String email) {
+		us.updateInfo(nickName, qq, phone, email, userId);
+		return new ResponseObject(100, "修改成功");
 	}
 }

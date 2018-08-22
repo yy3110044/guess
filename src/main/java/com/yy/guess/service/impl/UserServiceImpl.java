@@ -56,4 +56,15 @@ public class UserServiceImpl implements UserService {
 		Double balance = mapper.getBalance(userId);
 		return balance != null ? balance : 0;
 	}
+
+	@Override
+	public void updateInfo(String nickName, String qq, String phone, String email, int userId) {
+		mapper.updateInfo(nickName, qq, phone, email, userId);
+	}
+
+	@Override
+	public void updateRebateRate(double rebateRate, int userId) {
+		mapper.updateRebateRate(rebateRate, userId);
+		mapper.updateSubordinateDefaultRebateRate(rebateRate, userId);
+	}
 }

@@ -9,6 +9,7 @@ public class PlayType {
 	private int bo;
 	private String paramStr;
 	private String templateClass;
+	private boolean guessStart;
 	private Date createTime = new Date();
 	public int getId() {
 		return id;
@@ -45,6 +46,12 @@ public class PlayType {
 	}
 	public void setTemplateClass(String templateClass) {
 		this.templateClass = templateClass;
+	}
+	public boolean isGuessStart() {
+		return guessStart;
+	}
+	public void setGuessStart(boolean guessStart) {
+		this.guessStart = guessStart;
 	}
 	public Date getCreateTime() {
 		return createTime;

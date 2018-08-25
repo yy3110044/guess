@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yy.guess.mapper.BetMapper;
-import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.mapper.TradeFlowMapper;
 import com.yy.guess.mapper.UserMapper;
@@ -20,7 +21,6 @@ import com.yy.guess.po.TradeFlow;
 import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.po.enums.TradeType;
 import com.yy.guess.service.BetService;
-import com.yy.guess.service.MatchVersusService;
 import com.yy.guess.util.CachePre;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.RedisUtil;
@@ -28,6 +28,8 @@ import com.yy.fast4j.RedisUtil;
 @Repository("betService")
 @Transactional
 public class BetServiceImpl implements BetService {
+	private static final Logger logger = LogManager.getLogger(BetServiceImpl.class);
+	
     @Autowired
     private BetMapper mapper;
     
@@ -129,6 +131,11 @@ public class BetServiceImpl implements BetService {
 			return false;
 		}
 	}
+	
+	@Override
+	public boolean checkGuessStarted(int pleyTypeId) {
+		return this.lockPlayTypeMap.get(pleyTypeId) != null;
+	}
     
     /**
      * 下注方法
@@ -161,6 +168,7 @@ public class BetServiceImpl implements BetService {
 			flow.setAmount(0 - betAmount);
 			flow.setType(TradeType.下注);
 			tfm.add(flow);
+			return true;
 		}
 	}
 	//奖池计算
@@ -172,15 +180,10 @@ public class BetServiceImpl implements BetService {
                                     double odds,
                                     double betAmount,
                                     String key) {
-		Queue<Bet> leftBetQueue = this.getUnSoldBetQueue(CachePre.GUESS_LEFT_UNSOLD_BET_QUEUE, key);//左方未售完下注队列
-		Queue<Bet> rightBetQueue = this.getUnSoldBetQueue(CachePre.GUESS_RIGHT_UNSOLD_BET_QUEUE, key);//右方未售完下注队列
-		
-		double leftBonusPool = this.getBonusPool(CachePre.GUESS_LEFT_BONUS_POOL, key);//左方奖金池
-		double rightBonusPool = this.getBonusPool(CachePre.GUESS_RIGHT_BONUS_POOL, key);//右方奖金池
-
 		double guessAmount = odds * betAmount;//对赌金额
 		switch(betDirection) {
 		case LEFT:
+			double rightBonusPool = this.getBonusPool(CachePre.GUESS_RIGHT_BONUS_POOL, key);//右方奖金池
 			if(guessAmount > rightBonusPool) { //对赌金额大于对方奖金池
 				this.minusOrPlusBonusPool(CachePre.GUESS_RIGHT_BONUS_POOL, key, 0 - rightBonusPool); //减去对方奖金池
 				//对赌金额未售完，还要把Bet存入到缓存中
@@ -189,17 +192,33 @@ public class BetServiceImpl implements BetService {
 				
 				//把未售完的添加到已方奖金池中
 				this.minusOrPlusBonusPool(CachePre.GUESS_LEFT_BONUS_POOL, key, guessAmount - rightBonusPool);//把未售完的添加到己方奖金池中
-				//接下来，还要从对方未售完的bet缓存中修改
 				
+				//接下来，还要从对方未售完的bet缓存中减去金额
+				this.minusBet(CachePre.GUESS_RIGHT_BONUS_POOL, key, rightBonusPool);
 			} else { //对赌金额小于等于对方奖金池
 				this.minusOrPlusBonusPool(CachePre.GUESS_RIGHT_BONUS_POOL, key, 0 - guessAmount); //减去对方奖金池
-				Bet bet = this.generateAndSaveBet(versusId, playTypeId, userId, userName, betDirection, odds, betAmount, betAmount, true);
+				this.generateAndSaveBet(versusId, playTypeId, userId, userName, betDirection, odds, betAmount, betAmount, true);
+				
+				//从对方未售完的bet缓存中减去金额
+				this.minusBet(CachePre.GUESS_RIGHT_BONUS_POOL, key, guessAmount);
 			}
 			break;
 		case RIGHT:
-
+			double leftBonusPool = this.getBonusPool(CachePre.GUESS_LEFT_BONUS_POOL, key);//左方奖金池
+			if(guessAmount > leftBonusPool) {
+				this.minusOrPlusBonusPool(CachePre.GUESS_LEFT_BONUS_POOL, key, 0 - leftBonusPool);
+				Bet bet = this.generateAndSaveBet(versusId, playTypeId, userId, userName, betDirection, odds, betAmount, guessAmount - leftBonusPool, false);
+				this.addBetToRedis(CachePre.GUESS_RIGHT_UNSOLD_BET_QUEUE, key, bet);
+				this.minusOrPlusBonusPool(CachePre.GUESS_RIGHT_BONUS_POOL, key, guessAmount - leftBonusPool);
+				this.minusBet(CachePre.GUESS_LEFT_BONUS_POOL, key, leftBonusPool);
+			} else {
+				this.minusOrPlusBonusPool(CachePre.GUESS_LEFT_BONUS_POOL, key, 0 - guessAmount);
+				this.generateAndSaveBet(versusId, playTypeId, userId, userName, betDirection, odds, betAmount, betAmount, true);
+				this.minusBet(CachePre.GUESS_LEFT_BONUS_POOL, key, guessAmount);
+			}
 			break;
 		default:
+			logger.error("未知的投注方向");
 			throw new RuntimeException("未知的投注方向");
 		}
 	}
@@ -238,21 +257,54 @@ public class BetServiceImpl implements BetService {
 	}
 	//添加一个未售完bet到缓存
 	private void addBetToRedis(String pre, String key, Bet bet) {
+		if(bet.getSoldAmount() >= bet.getBetAmount() || bet.isSoldOut()) {
+			RuntimeException e = new RuntimeException("已被售完的，不能添加：betAmount：" + bet.getBetAmount() + "，soldAmount：" + bet.getSoldAmount() + "，soldOut：" + bet.isSoldOut());
+			logger.error(e);
+			throw e;
+		}
 		@SuppressWarnings("unchecked")
 		Queue<Bet> betQueue = (Queue<Bet>)RedisUtil.getObject(redisTemplate, pre, key);
+		if(betQueue == null) {
+			betQueue = new LinkedList<Bet>();
+		}
 		betQueue.offer(bet);
 		RedisUtil.set(redisTemplate, pre, key, betQueue);
 	}
-	//从缓存bet中国消耗一定下载
+	//从缓存bet中国消耗一定下注
 	private void minusBet(String pre, String key, double minusMonus) {
-		
-	}
-	/*
-	//返回未售完的投注队列
-	private Queue<Bet> getUnSoldBetQueue(String pre, String key) {
+		if(minusMonus <= 0) {
+			RuntimeException e = new RuntimeException("minusMonus必须大于零");
+			logger.error(e);
+			throw e;
+		}
 		@SuppressWarnings("unchecked")
-		Queue<Bet> betQueue = (Queue<Bet>)RedisUtil.getObject(redisTemplate, pre, key);
-		return betQueue == null ? new LinkedList<Bet>() : betQueue;
+		Queue<Bet> queue = (Queue<Bet>)RedisUtil.getObject(redisTemplate, pre, key);
+		if(queue == null) {
+			RuntimeException e = new RuntimeException("betQueue为空");
+			logger.error(e);
+			throw e;
+		}
+		this.recursiveMinusBet(queue, minusMonus);//递归
 	}
-	*/
+	private void recursiveMinusBet(Queue<Bet> queue, double minusMonus) {
+		Bet bet = queue.peek();
+		if(bet == null) {
+			RuntimeException e = new RuntimeException("bet为空");
+			logger.error(e);
+			throw e;
+		}
+		
+		double lastAmount = bet.getBetAmount() - bet.getSoldAmount(); //未售完的金额
+		if(lastAmount < minusMonus) { //未售完的，小于要消耗的金额，说明还要再取
+			queue.poll();//从queue中移除
+			mapper.updateSoldAmount(bet.getBetAmount(), true, bet.getId());//更新数据库
+			this.recursiveMinusBet(queue, minusMonus - lastAmount);//递归调用
+		} else if(lastAmount > minusMonus) { //未售完的，大于要消耗的金额，说明够了，还有剩
+			bet.setSoldAmount(bet.getSoldAmount() + minusMonus);
+			mapper.updateSoldAmount(bet.getSoldAmount(), false, bet.getId()); //更新数据库
+		} else { //未售完的，等于要消耗的金额，说明刚好售完
+			queue.poll();//从queue中移除
+			mapper.updateSoldAmount(bet.getBetAmount(), true, bet.getId()); //更新数据库
+		}
+	}
 }

@@ -4,18 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.ResponseObject;
+import com.yy.guess.component.ConfigComponent;
 import com.yy.guess.po.AdminUser;
 import com.yy.guess.po.Config;
 import com.yy.guess.service.AdminUserService;
-import com.yy.guess.service.ConfigService;
-import com.yy.guess.util.CachePre;
 
 /**
  * 网站信息controller
@@ -30,12 +27,8 @@ public class WebSiteAdminController {
 	private AdminUserService aus;
 	
 	@Autowired
-	private ConfigService cs;
-	
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	private ConfigComponent cfgCom;
 
-	
 	@RequestMapping("/getWebsiteInfo")
 	public ResponseObject getWebsiteInfo(HttpServletRequest req) {
 		int adminUserId = (Integer)req.getAttribute("adminUserId");
@@ -53,7 +46,7 @@ public class WebSiteAdminController {
 	
 	@RequestMapping("/getAllConfigs")
 	public ResponseObject getAllConfigs() {
-		return new ResponseObject(100, "返回成功", cs.query(null));
+		return new ResponseObject(100, "返回成功", cfgCom.getAllConfig());
 	}
 	
 	//修改配置(同时修改数据库与缓存)
@@ -68,10 +61,8 @@ public class WebSiteAdminController {
 				configs[i] = new Config();
 				configs[i].setName(strs[0]);
 				configs[i].setVal(strs[1]);
-				
-				RedisUtil.set(redisTemplate, CachePre.GUESS_CONFIG, configs[i].getName(), configs[i].getVal());
 			}
-			cs.update(configs);
+			cfgCom.update(configs);
 			return new ResponseObject(100, "修改成功");
 		} else {
 			return new ResponseObject(101, "参数不能为空");

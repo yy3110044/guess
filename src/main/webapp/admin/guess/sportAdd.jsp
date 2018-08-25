@@ -3,7 +3,7 @@
 <head>
 <base href="${basePath}"/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>添加项目 - <%=com.yy.fast4j.RedisUtil.getObject(application, com.yy.guess.util.CachePre.GUESS_CONFIG, "webTitle")%></title>
+<title>添加项目 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <link rel="stylesheet" href="admin/css/bootstrap.css">
 <link rel="stylesheet" href="admin/css/css.css">
 <script src="js/jquery.js"></script>

@@ -2,7 +2,6 @@ package com.yy.guess.controller.administration;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,14 +11,13 @@ import com.yy.fast4j.Fast4jUtils;
 import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
-import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.fast4j.ResponseObject;
+import com.yy.guess.component.ConfigComponent;
 import com.yy.guess.po.User;
 import com.yy.guess.po.enums.TradeType;
 import com.yy.guess.service.TradeFlowService;
 import com.yy.guess.service.UserService;
-import com.yy.guess.util.CachePre;
 
 /**
  * 会员管理
@@ -37,7 +35,7 @@ public class UserAdminController {
 	private TradeFlowService tfs;
 	
 	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	private ConfigComponent cfgCom;
 	
 	@RequestMapping("/userTreeList")
 	public ResponseObject userTreeList(@RequestParam(defaultValue="0") int superUserId,
@@ -118,8 +116,8 @@ public class UserAdminController {
 	@RequestMapping("/updateRebateRate")
 	public ResponseObject updateRebateRate(@RequestParam double rebateRate,
                                            @RequestParam int userId) {
-		double userRebateRateMax = Double.parseDouble(RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "userRebateRateMax"));
-		double userRebateRateMin = Double.parseDouble(RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "userRebateRateMin"));
+		double userRebateRateMax = cfgCom.getUserRebateRateMax();
+		double userRebateRateMin = cfgCom.getUserRebateRateMin();
 		
 		User user = us.findById(userId);
 		User superUser = us.findById(user.getSuperUserId());

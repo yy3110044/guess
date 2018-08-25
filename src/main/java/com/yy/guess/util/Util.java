@@ -2,6 +2,9 @@ package com.yy.guess.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import javax.servlet.ServletContext;
+import com.yy.fast4j.Fast4jUtils;
+import com.yy.guess.component.ConfigComponent;
 
 public class Util {
 	private Util() {}
@@ -41,5 +44,9 @@ public class Util {
 			}
 		}
 		return false;
+	}
+	
+	public static ConfigComponent getConfigCom(ServletContext sc) {
+		return Fast4jUtils.getBean(ConfigComponent.class, sc);
 	}
 }

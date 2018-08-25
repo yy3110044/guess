@@ -56,6 +56,7 @@ var query = function(pageSize, pageNo) {
 						str += '<a href="javascript:;" onclick="updateInfo(' + obj.id + ', this)">修改资料</a>';
 						str += '&nbsp;<a href="javascript:;" onclick="updateRebateRate(' + obj.id + ', this)">修改返点</a>';
 						str += '&nbsp;<a href="javascript:;" onclick="updateBalance(' + obj.id + ', this)">修改余额</a>';
+						str += '&nbsp;<a href="admin/tradeFlow/tradeFlowList.jsp?userId=' + obj.id + '" target="_blank">查看流水</a>';
 						return str;
 					}}
 				]);

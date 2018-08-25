@@ -20,7 +20,7 @@ $(document).ready(function(){
 					var obj = list[i];
 					str += '<tr>';
 					str += '<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">' + obj.description + '：</td>';
-					str += '<td><input class="configInput" type="text" name="' + obj.name + '" value="' + obj.val + '" style="width:300px;"></td>';
+					str += '<td><input class="configInput" type="text" name="' + obj.name + '" value="' + obj.val + '" data-oldValue="' + obj.val + '" style="width:300px;"></td>';
 					str += '</tr>';
 				}
 				$("table.table-bordered").prepend(str);
@@ -36,7 +36,10 @@ var modify = function(){
 		$("input.configInput").each(function(){
 			var name = $.trim($(this).attr("name"));
 			var val = $.trim($(this).val());
-			params.push(name + "=>" + val);
+			var oldValue = $.trim($(this).attr("data-oldValue"));
+			if(val != oldValue) { //发生了改变
+				params.push(name + "=>" + val);
+			}
 		});
 		loadData({
 			url : "administration/modifyConfig",

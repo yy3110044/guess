@@ -84,6 +84,7 @@ INSERT INTO guess_config VALUES(null, 'webTitle', '竞猜', '网站标题名');
 INSERT INTO guess_config VALUES(null, 'uploadUrl', 'http://aidazhou.cn/staticSourceAdmin/fileUpload', '文件上传url');
 INSERT INTO guess_config VALUES(null, 'userRebateRateMax', '0.1', '用户返点率上限');
 INSERT INTO guess_config VALUES(null, 'userRebateRateMin', '0', '用户返点率下限');
+INSERT INTO guess_config VALUES(null, 'platformRate', '0.03', '平台抽成');
 
 /*体育运动表*/
 DROP TABLE IF EXISTS `guess_sport`;
@@ -180,7 +181,7 @@ CREATE TABLE `guess_bet` (
   `userId` int(11) COMMENT '下注用户 id',
   `userName` varchar(128) COMMENT '下注用户名',
   `betDirection` enum('LEFT', 'RIGHT') COMMENT '下注的哪一方',
-  `odds` decimal(15, 6) COMMENT '赔率',
+  `odds` decimal(9, 4) COMMENT '赔率',
   `betAmount` decimal(15, 6) COMMENT '下注金额',
   `soldAmount` decimal(15, 6) COMMENT '已被认购金额',
   `soldOut` bit(1) COMMENT '是否已售完',
@@ -202,8 +203,11 @@ CREATE TABLE `guess_trade_flow` (
   `type` enum('下注 ', '退款', '返点', '返奖', '充值', '提现', '其它') COMMENT '类型',
   `description` varchar(256) COMMENT '描述',
   `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
-  PRIMARY KEY (`id`)
+  KEY `type` (`type`),
+  KEY `userId_type` (`userId`, `type`),
+  KEY `createTime` (`createTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*比赛战队、队伍表*/

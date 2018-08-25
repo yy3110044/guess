@@ -23,9 +23,9 @@ public class RedisConfig {
 	@Bean
 	public JedisPoolConfig jedisPoolConfig() {
 		JedisPoolConfig config = new JedisPoolConfig();
-		config.setMaxTotal(200);//最大分配的连接数
-		config.setMaxIdle(60);//最大空闲连接数
-		config.setMinIdle(20);//最小空闲连接数
+		config.setMaxTotal(500);//最大分配的连接数
+		config.setMaxIdle(150);//最大空闲连接数
+		config.setMinIdle(50);//最小空闲连接数
 		config.setMaxWaitMillis(5000);//建立连接的最大等待时间，超过时间，就会抛出异常，负数表示一直等待
 		config.setTestOnBorrow(false);//当调用borrow Object方法时，是否进行有效性检查
 		config.setTestWhileIdle(true);//连接空闲时是否检验正确性

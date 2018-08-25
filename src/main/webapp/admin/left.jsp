@@ -12,6 +12,7 @@
 			<!--
 			<a href="admin/user/userTreeList.jsp">用户代理</a>
 			-->
+			<a href="admin/tradeFlow/tradeFlowList.jsp">交易流水</a>
 		</div>
 		<div>
 			<span>竞猜管理</span>

@@ -116,21 +116,25 @@ var addImageUploadEvent = function(obj) {
 //填充内容
 var getContentStr = function(param) {
 	var str = '';
-	for(var i=0; i<param.list.length; i++) {
-		var obj = param.list[i];
-		str += '<tr align="center" class="contentTr">';
-		for(var j=0; j<param.fields.length; j++) {
-			var field = param.fields[j];
-			var tdId = parseInt(Math.random() * 10000000000000000, 10);
-			str += '<td id="' + tdId + '">';
-			if(field.fn != null) { //方法不为空，执行方法，并返回
-				str += field.fn(obj, tdId, i);
-			} else { //直接返回字段值
-				str += obj[field.field] == null ? '' : obj[field.field];
+	if(param.list.length > 0) {
+		for(var i=0; i<param.list.length; i++) {
+			var obj = param.list[i];
+			str += '<tr align="center" class="contentTr">';
+			for(var j=0; j<param.fields.length; j++) {
+				var field = param.fields[j];
+				var tdId = parseInt(Math.random() * 10000000000000000, 10);
+				str += '<td id="' + tdId + '">';
+				if(field.fn != null) { //方法不为空，执行方法，并返回
+					str += field.fn(obj, tdId, i);
+				} else { //直接返回字段值
+					str += obj[field.field] == null ? '' : obj[field.field];
+				}
+				str += '</td>';
 			}
-			str += '</td>';
+			str += '</tr>';
 		}
-		str += '</tr>';
+	} else {
+		str += '<tr align="center" class="contentTr"><td colspan="99" style="color:red;text-align:center;">没有记录</td></tr>';
 	}
 	return str;
 };

@@ -15,6 +15,7 @@ public interface BetService {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
     
+    void loadStartedGuess(); //从数据库读取已开启的竞猜
     boolean startGuessByVersusId(int versusId); //开启对阵下的所有竞猜
     boolean stopGuessByVersusId(int versusId); //关闭对阵下的的有竞猜
     boolean startGuessByPlayTypeId(int playTypeId); //开启某个竞猜

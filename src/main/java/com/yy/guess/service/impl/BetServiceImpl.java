@@ -85,12 +85,21 @@ public class BetServiceImpl implements BetService {
     private Map<Integer, PlayType> lockPlayTypeMap = new ConcurrentHashMap<Integer, PlayType>();
     
     @Override
+    public void loadStartedGuess() {
+    	List<PlayType> ptList = ptm.query(new QueryCondition().addCondition("guessStart", "=", true));
+    	for(PlayType pt : ptList) {
+    		this.lockPlayTypeMap.put(pt.getId(), pt);
+    	}
+    }
+    
+    @Override
 	public boolean startGuessByVersusId(int versusId) {
     	List<PlayType> ptList = ptm.query(new QueryCondition().addCondition("versusId", "=", versusId));
     	if(ptList.size() > 0) {
     		for(PlayType pt : ptList) {
     			lockPlayTypeMap.put(pt.getId(), pt);
     		}
+    		ptm.updateGuessStartByVersusId(true, versusId);
     		return true;
     	} else {
     		return false;
@@ -104,6 +113,7 @@ public class BetServiceImpl implements BetService {
 			for(PlayType pt : ptList) {
 				lockPlayTypeMap.remove(pt.getId());
 			}
+			ptm.updateGuessStartByVersusId(false, versusId);
 			return true;
 		} else {
 			return false;
@@ -115,6 +125,7 @@ public class BetServiceImpl implements BetService {
 		PlayType pt = ptm.findById(playTypeId);
 		if(pt != null) {
 			lockPlayTypeMap.put(pt.getId(), pt);
+			ptm.updateGuessStartByPlayTypeId(true, playTypeId);
 			return true;
 		} else {
 			return false;
@@ -126,6 +137,7 @@ public class BetServiceImpl implements BetService {
 		PlayType pt = ptm.findById(playTypeId);
 		if(pt != null) {
 			lockPlayTypeMap.remove(pt.getId());
+			ptm.updateGuessStartByPlayTypeId(false, playTypeId);
 			return true;
 		} else {
 			return false;
@@ -218,8 +230,9 @@ public class BetServiceImpl implements BetService {
 			}
 			break;
 		default:
-			logger.error("未知的投注方向");
-			throw new RuntimeException("未知的投注方向");
+			RuntimeException e = new RuntimeException("未知的投注方向");
+			logger.error(e);
+			throw e;
 		}
 	}
 	//生成并保存下注对象，并返回

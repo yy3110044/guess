@@ -8,6 +8,7 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import com.yy.guess.component.ConfigComponent;
 import com.yy.guess.component.GuessSettleComponent;
+import com.yy.guess.service.BetService;
 
 @Component
 public class AppRunner implements CommandLineRunner, ApplicationRunner, Ordered {
@@ -16,6 +17,9 @@ public class AppRunner implements CommandLineRunner, ApplicationRunner, Ordered 
 	
 	@Autowired
 	private ConfigComponent cfgCom;
+	
+	@Autowired
+	private BetService bs;
 
 	/**
 	 * 实现Ordered接口，可以实现，不同的操作按顺序启动
@@ -37,7 +41,8 @@ public class AppRunner implements CommandLineRunner, ApplicationRunner, Ordered 
 	//同时在要在实现类上加上@Component注解，这里直接用
 	@Override
 	public void run(String... args) throws Exception {
-		cfgCom.loadConfigToCache();
-		guessSettleComponent.start();
+		bs.loadStartedGuess(); //加载已开启的竞猜
+		cfgCom.loadConfigToCache(); //加载配置到redis
+		guessSettleComponent.start(); //
 	}
 }

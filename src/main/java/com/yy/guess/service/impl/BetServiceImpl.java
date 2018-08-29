@@ -190,7 +190,7 @@ public class BetServiceImpl implements BetService {
 		
 		synchronized (lockPlayType) { //线程同步
 			//奖池计算
-			this.calculateBonusPool(lockPlayType.getVersusId(), playTypeId, userId, userName, betDirection, odds, betAmount);
+			this.calculateBonusPool(lockPlayType.getVersusId(), lockPlayType.getBo(), playTypeId, userId, userName, betDirection, odds, betAmount);
 			
 			double preBalance = um.getBalance(userId);//查询用户原余额
 			um.plusBalance(0 - betAmount, userId); //减去用户余额
@@ -209,6 +209,7 @@ public class BetServiceImpl implements BetService {
 	
 	//奖池计算
 	private void calculateBonusPool(int versusId,
+									int bo,
                                     int playTypeId,
                                     int userId,
                                     String userName,
@@ -245,7 +246,7 @@ public class BetServiceImpl implements BetService {
 		RedisUtil.set(redisTemplate, newestOddsPre, redisKey, odds);
 		
 		//生成Bet对象并保存到redis缓存中
-		this.addBetToRedis(ownSideUnSoldBetQueuePre, redisKey, this.generateAndSaveBet(versusId, playTypeId, userId, userName, betDirection, odds, betAmount, 0, false));
+		this.addBetToRedis(ownSideUnSoldBetQueuePre, redisKey, this.generateAndSaveBet(versusId, bo, playTypeId, userId, userName, betDirection, odds, betAmount, 0, false));
 
 		//计算双方奖池
 		this.calculateBothSideBonusPool(CachePre.GUESS_LEFT_BONUS_POOL, CachePre.GUESS_RIGHT_UNSOLD_BET_QUEUE, redisKey);
@@ -254,6 +255,7 @@ public class BetServiceImpl implements BetService {
 
 	//生成并保存下注对象，并返回
 	private Bet generateAndSaveBet(int versusId,
+							int bo,
                             int playTypeId,
                             int userId,
                             String userName,
@@ -264,6 +266,7 @@ public class BetServiceImpl implements BetService {
                             boolean soldOut) {
 		Bet bet = new Bet();
 		bet.setVersusId(versusId);
+		bet.setBo(bo);
 		bet.setPlayTypeId(playTypeId);
 		bet.setUserId(userId);
 		bet.setUserName(userName);

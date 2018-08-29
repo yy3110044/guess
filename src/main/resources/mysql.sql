@@ -181,6 +181,7 @@ DROP TABLE IF EXISTS `guess_bet`;
 CREATE TABLE `guess_bet` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `versusId` int(11) COMMENT '对阵id',
+  `bo` tinyint COMMENT '对应比赛场次，从1开始，0代表总对阵',
   `playTypeId` int(11) COMMENT '玩法id',
   `userId` int(11) COMMENT '下注用户 id',
   `userName` varchar(128) COMMENT '下注用户名',

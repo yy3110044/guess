@@ -6,6 +6,7 @@ import com.yy.guess.po.enums.BetDirection;
 public class Bet {
 	private int id;
 	private int versusId;
+	private int bo;
 	private int playTypeId;
 	private int userId;
 	private String userName;
@@ -26,6 +27,12 @@ public class Bet {
 	}
 	public void setVersusId(int versusId) {
 		this.versusId = versusId;
+	}
+	public int getBo() {
+		return bo;
+	}
+	public void setBo(int bo) {
+		this.bo = bo;
 	}
 	public int getPlayTypeId() {
 		return playTypeId;

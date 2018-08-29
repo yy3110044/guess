@@ -69,4 +69,22 @@ public class ConfigComponent {
 		String str = RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "platformRate");
 		return Double.parseDouble(str);
 	}
+	
+	//返回赔率上限
+	public double getOddsMax() {
+		String str = RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "oddsMax");
+		return Double.parseDouble(str);
+	}
+	
+	//返回下注金额下限
+	public double getBetAmountMin() {
+		String str = RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "betAmountMin");
+		return Double.parseDouble(str);
+	}
+	
+	//返加下注金额上限
+	public double getBetAmountMax() {
+		String str = RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "betAmountMax");
+		return Double.parseDouble(str);
+	}
 }

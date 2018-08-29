@@ -1,21 +1,20 @@
 package com.yy.guess.controller.user;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.ResponseObject;
-import com.yy.guess.po.Bet;
+import com.yy.guess.component.ConfigComponent;
+import com.yy.guess.po.PlayType;
 import com.yy.guess.po.User;
 import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.service.BetService;
+import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.service.UserService;
-import com.yy.guess.util.CachePre;
 
 /**
  * 下注相关
@@ -24,71 +23,60 @@ import com.yy.guess.util.CachePre;
  */
 @CrossOrigin
 @RestController
-//@RequestMapping(value="/user", method=RequestMethod.POST)
-@RequestMapping(method={RequestMethod.POST, RequestMethod.GET})
+@RequestMapping(value="/user", method=RequestMethod.POST)
 public class BetController {
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
-	
 	@Autowired
 	private UserService us;
 	
 	@Autowired
 	private BetService bs;
 	
-	@RequestMapping("/testBet")
-	public ResponseObject testBet(@RequestParam int versusId,
-                                  @RequestParam int playTypeId,
-                                  @RequestParam int userId,
-                                  @RequestParam BetDirection betDirection,
-                                  @RequestParam double odds,
-                                  @RequestParam double betAmount) {
+	@Autowired
+	private PlayTypeService pts;
+	
+	@Autowired
+	private ConfigComponent cfgCom;
+	
+	@RequestMapping("/bet")
+	public ResponseObject bet(@RequestParam int playTypeId,
+                              @RequestParam BetDirection betDirection,
+                              @RequestParam double odds,
+                              @RequestParam double betAmount,
+                              HttpServletRequest req) {
+		if(odds <= 0 || betAmount <= 0) {
+			return new ResponseObject(101, "赔率、投注金额必须大于零");
+		}
+		
+		if(odds > cfgCom.getOddsMax()) {
+			return new ResponseObject(102, "赔率不能大于" + cfgCom.getOddsMax());
+		}
+		
+		if(betAmount < cfgCom.getBetAmountMin() || betAmount > cfgCom.getBetAmountMax()) {
+			return new ResponseObject(103, "下注金额范围：" + cfgCom.getBetAmountMin() + " ~ " + cfgCom.getBetAmountMax());
+		}
+		
+		PlayType pt = pts.findById(playTypeId);
+		if(pt == null) {
+			return new ResponseObject(104, "玩法不存在");
+		}
+		
+		if(!pt.isGuessStart()) {
+			return new ResponseObject(105, "玩法未开启竞猜");
+		}
+		
+		int userId = (Integer)req.getAttribute("userId");
+
 		User user = us.findById(userId);
 		if(user.getBalance() < betAmount) {
-			return new ResponseObject(101, "用户余额不足");
+			return new ResponseObject(106, "用户余额不足");
 		}
-		boolean result = bs.bet(versusId, playTypeId, userId, user.getUserName(), betDirection, odds, betAmount);
-		return new ResponseObject(100, "下注成功", result);
-	}
-	
-	/**
-	 * 返回奖金池
-	 * @param playTypeId
-	 * @param betDirection
-	 * @return
-	 */
-	@RequestMapping("/getBonusPool")
-	public ResponseObject getBonusPool(@RequestParam int playTypeId, @RequestParam BetDirection betDirection) {
-		Double bonusPool = null;
-		switch(betDirection) {
-		case LEFT:
-			bonusPool = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_LEFT_BONUS_POOL, String.valueOf(playTypeId));
-			break;
-		case RIGHT:
-			bonusPool = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_RIGHT_BONUS_POOL, String.valueOf(playTypeId));
-			break;
+
+		boolean result = bs.bet(playTypeId, userId, user.getUserName(), betDirection, odds, betAmount);
+
+		if(result) {
+			return new ResponseObject(100, "下注成功");
+		} else {
+			return new ResponseObject(107, "下注失败");
 		}
-		return new ResponseObject(100, "返回成功", bonusPool == null ? 0 : bonusPool);
-	}
-	
-	/**
-	 *  返回未售出 bet列表
-	 * @param playTypeId
-	 * @param betDirection
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	@RequestMapping("/getUnSoldBetList")
-	public ResponseObject getUnSoldBetList(@RequestParam int playTypeId, @RequestParam BetDirection betDirection) {
-		List<Bet> betList = null;
-		switch(betDirection) {
-		case LEFT:
-			betList = (List<Bet>)RedisUtil.getObject(redisTemplate, CachePre.GUESS_LEFT_UNSOLD_BET_QUEUE, String.valueOf(playTypeId));
-			break;
-		case RIGHT:
-			betList = (List<Bet>)RedisUtil.getObject(redisTemplate, CachePre.GUESS_RIGHT_UNSOLD_BET_QUEUE, String.valueOf(playTypeId));
-			break;
-		}
-		return new ResponseObject(100, "返回成功", betList);
 	}
 }

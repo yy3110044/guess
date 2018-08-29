@@ -85,6 +85,9 @@ INSERT INTO guess_config VALUES(null, 'uploadUrl', 'http://aidazhou.cn/staticSou
 INSERT INTO guess_config VALUES(null, 'userRebateRateMax', '0.1', '用户返点率上限');
 INSERT INTO guess_config VALUES(null, 'userRebateRateMin', '0', '用户返点率下限');
 INSERT INTO guess_config VALUES(null, 'platformRate', '0.03', '平台抽成');
+INSERT INTO guess_config VALUES(null, 'oddsMax', '1000000', '赔率上限');
+INSERT INTO guess_config VALUES(null, 'betAmountMin', '0.01', '下注金额下限，单位：元');
+INSERT INTO guess_config VALUES(null, 'betAmountMax', '10000', '下注金额上限，单位：元');
 
 /*体育运动表*/
 DROP TABLE IF EXISTS `guess_sport`;

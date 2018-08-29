@@ -21,6 +21,5 @@ public interface BetService {
     boolean startGuessByPlayTypeId(int playTypeId); //开启某个竞猜
     boolean stopGuessByPlayTypeId(int playTypeId); //关闭某个竞猜
     boolean checkGuessStarted(int pleyTypeId); //查看某个玩法是否已开启竞猜
-    //下注
-    boolean bet(int versusId, int playTypeId, int userId, String userName, BetDirection betDirection, double odds, double betAmount);
+    boolean bet(int playTypeId, int userId, String userName, BetDirection betDirection, double odds, double betAmount);//下注
 }

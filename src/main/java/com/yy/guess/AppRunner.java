@@ -7,13 +7,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import com.yy.guess.component.ConfigComponent;
-import com.yy.guess.component.GuessSettleComponent;
+import com.yy.guess.component.GuessMonitor;
 import com.yy.guess.service.BetService;
 
 @Component
 public class AppRunner implements CommandLineRunner, ApplicationRunner, Ordered {
 	@Autowired
-	private GuessSettleComponent guessSettleComponent;
+	private GuessMonitor guessMonitor;
 	
 	@Autowired
 	private ConfigComponent cfgCom;
@@ -43,6 +43,6 @@ public class AppRunner implements CommandLineRunner, ApplicationRunner, Ordered 
 	public void run(String... args) throws Exception {
 		bs.loadStartedGuess(); //加载已开启的竞猜
 		cfgCom.loadConfigToCache(); //加载配置到redis
-		guessSettleComponent.start(); //
+		guessMonitor.start(); //
 	}
 }

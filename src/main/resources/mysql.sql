@@ -190,6 +190,7 @@ CREATE TABLE `guess_bet` (
   `betAmount` decimal(15, 6) COMMENT '下注金额',
   `soldAmount` decimal(15, 6) COMMENT '已被认购金额',
   `soldOut` bit(1) COMMENT '是否已售完',
+  `settlement` bit(1) COMMENT '是否已结算',
   `createTime` datetime COMMENT '创建时间',
   KEY `versusId` (`versusId`),
   KEY `playTypeId` (`playTypeId`),

@@ -5,6 +5,7 @@
 			<span>网站管理</span>
 			<a href="admin/webSite/webSiteInfo.jsp">网站信息</a>
 			<a href="admin/webSite/modifyConfig.jsp">修改参数</a>
+			<a href="admin/webSite/loginLogList.jsp">登陆日志</a>
 		</div>
 		<div>
 			<span>用户管理</span>

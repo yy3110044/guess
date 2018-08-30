@@ -15,7 +15,9 @@ public class Bet {
 	private double betAmount;
 	private double soldAmount;
 	private boolean soldOut;
+	private boolean settlement;
 	private Date createTime = new Date();
+
 	public int getId() {
 		return id;
 	}
@@ -81,6 +83,12 @@ public class Bet {
 	}
 	public void setSoldOut(boolean soldOut) {
 		this.soldOut = soldOut;
+	}
+	public boolean isSettlement() {
+		return settlement;
+	}
+	public void setSettlement(boolean settlement) {
+		this.settlement = settlement;
 	}
 	public Date getCreateTime() {
 		return createTime;

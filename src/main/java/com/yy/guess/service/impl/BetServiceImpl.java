@@ -11,19 +11,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.yy.guess.component.ConfigComponent;
 import com.yy.guess.mapper.BetMapper;
+import com.yy.guess.mapper.MatchVersusBoMapper;
+import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.mapper.TradeFlowMapper;
 import com.yy.guess.mapper.UserMapper;
+import com.yy.guess.playTemplate.GuessPlayTemplate;
+import com.yy.guess.playTemplate.GuessPlayTemplateFactory;
 import com.yy.guess.po.Bet;
+import com.yy.guess.po.MatchVersus;
+import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.TradeFlow;
+import com.yy.guess.po.User;
 import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.po.enums.TradeType;
 import com.yy.guess.service.BetService;
 import com.yy.guess.util.CachePre;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.RedisUtil;
+import com.yy.fast4j.QueryCondition.SortType;
 
 @Repository("betService")
 @Transactional
@@ -44,6 +54,15 @@ public class BetServiceImpl implements BetService {
     
     @Autowired
     private PlayTypeMapper ptm;
+    
+    @Autowired
+    private MatchVersusMapper mvm;
+    
+    @Autowired
+    private MatchVersusBoMapper mvbm;
+    
+    @Autowired
+    private ConfigComponent cfgCom;
     
     @Override
     public void add(Bet obj) {
@@ -373,6 +392,28 @@ public class BetServiceImpl implements BetService {
 			} else {
 				return bonus;
 			}
+		}
+	}
+
+	@Override
+	public void settlement(Bet bet) {
+		MatchVersus versus = mvm.findById(bet.getVersusId());
+		List<MatchVersusBo> boList = mvbm.query(new QueryCondition().addCondition("versusId", "=", bet.getVersusId()).addSort("bo", SortType.ASC));
+		PlayType pt = ptm.findById(bet.getPlayTypeId());
+		
+		GuessPlayTemplate temp = GuessPlayTemplateFactory.getGuessPlayTemplate(pt.getTemplateClass());
+		int result = temp.getResult(versus, boList, pt);
+		if(result < 0) { //左方胜
+			if(bet.getBetDirection() == BetDirection.LEFT) {
+				double bonus = bet.getSoldAmount() * bet.getOdds(); //奖金
+				double unSoldRefund = bet.getBetAmount() - bet.getSoldAmount(); //未售完的退款
+			}
+		} else if(result > 0) { //右方胜
+			if(bet.getBetDirection() == BetDirection.RIGHT) {
+				
+			}
+		} else { //平，不处理
+			return
 		}
 	}
 }

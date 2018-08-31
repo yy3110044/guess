@@ -70,9 +70,9 @@ public class ConfigComponent {
 		return Double.parseDouble(str);
 	}
 	
-	//返回赔率上限
-	public double getOddsMax() {
-		String str = RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "oddsMax");
+	//返回返还率
+	public double getReturnRate() {
+		String str = RedisUtil.getString(redisTemplate, CachePre.GUESS_CONFIG, "returnRate");
 		return Double.parseDouble(str);
 	}
 	

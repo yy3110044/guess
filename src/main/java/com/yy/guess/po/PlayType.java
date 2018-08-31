@@ -10,6 +10,11 @@ public class PlayType {
 	private String paramStr;
 	private String templateClass;
 	private boolean guessStart;
+	private double leftOdds;
+	private double rightOdds;
+	private double leftBonusPool;
+	private double rightBonusPool;
+	private boolean fixedOdds;
 	private Date createTime = new Date();
 	public int getId() {
 		return id;
@@ -52,6 +57,36 @@ public class PlayType {
 	}
 	public void setGuessStart(boolean guessStart) {
 		this.guessStart = guessStart;
+	}
+	public double getLeftOdds() {
+		return leftOdds;
+	}
+	public void setLeftOdds(double leftOdds) {
+		this.leftOdds = leftOdds;
+	}
+	public double getRightOdds() {
+		return rightOdds;
+	}
+	public void setRightOdds(double rightOdds) {
+		this.rightOdds = rightOdds;
+	}
+	public double getLeftBonusPool() {
+		return leftBonusPool;
+	}
+	public void setLeftBonusPool(double leftBonusPool) {
+		this.leftBonusPool = leftBonusPool;
+	}
+	public double getRightBonusPool() {
+		return rightBonusPool;
+	}
+	public void setRightBonusPool(double rightBonusPool) {
+		this.rightBonusPool = rightBonusPool;
+	}
+	public boolean isFixedOdds() {
+		return fixedOdds;
+	}
+	public void setFixedOdds(boolean fixedOdds) {
+		this.fixedOdds = fixedOdds;
 	}
 	public Date getCreateTime() {
 		return createTime;

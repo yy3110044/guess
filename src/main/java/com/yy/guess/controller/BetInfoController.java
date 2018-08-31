@@ -1,6 +1,5 @@
 package com.yy.guess.controller;
 
-import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.ResponseObject;
-import com.yy.guess.po.Bet;
 import com.yy.guess.po.enums.BetDirection;
+import com.yy.guess.service.BetService;
 import com.yy.guess.util.CachePre;
 
 /**
@@ -25,7 +24,10 @@ import com.yy.guess.util.CachePre;
 public class BetInfoController {
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
-	
+
+	@Autowired
+	private BetService bs;
+
 	/**
 	 *    返回奖金池
 	 * @param playTypeId
@@ -42,10 +44,13 @@ public class BetInfoController {
 		case RIGHT:
 			bonusPool = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_RIGHT_BONUS_POOL, String.valueOf(playTypeId));
 			break;
+		default:
+			RuntimeException e = new RuntimeException("未知的betDirection");
+			throw e;
 		}
 		return new ResponseObject(100, "返回成功", bonusPool == null ? 0 : bonusPool);
 	}
-	
+
 	/**
 	 *    返回最新赔率
 	 * @param playTypeId
@@ -54,36 +59,6 @@ public class BetInfoController {
 	 */
 	@RequestMapping("/getNewestOdds")
 	public ResponseObject getNewestOdds(@RequestParam int playTypeId, @RequestParam BetDirection betDirection) {
-		Double newestOdds = null;
-		switch(betDirection) {
-		case LEFT:
-			newestOdds = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_LEFT_NEWEST_ODDS, String.valueOf(playTypeId));
-			break;
-		case RIGHT:
-			newestOdds = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_RIGHT_NEWEST_ODDS, String.valueOf(playTypeId));
-			break;
-		}
-		return new ResponseObject(100, "返回成功", newestOdds == null ? 0 : newestOdds);
-	}
-	
-	/**
-	 *   返回未售出 bet列表
-	 * @param playTypeId
-	 * @param betDirection
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	@RequestMapping("/getUnSoldBetList")
-	public ResponseObject getUnSoldBetList(@RequestParam int playTypeId, @RequestParam BetDirection betDirection) {
-		Collection<Bet> betCollection = null;
-		switch(betDirection) {
-		case LEFT:
-			betCollection = (Collection<Bet>)RedisUtil.getObject(redisTemplate, CachePre.GUESS_LEFT_UNSOLD_BET_QUEUE, String.valueOf(playTypeId));
-			break;
-		case RIGHT:
-			betCollection = (Collection<Bet>)RedisUtil.getObject(redisTemplate, CachePre.GUESS_RIGHT_UNSOLD_BET_QUEUE, String.valueOf(playTypeId));
-			break;
-		}
-		return new ResponseObject(100, "返回成功", betCollection);
+		return new ResponseObject(100, "返回成功", bs.getOdds(playTypeId, betDirection));
 	}
 }

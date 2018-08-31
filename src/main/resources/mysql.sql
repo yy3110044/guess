@@ -84,8 +84,8 @@ INSERT INTO guess_config VALUES(null, 'webTitle', '竞猜', '网站标题名');
 INSERT INTO guess_config VALUES(null, 'uploadUrl', 'http://aidazhou.cn/staticSourceAdmin/fileUpload', '文件上传url');
 INSERT INTO guess_config VALUES(null, 'userRebateRateMax', '0.1', '用户返点率上限');
 INSERT INTO guess_config VALUES(null, 'userRebateRateMin', '0', '用户返点率下限');
-INSERT INTO guess_config VALUES(null, 'platformRate', '0.03', '平台抽成');
-INSERT INTO guess_config VALUES(null, 'oddsMax', '1000000', '赔率上限');
+INSERT INTO guess_config VALUES(null, 'platformRate', '0.05', '平台抽成');
+INSERT INTO guess_config VALUES(null, 'returnRate', '1', '返还率，此参数影响赔率');
 INSERT INTO guess_config VALUES(null, 'betAmountMin', '0.01', '下注金额下限，单位：元');
 INSERT INTO guess_config VALUES(null, 'betAmountMax', '10000', '下注金额上限，单位：元');
 
@@ -171,6 +171,11 @@ CREATE TABLE `guess_play_type` (
   `paramStr` varchar(128) COMMENT '此玩法需要用到的参数，json格式字符串',
   `templateClass` varchar(128) COMMENT '模版类class',
   `guessStart` bit(1) COMMENT '是否开启竞猜',
+  `leftOdds` decimal(9, 4) COMMENT '左方赔率',
+  `rightOdds` decimal(9, 4) COMMENT '右方赔率',
+  `leftBonusPool` decimal(15, 6) COMMENT '左方奖金池',
+  `rightBonusPool` decimal(15, 6) COMMENT '右方奖金池',
+  `fixedOdds` bit(1) COMMENT '是否固定赔率',
   `createTime` datetime COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `versusId` (`versusId`)
@@ -186,10 +191,7 @@ CREATE TABLE `guess_bet` (
   `userId` int(11) COMMENT '下注用户 id',
   `userName` varchar(128) COMMENT '下注用户名',
   `betDirection` enum('LEFT', 'RIGHT') COMMENT '下注的哪一方',
-  `odds` decimal(9, 4) COMMENT '赔率',
   `betAmount` decimal(15, 6) COMMENT '下注金额',
-  `soldAmount` decimal(15, 6) COMMENT '已被认购金额',
-  `soldOut` bit(1) COMMENT '是否已售完',
   `settlement` bit(1) COMMENT '是否已结算',
   `createTime` datetime COMMENT '创建时间',
   KEY `versusId` (`versusId`),

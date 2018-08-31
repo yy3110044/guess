@@ -11,10 +11,7 @@ public class Bet {
 	private int userId;
 	private String userName;
 	private BetDirection betDirection;
-	private double odds;
 	private double betAmount;
-	private double soldAmount;
-	private boolean soldOut;
 	private boolean settlement;
 	private Date createTime = new Date();
 
@@ -60,29 +57,11 @@ public class Bet {
 	public void setBetDirection(BetDirection betDirection) {
 		this.betDirection = betDirection;
 	}
-	public double getOdds() {
-		return odds;
-	}
-	public void setOdds(double odds) {
-		this.odds = odds;
-	}
 	public double getBetAmount() {
 		return betAmount;
 	}
 	public void setBetAmount(double betAmount) {
 		this.betAmount = betAmount;
-	}
-	public double getSoldAmount() {
-		return soldAmount;
-	}
-	public void setSoldAmount(double soldAmount) {
-		this.soldAmount = soldAmount;
-	}
-	public boolean isSoldOut() {
-		return soldOut;
-	}
-	public void setSoldOut(boolean soldOut) {
-		this.soldOut = soldOut;
 	}
 	public boolean isSettlement() {
 		return settlement;
@@ -95,26 +74,5 @@ public class Bet {
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Bet other = (Bet) obj;
-		if (id != other.id)
-			return false;
-		return true;
 	}
 }

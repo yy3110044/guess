@@ -18,6 +18,7 @@ import com.yy.guess.po.Bet;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.TradeFlow;
 import com.yy.guess.po.enums.BetDirection;
+import com.yy.guess.po.enums.BetStatus;
 import com.yy.guess.po.enums.TradeType;
 import com.yy.guess.service.BetService;
 import com.yy.guess.util.CachePre;
@@ -145,6 +146,29 @@ public class BetServiceImpl implements BetService {
 			return false;
 		}
 	}
+	
+	@Override
+	public boolean stopGuessByVerssuIdAndBo(int versusId, int bo) {
+		List<PlayType> ptList = ptm.query(new QueryCondition().addCondition("versusId", "=", versusId).addCondition("bo", "=", bo));
+		if(ptList.size() > 0) {
+			for(PlayType pt : ptList) {
+				lockPlayTypeMap.remove(pt.getId());
+				double[] bonusPool = this.getBonusPool(pt.getId());
+				if(pt.isFixedOdds()) {
+					ptm.updateBonusPool(bonusPool[0], bonusPool[1], pt.getId());
+				} else {
+					double leftOdds = oddsCom.getNewestOdds(pt.getId(), BetDirection.LEFT);
+					double rightOdds = oddsCom.getNewestOdds(pt.getId(), BetDirection.RIGHT);
+					ptm.updateOddsAndBonusPool(leftOdds, rightOdds, bonusPool[0], bonusPool[1], pt.getId());
+				}
+				this.cleanGuessCache(pt.getId());
+			}
+			ptm.updateGuessStartByVersusIdAndBo(false, versusId, bo);
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	//开启某个竞猜
 	@Override
@@ -243,7 +267,7 @@ public class BetServiceImpl implements BetService {
 			bet.setUserName(userName);
 			bet.setBetDirection(betDirection);
 			bet.setBetAmount(betAmount);
-			bet.setSettlement(false);
+			bet.setStatus(BetStatus.已下注);
 			mapper.add(bet);
 			
 			//修改缓存奖金池

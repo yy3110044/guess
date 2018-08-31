@@ -377,7 +377,7 @@ var loadPlayType = function(){
 					if(boList.length > 0) {
 						for(var i=0; i<boList.length; i++) {
 							var obj = boList[i];
-							str += '<div>' + (i + 1) + '、名称：' + obj.name + '，参数：' + (empty(obj.paramStr) ? '' : obj.paramStr) + '，模版：' + obj.templateClass + '。&nbsp;&nbsp;<a href="javascript:;" onclick="deletePlayType(' + obj.id + ', this)">删除</a></div>';
+							str += '<div>' + (i + 1) + '、名称：' + obj.name + '，参数：' + (empty(obj.paramStr) ? '' : obj.paramStr) + '，模版：' + obj.templateClass + '。' + (obj.guessStart?'已开启竞猜':'已关闭竞猜') + '&nbsp;&nbsp;<a href="javascript:;" onclick="deletePlayType(' + obj.id + ', this)">删除</a></div>';
 						}
 					} else {
 						str += '<div style="color:red;">未添加</div>';
@@ -419,6 +419,7 @@ var detail = function(versusId, e) {
 				var str = '<tr class="contentTr detailTr"><td colspan="99">';
 				str += '<div style="margin-top:8px;font-weight:bold;font-size:16px;">' + versus.matchName + '&nbsp;' + versus.name + '&nbsp;' + versus.leftTeamName + '&nbsp;VS&nbsp;' + versus.rightTeamName + '</div>';
 				str += '<div style="margin-top:8px;border:1px dashed blue;padding:4px;" id="versus' + versus.id + '" class="detailDiv">';
+				str += '<div style="margin-top:4px;font-weight:bold;font-size:16px;">主盘口</div>';
 				str += '<div style="margin-top:4px;">开始时间：<input type="text" class="startTime" value="' + versus.startTime + '" placeholder="比赛开始时间" class="laydate-icon" onclick="laydate({istime:true,format:\'YYYY-MM-DD hh:mm:ss\'});" style="width:140px;cursor:pointer;" readonly="readonly"></div>';
 				str += '<div style="margin-top:4px;">比赛局数：<input type="number" class="boCount" value="' + versus.boCount + '" data-oldBoCount="' + versus.boCount + '" min="1"></div>';
 				str += '<div style="margin-top:4px;">实际局数：<input type="number" class="realBoCount" value="' + versus.realBoCount + '" min="0"></div>';
@@ -492,6 +493,15 @@ var modifyVersus = function(versusIdNumber) {
 	var realBoCount = $.trim($("#" + versusId).find(".realBoCount").val());
 	var status = $.trim($("#" + versusId).find(".status").val());
 	var result = $.trim($("#" + versusId).find(".result").val());
+	if("已结束" == status) {
+		if(!confirm("若将状态修改为已结束，将会关闭投注接口并结算，确定操作吗？")) {
+			return;
+		}
+	} else if("未比赛" == status) {
+		if(!confirm("若将状态修改为未比赛，将会关闭投注接口并退回用户的投注金额，确定操作吗？")) {
+			return;
+		}
+	}
 	loadData({
 		url : "administration/matchVersusUpdate",
 		data : {
@@ -526,6 +536,15 @@ var modifyVersusBo = function(versusBoIdNumber) {
 	var matchTime = getSecondTime($.trim($("#" + versusBoId).find(".matchTimeHour").val()), $.trim($("#" + versusBoId).find(".matchTimeMinute").val()), $.trim($("#" + versusBoId).find(".matchTimeSecond").val()));
 	var status = $.trim($("#" + versusBoId).find(".status").val());
 	var result = $.trim($("#" + versusBoId).find(".result").val());
+	if("已结束" == status) {
+		if(!confirm("若将状态修改为已结束，将会关闭投注接口并结算，确定操作吗？")) {
+			return;
+		}
+	} else if("未比赛" == status) {
+		if(!confirm("若将状态修改为未比赛，将会关闭投注接口并退回用户的投注金额，确定操作吗？")) {
+			return;
+		}
+	}
 	loadData({
 		url : "administration/matchVersusBoUpdate",
 		data : {

@@ -2,6 +2,7 @@ package com.yy.guess.po;
 
 import java.util.Date;
 import com.yy.guess.po.enums.BetDirection;
+import com.yy.guess.po.enums.BetStatus;
 
 public class Bet {
 	private int id;
@@ -12,9 +13,8 @@ public class Bet {
 	private String userName;
 	private BetDirection betDirection;
 	private double betAmount;
-	private boolean settlement;
+	private BetStatus status;
 	private Date createTime = new Date();
-
 	public int getId() {
 		return id;
 	}
@@ -63,11 +63,11 @@ public class Bet {
 	public void setBetAmount(double betAmount) {
 		this.betAmount = betAmount;
 	}
-	public boolean isSettlement() {
-		return settlement;
+	public BetStatus getStatus() {
+		return status;
 	}
-	public void setSettlement(boolean settlement) {
-		this.settlement = settlement;
+	public void setStatus(BetStatus status) {
+		this.status = status;
 	}
 	public Date getCreateTime() {
 		return createTime;

@@ -30,6 +30,7 @@ import com.yy.guess.po.PlayType;
 import com.yy.guess.po.Sport;
 import com.yy.guess.po.Team;
 import com.yy.guess.po.enums.MatchStatus;
+import com.yy.guess.service.BetService;
 import com.yy.guess.service.MatchService;
 import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
@@ -64,6 +65,9 @@ public class GuessAdminController {
 	
 	@Autowired
 	private PlayTypeService pts;
+	
+	@Autowired
+	private BetService bs;
 	
 	/**
 	 * 添加运动项目
@@ -454,6 +458,9 @@ public class GuessAdminController {
 		if(MatchStatus.已结束 == status) {
 			versus.setResult(result);
 		}
+		if(MatchStatus.已结束 == status || MatchStatus.未比赛 == status) {//关闭投注接口
+			bs.stopGuessByVerssuIdAndBo(versus.getId(), 0);
+		}
 		if(boCount != versus.getBoCount()) { //更改了boCount
 			versus.setBoCount(boCount);
 			List<MatchVersusBo> boList = new ArrayList<MatchVersusBo>();
@@ -502,6 +509,9 @@ public class GuessAdminController {
 		versusBo.setStatus(status);
 		if(MatchStatus.已结束 == status) {
 			versusBo.setResult(result);
+		}
+		if(MatchStatus.已结束 == status || MatchStatus.未比赛 == status) {//关闭投注接口
+			bs.stopGuessByVerssuIdAndBo(versusBo.getVersusId(), versusBo.getBo());
 		}
 		mvbs.update(versusBo);
 		return new ResponseObject(100, "修改成功");
@@ -638,6 +648,11 @@ public class GuessAdminController {
 			versusPy.setName(name);
 			versusPy.setBo(0);
 			versusPy.setParamStr(paramStr);
+			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
+				versusPy.setGuessStart(true);
+			} else {
+				versusPy.setGuessStart(false);
+			}
 			versusPy.setTemplateClass(template.getClass().getName());
 			ptList.add(versusPy);
 			for(int i=0; i<boList.size(); i++) { //bo
@@ -647,6 +662,11 @@ public class GuessAdminController {
 				boPy.setName(name);
 				boPy.setBo(versusBo.getBo());
 				boPy.setParamStr(paramStr);
+				if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
+					boPy.setGuessStart(true);
+				} else {
+					boPy.setGuessStart(false);
+				}
 				boPy.setTemplateClass(template.getClass().getName());
 				ptList.add(boPy);
 			}
@@ -659,6 +679,11 @@ public class GuessAdminController {
 			boPy.setName(name);
 			boPy.setBo(bo);
 			boPy.setParamStr(paramStr);
+			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
+				boPy.setGuessStart(true);
+			} else {
+				boPy.setGuessStart(false);
+			}
 			boPy.setTemplateClass(template.getClass().getName());
 			ptList.add(boPy);
 		} else { //只应用到总盘口
@@ -670,6 +695,11 @@ public class GuessAdminController {
 			versusPy.setName(name);
 			versusPy.setBo(0);
 			versusPy.setParamStr(paramStr);
+			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
+				versusPy.setGuessStart(true);
+			} else {
+				versusPy.setGuessStart(false);
+			}
 			versusPy.setTemplateClass(template.getClass().getName());
 			ptList.add(versusPy);
 		}

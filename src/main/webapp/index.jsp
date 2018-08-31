@@ -127,9 +127,9 @@ var getUnSoldBetList = function(){
 };
 
 $(document).ready(function(){
-	getBonusPool();
-	getUnSoldBetList();
-	getNewestOdds();
+	//getBonusPool();
+	//getUnSoldBetList();
+	//getNewestOdds();
 });
 </script>
 <title>竞猜</title>

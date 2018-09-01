@@ -2,11 +2,8 @@ package com.yy.guess.controller.administration;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,7 +23,6 @@ import com.yy.guess.playTemplate.GuessPlayTemplateFactory;
 import com.yy.guess.po.Match;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
-import com.yy.guess.po.PlayType;
 import com.yy.guess.po.Sport;
 import com.yy.guess.po.Team;
 import com.yy.guess.po.enums.MatchStatus;
@@ -34,7 +30,6 @@ import com.yy.guess.service.BetService;
 import com.yy.guess.service.MatchService;
 import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
-import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.service.SportService;
 import com.yy.guess.service.TeamService;
 
@@ -62,9 +57,6 @@ public class GuessAdminController {
 	
 	@Autowired
 	private MatchVersusBoService mvbs;
-	
-	@Autowired
-	private PlayTypeService pts;
 	
 	@Autowired
 	private BetService bs;
@@ -559,30 +551,6 @@ public class GuessAdminController {
 		return new ResponseObject(100, "返回成功", map);
 	}
 
-	//返回某个对阵下的竞猜玩法数
-	@RequestMapping("/getPlayTypeCount")
-	public ResponseObject getPlayTypeCount(@RequestParam int versusId, Integer bo) {
-		QueryCondition qc = new QueryCondition();
-		qc.addCondition("versusId", "=", versusId);
-		if(bo != null) {
-			qc.addCondition("bo", "=", bo);
-		}
-		int count = pts.getCount(qc);
-		return new ResponseObject(100, "返回成功", count);
-	}
-	
-	//返回某个对阵下的所有竞猜玩法
-	@RequestMapping("/getPlayType")
-	public ResponseObject getPlayType(@RequestParam int versusId, Integer bo) {
-		QueryCondition qc = new QueryCondition();
-		qc.addCondition("versusId", "=", versusId);
-		if(bo != null) {
-			qc.addCondition("bo", "=", bo);
-		}
-		List<PlayType> list = pts.query(qc);
-		return new ResponseObject(100, "返回成功", list);
-	}
-	
 	//返回所有玩法类型，以对阵
 	@RequestMapping("/getGuessPlayTemplateAndMatchVersus")
 	public ResponseObject getGuessPlayTemplateAndMatchVersus(@RequestParam int versusId) {
@@ -606,123 +574,5 @@ public class GuessAdminController {
 		result.put("boList", boList);
 		result.put("templateList", templateList);
 		return new ResponseObject(100, "返回成功", result);
-	}
-	
-	//添加玩法
-	@RequestMapping("/addPlayType")
-	public ResponseObject addPlayType(@RequestParam int versusId,
-                                      @RequestParam int bo,
-                                      @RequestParam String name,
-                                      @RequestParam String templateClass,
-                                      HttpServletRequest req) {
-		String[] params = req.getParameterValues("params[]");
-		MatchVersus versus = mvs.findById(versusId);
-		if(versus == null) {
-			return new ResponseObject(101, "对阵不存在");
-		}
-		GuessPlayTemplate template = GuessPlayTemplateFactory.getGuessPlayTemplate(templateClass);
-		if(template == null) {
-			return new ResponseObject(102, "玩法模版不存在：" + templateClass);
-		}
-		List<MatchVersusBo> boList = mvbs.query(new QueryCondition().addCondition("versusId", "=", versusId).addSort("bo", SortType.ASC));
-		if(bo > boList.size()) {
-			return new ResponseObject(103, "bo超出范围");
-		}
-		
-		//参数字符串
-		String paramStr = null;
-		if(params != null && params.length > 0) {
-			Map<String, String> paramMap = new LinkedHashMap<String, String>();
-			for(String param : params) {
-				String[] strs = param.split("\\|");
-				paramMap.put(strs[0], strs[1]);
-			}
-			paramStr = template.getParamJsonStr(paramMap);
-		}
-		
-		
-		List<PlayType> ptList = new ArrayList<PlayType>();
-		if(bo < 0) { //应用到所有
-			PlayType versusPy = new PlayType();//总盘口玩法
-			versusPy.setVersusId(versus.getId());
-			versusPy.setName(name);
-			versusPy.setBo(0);
-			versusPy.setParamStr(paramStr);
-			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
-				versusPy.setGuessStart(true);
-			} else {
-				versusPy.setGuessStart(false);
-			}
-			versusPy.setTemplateClass(template.getClass().getName());
-			ptList.add(versusPy);
-			for(int i=0; i<boList.size(); i++) { //bo
-				MatchVersusBo versusBo = boList.get(i);
-				PlayType boPy = new PlayType();
-				boPy.setVersusId(versus.getId());
-				boPy.setName(name);
-				boPy.setBo(versusBo.getBo());
-				boPy.setParamStr(paramStr);
-				if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
-					boPy.setGuessStart(true);
-				} else {
-					boPy.setGuessStart(false);
-				}
-				boPy.setTemplateClass(template.getClass().getName());
-				ptList.add(boPy);
-			}
-		} else if(bo > 0) { //只应用到bo
-			if(template.getSupport() == 0) {
-				return new ResponseObject(104, "玩法模版不支持");
-			}
-			PlayType boPy = new PlayType();
-			boPy.setVersusId(versus.getId());
-			boPy.setName(name);
-			boPy.setBo(bo);
-			boPy.setParamStr(paramStr);
-			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
-				boPy.setGuessStart(true);
-			} else {
-				boPy.setGuessStart(false);
-			}
-			boPy.setTemplateClass(template.getClass().getName());
-			ptList.add(boPy);
-		} else { //只应用到总盘口
-			if(template.getSupport() > 0) {
-				return new ResponseObject(104, "玩法模版不支持");
-			}
-			PlayType versusPy = new PlayType();//总盘口玩法
-			versusPy.setVersusId(versus.getId());
-			versusPy.setName(name);
-			versusPy.setBo(0);
-			versusPy.setParamStr(paramStr);
-			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
-				versusPy.setGuessStart(true);
-			} else {
-				versusPy.setGuessStart(false);
-			}
-			versusPy.setTemplateClass(template.getClass().getName());
-			ptList.add(versusPy);
-		}
-		
-		QueryCondition existsQc = new QueryCondition();
-		existsQc.addCondition("versusId", "=", versus.getId());
-		existsQc.addCondition("templateClass", "=", templateClass);
-		if(paramStr != null) {
-			existsQc.addCondition("paramStr", "=", paramStr);
-		}
-		for(PlayType pt : ptList) {
-			existsQc.addCondition("bo", "=", pt.getBo());
-			if(pts.find(existsQc) != null) {
-				return new ResponseObject(105, "已添加相同的玩法，请不要重复添加");
-			}
-		}
-		pts.addList(ptList);
-		return new ResponseObject(100, "添加成功");
-	}
-	
-	@RequestMapping("/playTypeDelete")
-	public ResponseObject playTypeDelete(@RequestParam int playTypeId) {
-		pts.delete(playTypeId);
-		return new ResponseObject(100, "删除成功");
 	}
 }

@@ -10,8 +10,8 @@
 <script src="laydate/laydate.js"></script>
 <script src="admin/js/common.js"></script>
 <script>
-var userRebateRateMin = parseFloat('<%=com.yy.fast4j.RedisUtil.getObject(application, com.yy.guess.util.CachePre.GUESS_CONFIG, "userRebateRateMin")%>');
-var userRebateRateMax = parseFloat('<%=com.yy.fast4j.RedisUtil.getObject(application, com.yy.guess.util.CachePre.GUESS_CONFIG, "userRebateRateMax")%>');
+ver userRebateRateMin = parseFloat('<%=com.yy.guess.util.Util.getConfigCom(application).getUserRebateRateMin()%>');
+ver userRebateRateMax = parseFloat('<%=com.yy.guess.util.Util.getConfigCom(application).getUserRebateRateMax()%>');
 $(document).ready(function(){
 	query(20, 1);
 });

@@ -190,16 +190,17 @@ var viewPlayType = function(versusId, e){
 				str += '<div style="margin-top:4px;"><input id="addPlayTypeName" placeholder="输入一个名称" type="text"></div>';
 				str += '<div style="margin-top:4px;"><select id="addPlayTypeBo"></select></div>';
 				str += '<div style="margin-top:4px;"><input type="button" value="添加玩法" onclick="addPlayType(' + versus.id + ')"></div>';
+				str += '<div style="margin-top:4px;"><a href="admin/guess/playTypeList.jsp?versusId=' + versus.id + '" target="_blank">查看所有详情</a></div>';
 				str += '</div>';
 
 				str += '<div style="margin-top:8px;border:1px dashed blue;padding:4px;border-radius:5px;">';
-				str += '<div>主盘口：</div>';
+				str += '<div>主盘口：<a href="admin/guess/playTypeList.jsp?versusId=' + versus.id + '&bo=0" target="_blank">查看详情</a></div>';
 				str += '<div class="versusPlayTypeDiv" data-versusId="' + versus.id + '" data-bo="0"></div>';
 				str += '</div>';
 				for(var i=0; i<boList.length; i++) {
 					var obj = boList[i];
 					str += '<div style="margin-top:8px;border:1px dashed blue;padding:4px;border-radius:5px;">';
-					str += '<div>第' + obj.bo + '局：</div>';
+					str += '<div>第' + obj.bo + '局：<a href="admin/guess/playTypeList.jsp?versusId=' + versus.id + '&bo=' + obj.bo + '" target="_blank">查看详情</a></div>';
 					str += '<div class="versusPlayTypeDiv" data-versusId="' + versus.id + '" data-bo="' + obj.bo + '"></div>';
 					str += '</div>';
 				}

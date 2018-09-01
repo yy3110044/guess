@@ -55,4 +55,9 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	public void addList(List<PlayType> ptList) {
 		mapper.addList(ptList);
 	}
+
+	@Override
+	public void updateFixedOdds(boolean fixedOdds, double leftOdds, double rightOdds, int playTypeId) {
+		mapper.updateFixedOdds(fixedOdds, leftOdds, rightOdds, playTypeId);
+	}
 }

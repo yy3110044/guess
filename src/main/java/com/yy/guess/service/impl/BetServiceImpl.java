@@ -9,12 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.yy.guess.component.ConfigComponent;
 import com.yy.guess.component.OddsComponent;
 import com.yy.guess.mapper.BetMapper;
+import com.yy.guess.mapper.MatchVersusBoMapper;
+import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.mapper.TradeFlowMapper;
 import com.yy.guess.mapper.UserMapper;
+import com.yy.guess.playTemplate.GuessPlayTemplate;
+import com.yy.guess.playTemplate.GuessPlayTemplateFactory;
 import com.yy.guess.po.Bet;
+import com.yy.guess.po.MatchVersus;
+import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.TradeFlow;
 import com.yy.guess.po.enums.BetDirection;
@@ -24,6 +32,7 @@ import com.yy.guess.service.BetService;
 import com.yy.guess.util.CachePre;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.RedisUtil;
+import com.yy.fast4j.QueryCondition.SortType;
 
 @Repository("betService")
 @Transactional
@@ -46,7 +55,16 @@ public class BetServiceImpl implements BetService {
     private PlayTypeMapper ptm;
     
     @Autowired
+    private MatchVersusMapper mvm;
+    
+    @Autowired
+    private MatchVersusBoMapper mvbm;
+    
+    @Autowired
     private OddsComponent oddsCom;
+    
+    @Autowired
+    private ConfigComponent cfgCom;
     
     @Override
     public void add(Bet obj) {
@@ -102,6 +120,7 @@ public class BetServiceImpl implements BetService {
     	List<PlayType> ptList = ptm.query(new QueryCondition().addCondition("versusId", "=", versusId));
     	if(ptList.size() > 0) {
     		for(PlayType pt : ptList) {
+    			pt.setGuessStart(true);
     			lockPlayTypeMap.put(pt.getId(), pt);
     		}
     		ptm.updateGuessStartByVersusId(true, versusId);
@@ -175,8 +194,8 @@ public class BetServiceImpl implements BetService {
 	public boolean startGuessByPlayTypeId(int playTypeId) {
 		PlayType pt = ptm.findById(playTypeId);
 		if(pt != null) {
-			lockPlayTypeMap.put(pt.getId(), pt);
 			ptm.updateGuessStartByPlayTypeId(true, playTypeId);
+			lockPlayTypeMap.put(playTypeId, ptm.findById(playTypeId));
 			return true;
 		} else {
 			return false;
@@ -305,6 +324,36 @@ public class BetServiceImpl implements BetService {
 
 	@Override
 	public void settlement(Bet bet) {
-		s
+		MatchVersus versus = mvm.findById(bet.getVersusId());
+		PlayType pt = ptm.findById(bet.getPlayTypeId());
+		List<MatchVersusBo> boList = mvbm.query(new QueryCondition().addCondition("versusId", "=", bet.getVersusId()).addSort("bo", SortType.ASC));
+		GuessPlayTemplate template = GuessPlayTemplateFactory.getGuessPlayTemplate(pt.getTemplateClass());
+
+		int result = template.getResult(versus, boList, pt);
+		if(result < 0) { //左方胜
+			if(bet.getBetDirection() == BetDirection.LEFT) {
+				double platformRate = cfgCom.getPlatformRate();
+				double odds = 0;
+				if(pt.isFixedOdds()) { //使用固定赔率
+					odds = pt.getLeftOdds();
+				} else { //使用变动赔率
+					odds = oddsCom.getNewestOdds(pt.getId(), BetDirection.LEFT);
+				}
+				
+			}
+		} else if(result > 0) { //右方胜
+			if(bet.getBetDirection() == BetDirection.RIGHT) {
+				double platformRate = cfgCom.getPlatformRate();
+				double odds = 0;
+				if(pt.isFixedOdds()) { //使用固定赔率
+					odds = pt.getRightOdds();
+				} else { //使用变动赔率
+					odds = oddsCom.getNewestOdds(pt.getId(), BetDirection.RIGHT);
+				}
+				
+			}
+		} else {
+			//为平时不处理
+		}
 	}
 }

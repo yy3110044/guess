@@ -31,9 +31,12 @@ public interface PlayTypeMapper {
     @Update("update guess_play_type set guessStart = #{guessStart} where versusId = #{versusId} and bo = #{bo}")
     void updateGuessStartByVersusIdAndBo(boolean guessStart, int versusId, int bo);
     
-    @Update("udpate guess_play_type set leftBonusPool = #{leftBonusPool}, rightBonusPool = #{rightBonusPool} where id = #{playTypeId}")
+    @Update("update guess_play_type set leftBonusPool = #{leftBonusPool}, rightBonusPool = #{rightBonusPool} where id = #{playTypeId}")
     void updateBonusPool(double leftBonusPool, double rightBonusPool, int playTypeId);
 
     @Update("update guess_play_type set leftOdds = #{leftOdds}, rightOdds = #{rightOdds}, leftBonusPool = #{leftBonusPool}, rightBonusPool = #{rightBonusPool} where id = #{playTypeId}")
     void updateOddsAndBonusPool(double leftOdds, double rightOdds, double leftBonusPool, double rightBonusPool, int playTypeId);
+
+    @Update("update guess_play_type set fixedOdds = #{fixedOdds}, leftOdds = #{leftOdds}, rightOdds = #{rightOdds} where id = #{playTypeId}")
+    void updateFixedOdds(boolean fixedOdds, double leftOdds, double rightOdds, int playTypeId);
 }

@@ -15,4 +15,5 @@ public interface PlayTypeService {
     /*****************************************************************分隔线************************************************************************/
     
     void addList(List<PlayType> ptList);
+    void updateFixedOdds(boolean fixedOdds, double leftOdds, double rightOdds, int playTypeId);
 }

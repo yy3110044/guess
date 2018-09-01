@@ -15,7 +15,7 @@
 $(document).ready(function(){
 	addImageUploadEvent({
 		"inputId" : "uploadImageInput",
-		"url" : "<%=com.yy.fast4j.RedisUtil.getObject(application, com.yy.guess.util.CachePre.GUESS_CONFIG, "uploadUrl")%>",
+		"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
 		"imgId" : "logoUrl"
 	});
 	loadData({

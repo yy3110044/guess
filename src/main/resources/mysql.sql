@@ -171,8 +171,8 @@ CREATE TABLE `guess_play_type` (
   `paramStr` varchar(128) COMMENT '此玩法需要用到的参数，json格式字符串',
   `templateClass` varchar(128) COMMENT '模版类class',
   `guessStart` bit(1) COMMENT '是否开启竞猜',
-  `leftOdds` decimal(9, 4) COMMENT '左方赔率',
-  `rightOdds` decimal(9, 4) COMMENT '右方赔率',
+  `leftOdds` decimal(15, 6) COMMENT '左方赔率',
+  `rightOdds` decimal(15, 6) COMMENT '右方赔率',
   `leftBonusPool` decimal(15, 6) COMMENT '左方奖金池',
   `rightBonusPool` decimal(15, 6) COMMENT '右方奖金池',
   `fixedOdds` bit(1) COMMENT '是否固定赔率',
@@ -215,6 +215,19 @@ CREATE TABLE `guess_trade_flow` (
   KEY `userId` (`userId`),
   KEY `type` (`type`),
   KEY `userId_type` (`userId`, `type`),
+  KEY `createTime` (`createTime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*平台抽成记录*/
+DROP TABLE IF EXISTS `guess_rate_record`;
+CREATE TABLE `guess_rate_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `userId` int(11) COMMENT '用户id',
+  `betId` int(11) COMMENT 'betId',
+  `amount` decimal(15, 6) COMMENT '抽成金额',
+  `platformRate` decimal(15, 6) COMMENT '抽成时的平台费率',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
   KEY `createTime` (`createTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

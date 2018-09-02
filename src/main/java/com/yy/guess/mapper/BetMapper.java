@@ -2,7 +2,10 @@ package com.yy.guess.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
+
 import com.yy.guess.po.Bet;
+import com.yy.guess.po.enums.BetStatus;
 import com.yy.fast4j.QueryCondition;
 
 @Mapper
@@ -15,4 +18,7 @@ public interface BetMapper {
     List<Bet> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+
+    @Update("update guess_bet set status = #{status} where id = #{betId}")
+    void setStatus(BetStatus status, int betId); //更改状态
 }

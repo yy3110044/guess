@@ -1,5 +1,6 @@
 package com.yy.guess.service.impl;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.yy.guess.component.ConfigComponent;
 import com.yy.guess.component.OddsComponent;
 import com.yy.guess.mapper.BetMapper;
 import com.yy.guess.mapper.MatchVersusBoMapper;
 import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
+import com.yy.guess.mapper.RateRecordMapper;
 import com.yy.guess.mapper.TradeFlowMapper;
 import com.yy.guess.mapper.UserMapper;
 import com.yy.guess.playTemplate.GuessPlayTemplate;
@@ -24,7 +25,9 @@ import com.yy.guess.po.Bet;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.PlayType;
+import com.yy.guess.po.RateRecord;
 import com.yy.guess.po.TradeFlow;
+import com.yy.guess.po.User;
 import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.po.enums.BetStatus;
 import com.yy.guess.po.enums.TradeType;
@@ -65,6 +68,9 @@ public class BetServiceImpl implements BetService {
     
     @Autowired
     private ConfigComponent cfgCom;
+    
+    @Autowired
+    private RateRecordMapper rrm;
     
     @Override
     public void add(Bet obj) {
@@ -339,7 +345,7 @@ public class BetServiceImpl implements BetService {
 				} else { //使用变动赔率
 					odds = oddsCom.getNewestOdds(pt.getId(), BetDirection.LEFT);
 				}
-				
+				this.settlement(bet.getId(), bet.getUserId(), odds * bet.getBetAmount(), platformRate);
 			}
 		} else if(result > 0) { //右方胜
 			if(bet.getBetDirection() == BetDirection.RIGHT) {
@@ -350,25 +356,69 @@ public class BetServiceImpl implements BetService {
 				} else { //使用变动赔率
 					odds = oddsCom.getNewestOdds(pt.getId(), BetDirection.RIGHT);
 				}
-				
+				this.settlement(bet.getId(), bet.getUserId(), odds * bet.getBetAmount(), platformRate);
 			}
 		} else {
 			//为平时不处理
 		}
 	}
-	private void settlement(int userId, String userName, double amount, double platformRate) {
-		double preBalance = um.getBalance(userId); //返回用户原余额
-		
+	private void settlement(int betId, int userId, double amount, double platformRate) {
+		User user = um.findById(userId); //取出未更改前用户
+
 		double choucheng = amount * platformRate; //平台抽成
+		double shide = amount - choucheng;//实际返奖
 		
-		um.plusBalance(amount - choucheng, userId);//更改余额
+		um.plusBalance(shide, userId);//更改余额
 		
-		TradeFlow flow = new TradeFlow(); //添加流水记录
+		mapper.setStatus(BetStatus.已结算, betId);//更改bet状态
+		
+		//添加流水记录
+		TradeFlow flow = new TradeFlow();
 		flow.setUserId(userId);
-		flow.setUserName(userName);
-		flow.setPreBalance(preBalance);
-		flow.setAmount(amount);
+		flow.setUserName(user.getUserName());
+		flow.setPreBalance(user.getBalance());
+		flow.setAmount(shide);
 		flow.setType(TradeType.返奖);
-		flow.setDescription("返奖：");
+		DecimalFormat df = new DecimalFormat("0.00");
+		flow.setDescription("返奖：" + df.format(amount) + "，实得：" + df.format(shide) + "，平台抽成：" + df.format(choucheng));
+		tfm.add(flow);
+		
+		//父用户返点
+		choucheng = this.recursiveUserRate(user, um.findById(user.getSuperUserId()), choucheng);
+		
+		//添加平台抽成记录
+		RateRecord record = new RateRecord();
+		record.setUserId(userId);
+		record.setBetId(betId);
+		record.setAmount(choucheng);
+		record.setPlatformRate(platformRate);
+		rrm.add(record);
+	}
+	//递归用户上级返点，返回剩余的平台抽成
+	private double recursiveUserRate(User childUser, User superUser, double choucheng) {
+		if(childUser == null || superUser == null) {
+			return choucheng;
+		} else {
+			double rate = superUser.getRebateRate() - childUser.getRebateRate();//返点率
+			double amount = choucheng * rate; //返点金额
+			if(amount > 0) { //大于零时才处理
+				//更改用户余额
+				um.plusBalance(amount, superUser.getId());
+				
+				//添加流水记录
+				TradeFlow flow = new TradeFlow();
+				flow.setUserId(superUser.getId());
+				flow.setUserName(superUser.getUserName());
+				flow.setPreBalance(superUser.getBalance());
+				flow.setAmount(amount);
+				flow.setType(TradeType.返点);
+				flow.setDescription("下级返点");
+				tfm.add(flow);
+				
+				return this.recursiveUserRate(superUser, um.findById(superUser.getSuperUserId()), choucheng - amount);
+			} else {
+				return choucheng;
+			}
+		}
 	}
 }

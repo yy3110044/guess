@@ -10,8 +10,8 @@
 <script src="laydate/laydate.js"></script>
 <script src="admin/js/common.js"></script>
 <script>
-ver userRebateRateMin = parseFloat('<%=com.yy.guess.util.Util.getConfigCom(application).getUserRebateRateMin()%>');
-ver userRebateRateMax = parseFloat('<%=com.yy.guess.util.Util.getConfigCom(application).getUserRebateRateMax()%>');
+var userRebateRateMin = parseFloat('<%=com.yy.guess.util.Util.getConfigCom(application).getUserRebateRateMin()%>');
+var userRebateRateMax = parseFloat('<%=com.yy.guess.util.Util.getConfigCom(application).getUserRebateRateMax()%>');
 $(document).ready(function(){
 	query(20, 1);
 });

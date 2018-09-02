@@ -356,4 +356,19 @@ public class BetServiceImpl implements BetService {
 			//为平时不处理
 		}
 	}
+	private void settlement(int userId, String userName, double amount, double platformRate) {
+		double preBalance = um.getBalance(userId); //返回用户原余额
+		
+		double choucheng = amount * platformRate; //平台抽成
+		
+		um.plusBalance(amount - choucheng, userId);//更改余额
+		
+		TradeFlow flow = new TradeFlow(); //添加流水记录
+		flow.setUserId(userId);
+		flow.setUserName(userName);
+		flow.setPreBalance(preBalance);
+		flow.setAmount(amount);
+		flow.setType(TradeType.返奖);
+		flow.setDescription("返奖：");
+	}
 }

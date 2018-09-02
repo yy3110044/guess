@@ -150,6 +150,7 @@ public class PlayTypeAdminController {
 			}
 		}
 		pts.addList(ptList);
+		bs.loadStartedGuess();//重新加载一次
 		return new ResponseObject(100, "添加成功");
 	}
 	

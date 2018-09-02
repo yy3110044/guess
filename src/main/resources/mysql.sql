@@ -192,7 +192,7 @@ CREATE TABLE `guess_bet` (
   `userName` varchar(128) COMMENT '下注用户名',
   `betDirection` enum('LEFT', 'RIGHT') COMMENT '下注的哪一方',
   `betAmount` decimal(15, 6) COMMENT '下注金额',
-  `status` enum('已下注', '已结算', '已退回') COMMENT '是否已结算',
+  `status` enum('已下注', '未猜中', '已结算', '已退回') COMMENT '是否已结算',
   `createTime` datetime COMMENT '创建时间',
   KEY `versusId` (`versusId`),
   KEY `playTypeId` (`playTypeId`),

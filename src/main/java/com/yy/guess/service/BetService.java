@@ -2,6 +2,8 @@ package com.yy.guess.service;
 
 import java.util.List;
 import com.yy.guess.po.Bet;
+import com.yy.guess.po.MatchVersus;
+import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.enums.BetDirection;
 import com.yy.fast4j.QueryCondition;
 
@@ -25,5 +27,8 @@ public interface BetService {
     void cleanGuessCache(int playTypeId); //清除相关缓存
     double getOdds(int playTypeId, BetDirection betDirection);//返回赔率
     boolean bet(int playTypeId, int userId, String userName, BetDirection betDirection, double betAmount);//下注
-    void settlement(Bet bet); //结算
+    
+    void settlementOrRefund(Bet bet); //结算
+    void settlement(Bet bet, MatchVersus versus, List<MatchVersusBo> boList); //计算结果
+    void refund(Bet bet, String description); //退款
 }

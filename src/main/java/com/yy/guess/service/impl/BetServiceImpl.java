@@ -327,12 +327,41 @@ public class BetServiceImpl implements BetService {
 			return true;
 		}
 	}
+	
+	@Override
+	public void settlementOrRefund(Bet bet) {
+		MatchVersus versus = mvm.findById(bet.getVersusId());
+		List<MatchVersusBo> boList = mvbm.query(new QueryCondition().addCondition("versusId", "=", bet.getVersusId()).addSort("bo", SortType.ASC));
+		
+		if(bet.getBo() == 0) { //主对阵
+			switch(versus.getStatus()) {
+			case 已结束:
+				this.settlement(bet, versus, boList);
+				break;
+			case 未比赛:
+				this.refund(bet, null); //未比赛，退款
+				break;
+			default:
+				break;
+			}
+		} else if(bet.getBo() > 0) { //bo
+			MatchVersusBo mvb = boList.get(bet.getBo() - 1);
+			switch(mvb.getStatus()) {
+			case 已结束:
+				this.settlement(bet, versus, boList);
+				break;
+			case 未比赛:
+				this.refund(bet, null); //未比赛，退款
+				break;
+			default:
+				break;
+			}
+		}
+	}
 
 	@Override
-	public void settlement(Bet bet) {
-		MatchVersus versus = mvm.findById(bet.getVersusId());
+	public void settlement(Bet bet, MatchVersus versus, List<MatchVersusBo> boList) {
 		PlayType pt = ptm.findById(bet.getPlayTypeId());
-		List<MatchVersusBo> boList = mvbm.query(new QueryCondition().addCondition("versusId", "=", bet.getVersusId()).addSort("bo", SortType.ASC));
 		GuessPlayTemplate template = GuessPlayTemplateFactory.getGuessPlayTemplate(pt.getTemplateClass());
 
 		int result = template.getResult(versus, boList, pt);
@@ -346,6 +375,7 @@ public class BetServiceImpl implements BetService {
 					odds = oddsCom.getNewestOdds(pt.getId(), BetDirection.LEFT);
 				}
 				this.settlement(bet.getId(), bet.getUserId(), odds * bet.getBetAmount(), platformRate);
+				return;
 			}
 		} else if(result > 0) { //右方胜
 			if(bet.getBetDirection() == BetDirection.RIGHT) {
@@ -357,10 +387,12 @@ public class BetServiceImpl implements BetService {
 					odds = oddsCom.getNewestOdds(pt.getId(), BetDirection.RIGHT);
 				}
 				this.settlement(bet.getId(), bet.getUserId(), odds * bet.getBetAmount(), platformRate);
+				return;
 			}
 		} else {
 			//为平时不处理
 		}
+		mapper.setStatus(BetStatus.未猜中, bet.getId());
 	}
 	private void settlement(int betId, int userId, double amount, double platformRate) {
 		User user = um.findById(userId); //取出未更改前用户
@@ -420,5 +452,28 @@ public class BetServiceImpl implements BetService {
 				return choucheng;
 			}
 		}
+	}
+
+	//退款
+	@Override
+	public void refund(Bet bet, String description) {
+		//原余额
+		double preBalance = um.getBalance(bet.getUserId());
+		
+		//更改用户余额
+		um.plusBalance(bet.getBetAmount(), bet.getUserId());
+		
+		//更改bet状态
+		mapper.setStatus(BetStatus.已退回, bet.getId());
+		
+		//添加流水记录
+		TradeFlow flow = new TradeFlow();
+		flow.setUserId(bet.getUserId());
+		flow.setUserName(bet.getUserName());
+		flow.setPreBalance(preBalance);
+		flow.setAmount(bet.getBetAmount());
+		flow.setType(TradeType.退款);
+		flow.setDescription(description);
+		tfm.add(flow);
 	}
 }

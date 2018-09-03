@@ -197,6 +197,7 @@ CREATE TABLE `guess_bet` (
   KEY `versusId` (`versusId`),
   KEY `playTypeId` (`playTypeId`),
   KEY `userId` (`userId`),
+  KEY `status` (`status`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

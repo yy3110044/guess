@@ -37,6 +37,7 @@ var typeChange = function(){
 	}
 	$("tr.titleTr").remove();
 	$("tr.queryTr").after(str);
+	query(20, 1);
 };
 $(document).ready(function(){
 	query(20, 1);
@@ -48,7 +49,9 @@ var query = function(pageSize, pageNo){
 		url : "administration/loginLogList",
 		data : {
 			"type" : type,
-			"userName" : userName
+			"userName" : userName,
+			"pageSize" : pageSize,
+			"pageNo" : pageNo
 		},
 		success : function(data) {
 			if(data.code == 100) {

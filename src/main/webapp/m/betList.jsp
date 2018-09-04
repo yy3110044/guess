@@ -5,46 +5,17 @@
 <%@include file="/m/head-common.jsp"%>
 </head>
 <body>
-	<noscript>
-		<strong>請啟用JavaScript已继续。</strong><br>
-		<h5>iOS > 设置 > Safari浏览器 > 高级 > JavaScript</h5>
-		<h5>Chrome > 设置 > 网站设置 > JavaScript</h5>
-	</noscript>
 	<div id="app" class="">
-		<!---->
-		<!---->
-		<!---->
-		<div class="loading-bkg" style="display: none;">
-			<div data-v-c96941ea="" class="loading">
-				<svg data-v-c96941ea="" version="1.1" id="loader-1"
-					xmlns="http://www.w3.org/2000/svg"
-					xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-					width="40px" height="40px" viewBox="0 0 40 40"
-					enable-background="new 0 0 40 40" xml:space="preserve">
-					<path data-v-c96941ea="" opacity="0.2" fill="#000"
-						d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
-  s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
-  c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"></path> <path
-						data-v-c96941ea="" fill="#000"
-						d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
-  C22.32,8.481,24.301,9.057,26.013,10.047z"
-						transform="rotate(5.02128 20 20)">
-					<animateTransform data-v-c96941ea="" attributeType="xml"
-						attributeName="transform" type="rotate" from="0 20 20"
-						to="360 20 20" dur="0.5s" repeatCount="indefinite"></animateTransform></path></svg>
-			</div>
-		</div>
 		<nav data-v-1db5fc32="" class="app-header">
 			<ul data-v-1db5fc32="">
 				<li data-v-1db5fc32="">
-					<!----> <a data-v-1db5fc32="" href="#/personal"
-					class="base-icon personal-info"></a>
+					<div data-v-1db5fc32="" class="notice-badge"></div>
+					<a data-v-1db5fc32="" href="" class="base-icon personal-info"></a>
 				</li>
 				<li data-v-1db5fc32="" class="home-logo"></li>
-				<li data-v-1db5fc32=""><a data-v-e7bb725a="" data-v-1db5fc32=""
-					href="//www.xlbmama.com/chat/h5/index.html?sysNum=322d704743e04896b8a70524ae45127e"
-					target="_blank" rel="noopener noreferrer"
-					class="customer-service base-icon service-link"> </a></li>
+				<li data-v-1db5fc32="">
+					<a data-v-e7bb725a="" data-v-1db5fc32="" href="" target="_blank" rel="noopener noreferrer" class="customer-service base-icon service-link"></a>
+				</li>
 			</ul>
 		</nav>
 		<div class="weui-tab">

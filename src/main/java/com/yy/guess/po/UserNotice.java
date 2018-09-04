@@ -7,7 +7,7 @@ public class UserNotice {
 	private int userId;
 	private String userName;
 	private String content;
-	private boolean read;
+	private boolean hadRead;
 	private Date readTime;
 	private Date createTime = new Date();
 	public int getId() {
@@ -34,11 +34,11 @@ public class UserNotice {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public boolean isRead() {
-		return read;
+	public boolean isHadRead() {
+		return hadRead;
 	}
-	public void setRead(boolean read) {
-		this.read = read;
+	public void setHadRead(boolean hadRead) {
+		this.hadRead = hadRead;
 	}
 	public Date getReadTime() {
 		return readTime;

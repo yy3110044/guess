@@ -15,6 +15,38 @@ var userRebateRateMax = parseFloat('<%=com.yy.guess.util.Util.getConfigCom(appli
 $(document).ready(function(){
 	query(20, 1);
 });
+
+var sendNotice = function(userId, e) {
+	var str = '';
+	str += '<tr class="contentTr detailTr"><td colspan="99" style="padding:4px;">';
+	str += '<input type="text" id="noticeContent" placeholder="输入通知内容" style="width:700px;">';
+	str += '&nbsp;&nbsp;<input type="button" onclick="sendNotice2(' + userId + ')" value="发送">';
+	str += '&nbsp;&nbsp;<input type="button" onclick="$(this).parent().parent().remove()" value="关闭">';
+	str += '</td></tr>';
+	$("tr.detailTr").remove();
+	$(e).parent().parent().after(str);
+};
+var sendNotice2 = function(userId){
+	var content = $.trim($("#noticeContent").val());
+	if(empty(content)) {
+		showMsg("请输入通知内容");
+		return;
+	}
+	loadData({
+		url : "administration/userNoticeAdd",
+		data : {
+			"userId" : userId,
+			"content" : content
+		},
+		success : function(data){
+			showMsg(data.msg);
+			if(data.code == 100) {
+				$("#noticeContent").val("");
+			}
+		}
+	});
+};
+
 var query = function(pageSize, pageNo) {
 	var userId = $.trim($("#userId").val());
 	var userName = $.trim($("#userName").val());
@@ -57,6 +89,7 @@ var query = function(pageSize, pageNo) {
 						str += '&nbsp;<a href="javascript:;" onclick="updateRebateRate(' + obj.id + ', this)">修改返点</a>';
 						str += '&nbsp;<a href="javascript:;" onclick="updateBalance(' + obj.id + ', this)">修改余额</a>';
 						str += '&nbsp;<a href="admin/tradeFlow/tradeFlowList.jsp?userId=' + obj.id + '" target="_blank">查看流水</a>';
+						str += '&nbsp;<a href="javascript:;" onclick="sendNotice(' + obj.id + ', this)">发送通知</a>';
 						return str;
 					}}
 				]);

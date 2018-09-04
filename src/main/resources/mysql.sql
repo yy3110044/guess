@@ -255,7 +255,7 @@ CREATE TABLE `guess_user_notice`(
   `userId` int(11) NOT NULL COMMENT '用户id',
   `userName` varchar(128) COMMENT '用户名',
   `content` varchar(256) NOT NULL COMMENT '通知内容',
-  `read` bit(1) COMMENT '是否已读取',
+  `hadRead` bit(1) COMMENT '是否已读取',
   `readTime` datetime COMMENT '用户读取时间',
   `createTime` datetime COMMENT '创建时间',
   PRIMARY KEY (`id`),

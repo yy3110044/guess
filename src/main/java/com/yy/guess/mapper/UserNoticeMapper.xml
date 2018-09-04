@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into guess_user_notice(id, userId, userName, content, read, readTime, createTime)
-        values(#{id}, #{userId}, #{userName}, #{content}, #{read}, #{readTime}, #{createTime})
+        insert into guess_user_notice(id, userId, userName, content, hadRead, readTime, createTime)
+        values(#{id}, #{userId}, #{userName}, #{content}, #{hadRead}, #{readTime}, #{createTime})
     </insert>
 
     <delete id="delete" parameterType="int">
@@ -17,12 +17,12 @@
 
     <update id="update" parameterType="com.yy.guess.po.UserNotice">
         update guess_user_notice set
-        userId = #{userId}, userName = #{userName}, content = #{content}, read = #{read}, readTime = #{readTime}, createTime = #{createTime}
+        userId = #{userId}, userName = #{userName}, content = #{content}, hadRead = #{hadRead}, readTime = #{readTime}, createTime = #{createTime}
         where id = #{id}
     </update>
 
     <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.UserNotice">
-        select id, userId, userName, content, read, readTime, createTime from guess_user_notice
+        select id, userId, userName, content, hadRead, readTime, createTime from guess_user_notice
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -44,12 +44,12 @@
     </select>
 
     <select id="findById" parameterType="int" resultType="com.yy.guess.po.UserNotice">
-        select id, userId, userName, content, read, readTime, createTime from guess_user_notice
+        select id, userId, userName, content, hadRead, readTime, createTime from guess_user_notice
         where id = #{id}
     </select>
 
     <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.UserNotice">
-        select id, userId, userName, content, read, readTime, createTime from guess_user_notice
+        select id, userId, userName, content, hadRead, readTime, createTime from guess_user_notice
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">

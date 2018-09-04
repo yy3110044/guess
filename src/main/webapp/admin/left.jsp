@@ -14,6 +14,7 @@
 			<!--
 			<a href="admin/user/userTreeList.jsp">用户代理</a>
 			-->
+			<a href="admin/user/userNoticeList.jsp">用户通知</a>
 			<a href="admin/tradeFlow/tradeFlowList.jsp">交易流水</a>
 		</div>
 		<div>

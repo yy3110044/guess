@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.yy.fast4j.Fast4jUtils;
 import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
@@ -44,7 +46,7 @@ public class NoticeAdminController {
                                          @RequestParam(defaultValue="1") int pageNo,
                                          @RequestParam(defaultValue="5") int showCount) {
 		QueryCondition qc = new QueryCondition();
-		if(userName != null) {
+		if(!Fast4jUtils.empty(userName)) {
 			qc.addCondition("userId", "=", us.getUserIdByUserName(userName));
 		}
 		qc.setPage(new Page(pageSize, pageNo, showCount));

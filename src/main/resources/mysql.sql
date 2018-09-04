@@ -11,6 +11,7 @@ CREATE TABLE `guess_user` (
   `withdrawPassword` varchar(128) COMMENT '取款密码',
   `balance` decimal(15, 6) COMMENT '帐户余额',
   `nickName` varchar(128) COMMENT '昵称',
+  `realName` varchar(128) COMMENT '真实姓名',
   `qq` varchar(128) COMMENT 'qq',
   `phone` varchar(128) COMMENT '手机号码',
   `email` varchar(128) COMMENT '电子邮箱',
@@ -88,6 +89,7 @@ INSERT INTO guess_config VALUES(null, 'platformRate', '0.05', '平台抽成');
 INSERT INTO guess_config VALUES(null, 'returnRate', '1', '返还率，此参数影响赔率');
 INSERT INTO guess_config VALUES(null, 'betAmountMin', '0.01', '下注金额下限，单位：元');
 INSERT INTO guess_config VALUES(null, 'betAmountMax', '10000', '下注金额上限，单位：元');
+INSERT INTO guess_config VALUES(null, 'customerServiceUrl', 'https://www.baidu.com/', '客服链接');
 
 /*体育运动表*/
 DROP TABLE IF EXISTS `guess_sport`;
@@ -245,5 +247,30 @@ CREATE TABLE `guess_team` (
   PRIMARY KEY (`id`),
   KEY `sportId` (`sportId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
+
+/*用户通知*/
+DROP TABLE IF EXISTS `guess_user_notice`;
+CREATE TABLE `guess_user_notice`(
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `userId` int(11) NOT NULL COMMENT '用户id',
+  `userName` varchar(128) COMMENT '用户名',
+  `content` varchar(256) NOT NULL COMMENT '通知内容',
+  `read` bit(1) COMMENT '是否已读取',
+  `readTime` datetime COMMENT '用户读取时间',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*系统通知*/
+DROP TABLE IF EXISTS `guess_system_notice`;
+CREATE TABLE `guess_system_notice`(
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `content` varchar(256) COMMENT '通知内容',
+  `top` int(11) COMMENT '置顶排序字段',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `top` (`top`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 show tables;

@@ -33,4 +33,7 @@ public interface UserMapper {
     //根据rebateRate修改下级默认返点，一般根updateRebateRate()方法一起用
     @Update("update guess_user set subordinateDefaultRebateRate = #{rebateRate} where id = #{userId} and subordinateDefaultRebateRate > #{rebateRate}")
     void updateSubordinateDefaultRebateRate(double rebateRate, int userId);
+    
+    @Select("select id from guess_user where userName = #{userName}")
+    Integer getUserIdByUserName(String userName);
 }

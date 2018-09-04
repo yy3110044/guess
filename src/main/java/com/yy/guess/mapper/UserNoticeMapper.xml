@@ -2,27 +2,27 @@
 <!DOCTYPE mapper
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yy.guess.mapper.UserMapper">
-    <insert id="add" parameterType="com.yy.guess.po.User">
+<mapper namespace="com.yy.guess.mapper.UserNoticeMapper">
+    <insert id="add" parameterType="com.yy.guess.po.UserNotice">
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into guess_user(id, userName, passWord, withdrawPassword, balance, nickName, realName, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime)
-        values(#{id}, #{userName}, #{passWord}, #{withdrawPassword}, #{balance}, #{nickName}, #{realName}, #{qq}, #{phone}, #{email}, #{registTime}, #{lastLoginIp}, #{lastLoginTime}, #{lastLoginType}, #{superUserId}, #{rebateRate}, #{subordinateDefaultRebateRate}, #{createTime})
+        insert into guess_user_notice(id, userId, userName, content, read, readTime, createTime)
+        values(#{id}, #{userId}, #{userName}, #{content}, #{read}, #{readTime}, #{createTime})
     </insert>
 
     <delete id="delete" parameterType="int">
-        delete from guess_user where id = #{id}
+        delete from guess_user_notice where id = #{id}
     </delete>
 
-    <update id="update" parameterType="com.yy.guess.po.User">
-        update guess_user set
-        userName = #{userName}, passWord = #{passWord}, withdrawPassword = #{withdrawPassword}, balance = #{balance}, nickName = #{nickName}, realName = #{realName}, qq = #{qq}, phone = #{phone}, email = #{email}, registTime = #{registTime}, lastLoginIp = #{lastLoginIp}, lastLoginTime = #{lastLoginTime}, lastLoginType = #{lastLoginType}, superUserId = #{superUserId}, rebateRate = #{rebateRate}, subordinateDefaultRebateRate = #{subordinateDefaultRebateRate}, createTime = #{createTime}
+    <update id="update" parameterType="com.yy.guess.po.UserNotice">
+        update guess_user_notice set
+        userId = #{userId}, userName = #{userName}, content = #{content}, read = #{read}, readTime = #{readTime}, createTime = #{createTime}
         where id = #{id}
     </update>
 
-    <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.User">
-        select id, userName, passWord, withdrawPassword, balance, nickName, realName, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime from guess_user
+    <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.UserNotice">
+        select id, userId, userName, content, read, readTime, createTime from guess_user_notice
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -43,13 +43,13 @@
         limit 0, 1
     </select>
 
-    <select id="findById" parameterType="int" resultType="com.yy.guess.po.User">
-        select id, userName, passWord, withdrawPassword, balance, nickName, realName, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime from guess_user
+    <select id="findById" parameterType="int" resultType="com.yy.guess.po.UserNotice">
+        select id, userId, userName, content, read, readTime, createTime from guess_user_notice
         where id = #{id}
     </select>
 
-    <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.User">
-        select id, userName, passWord, withdrawPassword, balance, nickName, realName, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime from guess_user
+    <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.UserNotice">
+        select id, userId, userName, content, read, readTime, createTime from guess_user_notice
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -73,7 +73,7 @@
     </select>
 
     <select id="getCount" parameterType="com.yy.fast4j.QueryCondition" resultType="int">
-        select count(*) from guess_user
+        select count(*) from guess_user_notice
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">

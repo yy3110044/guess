@@ -10,6 +10,7 @@ public class User {
 	private String withdrawPassword;
 	private double balance;
 	private String nickName;
+	private String realName;
 	private String qq;
 	private String phone;
 	private String email;
@@ -56,6 +57,12 @@ public class User {
 	}
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
+	}
+	public String getRealName() {
+		return realName;
+	}
+	public void setRealName(String realName) {
+		this.realName = realName;
 	}
 	public String getQq() {
 		return qq;

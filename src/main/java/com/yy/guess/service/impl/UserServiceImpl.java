@@ -67,4 +67,10 @@ public class UserServiceImpl implements UserService {
 		mapper.updateRebateRate(rebateRate, userId);
 		mapper.updateSubordinateDefaultRebateRate(rebateRate, userId);
 	}
+
+	@Override
+	public int getUserIdByUserName(String userName) {
+		Integer userId = mapper.getUserIdByUserName(userName);
+		return userId == null ? 0 : userId;
+	}
 }

@@ -85,4 +85,9 @@ public class ConfigComponent {
 		String str = configMap.get("betAmountMax");
 		return Double.parseDouble(str);
 	}
+	
+	//返回客服链接
+	public String getCustomerServiceUrl() {
+		return configMap.get("customerServiceUrl");
+	}
 }

@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>用户登录 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
-<%@include file="/m/zzzz/head-common.jsp"%>
+<%@include file="/m/head-common.jsp"%>
 </head>
 <body>
 	<div id="app" class="">

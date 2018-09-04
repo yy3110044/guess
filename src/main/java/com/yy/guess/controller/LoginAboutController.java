@@ -95,6 +95,7 @@ public class LoginAboutController {
 	public ResponseObject userRegistry(@RequestParam String userName,
                                        @RequestParam String passWord,
                                        String nickName,
+                                       String realName,
                                        String qq,
                                        String phone,
                                        String email,
@@ -131,6 +132,7 @@ public class LoginAboutController {
 		user.setUserName(userName);
 		user.setPassWord(DigestUtils.md5Hex(passWord));
 		user.setNickName(nickName);
+		user.setRealName(realName);
 		user.setQq(qq);
 		user.setPhone(phone);
 		user.setEmail(email);

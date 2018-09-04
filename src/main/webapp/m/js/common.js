@@ -162,10 +162,11 @@ var m_confirm_cancel2 = function(){
 };
 
 //toast框
+var toastSetTimeoutId = null;
 var m_toast = function(msg, showSuccessImg, showTransparent, timeout){
 	if(showSuccessImg == null) showSuccessImg = false;
 	if(showTransparent == null) showTransparent = false;
-	if(timeout == null) timeout = 4000;
+	if(timeout == null) timeout = 3000;
 	var str = '';
 	str += '<div class="vux-toast" id="m_toast_div">';
 	if(showTransparent) {
@@ -178,9 +179,11 @@ var m_toast = function(msg, showSuccessImg, showTransparent, timeout){
 	str += '		<p class="weui-toast__content" style="word-break:break-all;word-wrap:break-word;">' + msg + '</p>';
 	str += '	</div>';
 	str += '	<script>';
-	str += '	setTimeout("m_toast_close()", ' + timeout + ');';
+	str += '	if(toastSetTimeoutId != null) clearTimeout(toastSetTimeoutId);';
+	str += '	toastSetTimeoutId = setTimeout("m_toast_close()", ' + timeout + ');';
 	str += '	</script>';
 	str += '</div>';
+	m_toast_close();
 	$("body").append(str);
 };
 var m_toast_close = function(){

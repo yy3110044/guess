@@ -17,4 +17,5 @@ public interface UserService {
     double getBalance(int userId);
     void updateInfo(String nickName, String qq, String phone, String email, int userId);
     void updateRebateRate(double rebateRate, int userId);
+    int getUserIdByUserName(String userName); //返回用户id，0代表无
 }

@@ -1,9 +1,20 @@
 package com.yy.guess.po;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.yy.guess.po.enums.MatchStatus;
 
 public class MatchVersus {
+	private static final Date defaultEndTime;
+	static {
+		try {
+			defaultEndTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2099-01-01 00:00:00");
+		} catch (ParseException e) {
+			throw new RuntimeException(e.toString());
+		}
+	}
+
 	private int id;
 	private String name;
 	private int matchId;
@@ -20,7 +31,7 @@ public class MatchVersus {
 	private int rightTeamScore;
 	private int playTypeCount;
 	private Date startTime;
-	private Date endTime;
+	private Date endTime = defaultEndTime;
 	private MatchStatus status;
 	private int boCount;
 	private int realBoCount;

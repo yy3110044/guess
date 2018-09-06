@@ -24,5 +24,5 @@
     
     <!-- 项目的相关参数配置 -->
     <entry key="web.config.tokenExpirationTime">1296000000</entry><!-- token过期时间：单位：毫秒 -->
-    <entry key="web.config.guessMonitorDelay">15000</entry><!-- 竞猜监听延迟：单位：毫秒 -->
+    <entry key="web.config.guessMonitorDelay">20000</entry><!-- 竞猜监听延迟：单位：毫秒 -->
 </properties>

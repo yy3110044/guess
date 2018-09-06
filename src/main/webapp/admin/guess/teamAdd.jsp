@@ -63,7 +63,9 @@ var add = function() {
 			showMsg(data.msg);
 			if(data.code == 100) {
 				$("#name").val("");
-				$("#logoUrl").removeAttr("src");
+				if(logoUrl != "images/teamDefaultLogo.png") {
+					$("#logoUrl").removeAttr("src");
+				}
 				$("#description").val("");
 			}
 		}

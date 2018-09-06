@@ -1707,29 +1707,30 @@
 							</div>
 							<div class=" xs-fixed-container"></div>
 						</div>
-						<div data-v-bf66ef20=""
-							class="vux-popup-dialog base-popup vux-popup-bottom vux-popup-dialog vux-popup-dialog-bwpzr"
-							style="height: auto; max-height: 70vh; display: none;">
+						
+						<div data-v-bf66ef20="" class="vux-popup-dialog base-popup vux-popup-bottom vux-popup-dialog vux-popup-dialog-bwpzr" style="height: auto; max-height: 70vh;">
 							<div class="popup-header">
 								<div></div>
 								<div class="center-title">选择比赛日期</div>
-								<!---->
 								<div class="click-close-btn hide-btn"></div>
 							</div>
 							<div data-v-bf66ef20="">
-								<div data-v-bf66ef20="" class="popup-content"
-									id="vux-scroller-vjk78"
-									style="max-height: calc(70vh - 154px); height: 46px; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative; overflow: hidden;">
-									<div class="xs-container"
-										style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) translateZ(0px);">
-										<div data-v-bf66ef20="" class="date-list"
-											style="height: 0px; transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);"></div>
+								<div data-v-bf66ef20="" class="popup-content" id="vux-scroller-vjk78" style="max-height: calc(70vh - 154px); height: 200px; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative; overflow: hidden;">
+									<div class="xs-container" style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) translateZ(0px);">
+										<div data-v-bf66ef20="" class="date-list" style="height: 200px; transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+											<div data-v-bf66ef20="" class="date-item selected-date-item">2018年09月06日 周四<span data-v-bf66ef20="" class="selected-date-icon"> ✓ </span></div>
+											<div data-v-bf66ef20="" class="date-item">2018年09月07日 周四</div>
+											<div data-v-bf66ef20="" class="date-item">2018年09月08日 周四</div>
+											<div data-v-bf66ef20="" class="date-item">2018年09月09日 周四</div>
+											<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+										</div>
 									</div>
 									<div class=" xs-fixed-container"></div>
 								</div>
 								<div data-v-bf66ef20="" class="close-date-picker"></div>
 							</div>
 						</div>
+						
 					</div>
 				</div>
 			</div>

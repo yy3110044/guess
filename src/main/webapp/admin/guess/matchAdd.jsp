@@ -73,7 +73,9 @@ var add = function(){
 			showMsg(data.msg);
 			if(data.code == 100) {
 				$("#name").val("");
-				$("#logoUrl").removeAttr("src");
+				if(logoUrl != "images/matchDefaultLogo.png") {
+					$("#logoUrl").removeAttr("src");
+				}
 				$("#description").val("");
 				$("#startTime").val("");
 				$("#endTime").val("");

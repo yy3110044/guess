@@ -88,7 +88,9 @@ var query = function(pageSize, pageNo) {
 				{field : "name"},
 				{fn : function(obj){return '<span style="color:red;">' + obj.leftTeamName + '</span>&nbsp;vs&nbsp;<span style="color:green;">' + obj.rightTeamName + '</span>';}},
 				{field : "startTime"},
-				{field : "endTime"},
+				{fn : function(obj){
+					return obj.endTime == '2099-01-01 00:00:00' ? '' : obj.endTime;
+				}},
 				{fn : function(obj){
 					if("未开始" == obj.status) {
 						return '<span style="color:blue;">' + obj.status + '</span>';
@@ -408,7 +410,7 @@ var detail = function(versusId, e) {
 				str += '<div style="margin-top:4px;">开始时间：<input type="text" class="startTime" value="' + versus.startTime + '" placeholder="比赛开始时间" class="laydate-icon" onclick="laydate({istime:true,format:\'YYYY-MM-DD hh:mm:ss\'});" style="width:140px;cursor:pointer;" readonly="readonly"></div>';
 				str += '<div style="margin-top:4px;">比赛局数：<input type="number" class="boCount" value="' + versus.boCount + '" data-oldBoCount="' + versus.boCount + '" min="1" readonly="readonly"></div>';
 				str += '<div style="margin-top:4px;">实际局数：<input type="number" class="realBoCount" value="' + versus.realBoCount + '" min="0"></div>';
-				str += '<div style="margin-top:4px;">比分：<input type="number" class="leftTeamScore" value="' + versus.leftTeamScore + '" min="0" style="width:45px;">&nbsp;:&nbsp;<input type="number" class="rightTeamScore" value="' + versus.rightTeamScore + '" min="0" style="width:45px;"></div>';
+				str += '<div style="margin-top:4px;">比分：' + versus.leftTeamName + '<input type="number" class="leftTeamScore" value="' + versus.leftTeamScore + '" min="0" style="width:45px;">&nbsp;:&nbsp;<input type="number" class="rightTeamScore" value="' + versus.rightTeamScore + '" min="0" style="width:45px;text-align:right;">' + versus.rightTeamName + '</div>';
 				str += '<div style="margin-top:4px;">比赛状态：<select class="status" data-value="' + versus.status + '" onchange="detailStatusChange(this)"><%=com.yy.fast4j.Fast4jUtils.getSelectOptionHtmlStr(com.yy.guess.po.enums.MatchStatus.class)%></select></div>';
 				str += '<div style="margin-top:4px;' + (versus.status != '已结束' ? 'display:none;' : '') + '">比赛结果：<select class="result"><option value="-1"' + (versus.result < 0 ? ' selected="selected"' : '') + '>' + versus.leftTeamName + '胜</option><option value="0"' + (versus.result == 0 ? ' selected="selected"' : '') + '>平</option><option value="1"' + (versus.result > 0 ? ' selected="selected"' : '') + '>' + versus.rightTeamName + '胜</option></select></div>';
 				str += '<div style="margin-top:4px;"><input type="button" value="修改" onclick="modifyVersus(' + versus.id + ')"></div>';

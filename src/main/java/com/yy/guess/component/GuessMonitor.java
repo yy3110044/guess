@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +23,7 @@ import com.yy.guess.service.BetService;
  *
  */
 @Component
-public class GuessMonitor {
+public class GuessMonitor implements Runnable {
 	private static final Logger logger = LogManager.getLogger(GuessMonitor.class);
 	
 	private ScheduledExecutorService service;
@@ -30,33 +31,27 @@ public class GuessMonitor {
 	@Autowired
 	private BetService bs;
 	
-	@Value("${web.config.guessMonitorDelay}")
+	@Value("${web.config.guessMonitorDelay:20000}")
 	private long delay; //延迟，单位：毫秒
 	
-	public GuessMonitor() {
-		service = Executors.newSingleThreadScheduledExecutor();
-	}
-	
+	@PostConstruct
 	public void start() {
-		service.scheduleWithFixedDelay(new GuessMonitorRunable(), delay, delay, TimeUnit.MILLISECONDS);
+		service = Executors.newSingleThreadScheduledExecutor();
+		service.scheduleWithFixedDelay(this, delay, delay, TimeUnit.MILLISECONDS);
 	}
-	
 	@PreDestroy
 	public void stop() {
 		service.shutdownNow();
 	}
-	
-	private class GuessMonitorRunable implements Runnable {
-		@Override
-		public void run() {
-			try {
-				List<Bet> betList = bs.query(new QueryCondition().addCondition("status", "=", BetStatus.已下注));
-				for(Bet bet : betList) {
-					bs.settlementOrRefund(bet);
-				}
-			} catch (Exception e) {
-				logger.error(e);
+	@Override
+	public void run() {
+		try {
+			List<Bet> betList = bs.query(new QueryCondition().addCondition("status", "=", BetStatus.已下注));
+			for(Bet bet : betList) {
+				bs.settlementOrRefund(bet);
 			}
+		} catch (Exception e) {
+			logger.error(e.toString());
 		}
 	}
 }

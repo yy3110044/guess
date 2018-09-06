@@ -145,8 +145,12 @@ public class GuessAdminController {
 		if(sport == null) {
 			return new ResponseObject(101, "运动项目不存在，请先添加");
 		}
-		
-		Team team = new Team();
+		Team team = ts.find(new QueryCondition().addCondition("sportId", "=", sportId).addCondition("name", "=", name));
+		if(team != null) {
+			return new ResponseObject(102, "此队伍已存在");
+		}
+
+		team = new Team();
 		team.setSportId(sportId);
 		team.setSportName(sport.getName());
 		team.setName(name);

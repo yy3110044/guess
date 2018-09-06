@@ -149,7 +149,7 @@ public class PlayTypeAdminController {
 				return new ResponseObject(105, "已添加相同的玩法，请不要重复添加");
 			}
 		}
-		pts.addList(ptList);
+		pts.addList(ptList, versusId);
 		bs.loadStartedGuess();//重新加载一次
 		return new ResponseObject(100, "添加成功");
 	}

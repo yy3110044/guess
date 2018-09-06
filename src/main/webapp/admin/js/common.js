@@ -90,10 +90,11 @@ var addUploadEvent = function(obj) {
  * obj.inputId：上传图片表单id
  * obj.url：上传服务器url
  * obj.imgId：上传成功能的img元素id
+ * obj.defaultImgUrl: 默认图片url
  */
 var addImageUploadEvent = function(obj) {
 	var inputEle = $("#" + obj.inputId);
-	inputEle.after('<span id="progressallSpan" style="color:green;"></span><div><img id="' + obj.imgId + '"></div>');
+	inputEle.after('<span id="progressallSpan" style="color:green;"></span><div><img id="' + obj.imgId + '"' + (obj.defaultImgUrl == null ? '' : (' src="' + obj.defaultImgUrl + '"')) + '></div>');
 	obj.fileTypes = ["image/gif", "image/jpeg", "image/jpg", "image/png"];
 	obj.progressall = function(e, data){
 		var rate = parseInt(data.loaded / data.total * 100, 10);

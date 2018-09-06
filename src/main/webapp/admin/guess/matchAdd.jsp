@@ -17,7 +17,8 @@ $(document).ready(function(){
 	addImageUploadEvent({
 		"inputId" : "uploadImageInput",
 		"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
-		"imgId" : "logoUrl"
+		"imgId" : "logoUrl",
+		"defaultImgUrl" : "images/matchDefaultLogo.png"
 	});
 	loadData({
 		url : "administration/getAllSports",

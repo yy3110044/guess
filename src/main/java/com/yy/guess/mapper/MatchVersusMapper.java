@@ -3,6 +3,7 @@ package com.yy.guess.mapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.yy.guess.po.MatchVersus;
 import com.yy.fast4j.QueryCondition;
@@ -20,4 +21,7 @@ public interface MatchVersusMapper {
     
     @Select("select distinct(name) from guess_match_versus where matchId = #{matchId}")
     List<String> getDistinctName(int matchId);
+    
+    @Update("update guess_match_versus set playTypeCount = playTypeCount + #{plus} where id = #{versusId}")
+    void plusPlayTypeCount(int plus, int versusId);
 }

@@ -14,6 +14,6 @@ public interface PlayTypeService {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
     
-    void addList(List<PlayType> ptList);
+    void addList(List<PlayType> ptList, int versusId);
     void updateFixedOdds(boolean fixedOdds, double leftOdds, double rightOdds, int playTypeId);
 }

@@ -8,14 +8,17 @@ public class MatchVersus {
 	private String name;
 	private int matchId;
 	private String matchName;
+	private int sportId;
+	private String sportName;
 	private int leftTeamId;
 	private String leftTeamName;
 	private int rightTeamId;
 	private String rightTeamName;
 	private String leftTeamLogoUrl;
-	private String righTeamtLogoUrl;
+	private String rightTeamLogoUrl;
 	private int leftTeamScore;
 	private int rightTeamScore;
+	private int playTypeCount;
 	private Date startTime;
 	private Date endTime;
 	private MatchStatus status;
@@ -47,6 +50,18 @@ public class MatchVersus {
 	public void setMatchName(String matchName) {
 		this.matchName = matchName;
 	}
+	public int getSportId() {
+		return sportId;
+	}
+	public void setSportId(int sportId) {
+		this.sportId = sportId;
+	}
+	public String getSportName() {
+		return sportName;
+	}
+	public void setSportName(String sportName) {
+		this.sportName = sportName;
+	}
 	public int getLeftTeamId() {
 		return leftTeamId;
 	}
@@ -77,11 +92,11 @@ public class MatchVersus {
 	public void setLeftTeamLogoUrl(String leftTeamLogoUrl) {
 		this.leftTeamLogoUrl = leftTeamLogoUrl;
 	}
-	public String getRighTeamtLogoUrl() {
-		return righTeamtLogoUrl;
+	public String getRightTeamLogoUrl() {
+		return rightTeamLogoUrl;
 	}
-	public void setRighTeamtLogoUrl(String righTeamtLogoUrl) {
-		this.righTeamtLogoUrl = righTeamtLogoUrl;
+	public void setRightTeamLogoUrl(String rightTeamLogoUrl) {
+		this.rightTeamLogoUrl = rightTeamLogoUrl;
 	}
 	public int getLeftTeamScore() {
 		return leftTeamScore;
@@ -94,6 +109,12 @@ public class MatchVersus {
 	}
 	public void setRightTeamScore(int rightTeamScore) {
 		this.rightTeamScore = rightTeamScore;
+	}
+	public int getPlayTypeCount() {
+		return playTypeCount;
+	}
+	public void setPlayTypeCount(int playTypeCount) {
+		this.playTypeCount = playTypeCount;
 	}
 	public Date getStartTime() {
 		return startTime;

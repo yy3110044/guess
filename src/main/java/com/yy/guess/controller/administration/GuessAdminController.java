@@ -347,15 +347,23 @@ public class GuessAdminController {
 		if(boCount <= 0) {
 			return new ResponseObject(104, "比赛局数必须大于等于1");
 		}
+		Sport sport = ss.findById(match.getSportId());
+		if(sport == null) {
+			return new ResponseObject(105, "项目类型不存在");
+		}
 
 		MatchVersus mv = new MatchVersus();
 		mv.setName(name);
 		mv.setMatchId(matchId);
 		mv.setMatchName(match.getName());
+		mv.setSportId(sport.getId());
+		mv.setSportName(sport.getName());
 		mv.setLeftTeamId(leftTeamId);
 		mv.setLeftTeamName(leftTeam.getName());
 		mv.setRightTeamId(rightTeamId);
 		mv.setRightTeamName(rightTeam.getName());
+		mv.setLeftTeamLogoUrl(leftTeam.getLogoUrl());
+		mv.setRightTeamLogoUrl(rightTeam.getLogoUrl());
 		mv.setStartTime(startTime);
 		mv.setStatus(status);
 		mv.setBoCount(boCount);
@@ -426,7 +434,9 @@ public class GuessAdminController {
                                             @RequestParam int boCount,
                                             @RequestParam int realBoCount,
                                             @RequestParam MatchStatus status,
-                                            @RequestParam int result) {
+                                            @RequestParam int result,
+                                            @RequestParam int leftTeamScore,
+                                            @RequestParam int rightTeamScore) {
 		MatchVersus versus = mvs.findById(id);
 		if(versus == null) {
 			return new ResponseObject(101, "对阵不存在");
@@ -447,6 +457,8 @@ public class GuessAdminController {
 		versus.setRealBoCount(realBoCount);
 		versus.setStartTime(startTime);
 		versus.setStatus(status);
+		versus.setLeftTeamScore(leftTeamScore);
+		versus.setRightTeamScore(rightTeamScore);
 		if(MatchStatus.已结束 == status) {
 			versus.setResult(result);
 		}

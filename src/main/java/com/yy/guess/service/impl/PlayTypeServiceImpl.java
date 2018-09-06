@@ -4,6 +4,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.service.PlayTypeService;
@@ -14,6 +16,9 @@ import com.yy.fast4j.QueryCondition;
 public class PlayTypeServiceImpl implements PlayTypeService {
     @Autowired
     private PlayTypeMapper mapper;
+    
+    @Autowired
+    private MatchVersusMapper mvm;
 
     @Override
     public void add(PlayType obj) {
@@ -22,7 +27,11 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 
     @Override
     public void delete(int id) {
+    	PlayType pt = mapper.findById(id);
         mapper.delete(id);
+        if(pt != null) {
+        	mvm.plusPlayTypeCount(-1, pt.getVersusId());//更新versus中的玩法数
+        }
     }
 
     @Override
@@ -52,8 +61,9 @@ public class PlayTypeServiceImpl implements PlayTypeService {
     /*****************************************************************分隔线************************************************************************/
 
 	@Override
-	public void addList(List<PlayType> ptList) {
+	public void addList(List<PlayType> ptList, int versusId) {
 		mapper.addList(ptList);
+		mvm.plusPlayTypeCount(ptList.size(), versusId);//更新versus中的玩法数
 	}
 
 	@Override

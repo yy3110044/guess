@@ -83,6 +83,7 @@ var query = function(pageSize, pageNo) {
 			var listLength = data.result.list.length;
 			fillResult(data, [
 				{field : "id"},
+				{field : "sportName"},
 				{field : "matchName"},
 				{field : "name"},
 				{fn : function(obj){return '<span style="color:red;">' + obj.leftTeamName + '</span>&nbsp;vs&nbsp;<span style="color:green;">' + obj.rightTeamName + '</span>';}},
@@ -98,6 +99,10 @@ var query = function(pageSize, pageNo) {
 					} else {
 						return obj.status;
 					}
+				}},
+				{fn : function(obj){
+					var str = obj.leftTeamScore + '&nbsp;:&nbsp;' + obj.rightTeamScore;
+					return str;
 				}},
 				{field : "boCount"},
 				{field : "realBoCount"},
@@ -116,45 +121,23 @@ var query = function(pageSize, pageNo) {
 				}},
 				{field : "createTime"},
 				{fn : function(obj){
-					return '<span class="guessPlayTypeCount" data-versusId="' + obj.id + '"></span>';
+					var str = '';
+					if(obj.playTypeCount > 0) {
+						str += '<span style="color:green;">' + obj.playTypeCount + '</span>';
+					} else {
+						str += '<span style="color:red;">未添加</span>';
+					}
+					return str;
 				}},
 				{fn : function(obj, tdId, index){
 					var str = '';
 					str += '<a href="javascript:;" onclick="detail(' + obj.id + ', this)" id="versusDetailA' + obj.id + '">详情</a>';
 					str += '&nbsp;<a href="javascript:;" onclick="viewPlayType(' + obj.id + ', this)" id="viewPlayTypeA' + obj.id + '">玩法</a>';
 					str += '&nbsp;<a href="javascript:;" onclick="del(' + obj.id + ', this)">删除</a>';
-					if(index == (listLength - 1)) {
-						str += '<script>';
-						str += '$(document).ready(function(){loadGuessPlayTypeCount()});';
-						str += '</' + 'script>';
-					}
 					return str;
 				}}
 			]);
 		}
-	});
-};
-
-//读取玩法数
-var loadGuessPlayTypeCount = function(){
-	$("span.guessPlayTypeCount").each(function(){
-		var ts = $(this);
-		var versusId = ts.attr("data-versusId");
-		loadData({
-			url : "administration/getPlayTypeCount",
-			data : {"versusId" : versusId},
-			success : function(data) {
-				if(data.code == 100) {
-					if(data.result > 0) {
-						ts.html(data.result);
-					} else {
-						ts.html('<span style="color:red;">未添加</span>');
-					}
-				} else {
-					showMsg(data.msg);
-				}
-			}
-		});
 	});
 };
 
@@ -423,8 +406,9 @@ var detail = function(versusId, e) {
 				str += '<div style="margin-top:8px;border:1px dashed blue;padding:4px;" id="versus' + versus.id + '" class="detailDiv">';
 				str += '<div style="margin-top:4px;font-weight:bold;font-size:16px;">主盘口</div>';
 				str += '<div style="margin-top:4px;">开始时间：<input type="text" class="startTime" value="' + versus.startTime + '" placeholder="比赛开始时间" class="laydate-icon" onclick="laydate({istime:true,format:\'YYYY-MM-DD hh:mm:ss\'});" style="width:140px;cursor:pointer;" readonly="readonly"></div>';
-				str += '<div style="margin-top:4px;">比赛局数：<input type="number" class="boCount" value="' + versus.boCount + '" data-oldBoCount="' + versus.boCount + '" min="1"></div>';
+				str += '<div style="margin-top:4px;">比赛局数：<input type="number" class="boCount" value="' + versus.boCount + '" data-oldBoCount="' + versus.boCount + '" min="1" readonly="readonly"></div>';
 				str += '<div style="margin-top:4px;">实际局数：<input type="number" class="realBoCount" value="' + versus.realBoCount + '" min="0"></div>';
+				str += '<div style="margin-top:4px;">比分：<input type="number" class="leftTeamScore" value="' + versus.leftTeamScore + '" min="0" style="width:45px;">&nbsp;:&nbsp;<input type="number" class="rightTeamScore" value="' + versus.rightTeamScore + '" min="0" style="width:45px;"></div>';
 				str += '<div style="margin-top:4px;">比赛状态：<select class="status" data-value="' + versus.status + '" onchange="detailStatusChange(this)"><%=com.yy.fast4j.Fast4jUtils.getSelectOptionHtmlStr(com.yy.guess.po.enums.MatchStatus.class)%></select></div>';
 				str += '<div style="margin-top:4px;' + (versus.status != '已结束' ? 'display:none;' : '') + '">比赛结果：<select class="result"><option value="-1"' + (versus.result < 0 ? ' selected="selected"' : '') + '>' + versus.leftTeamName + '胜</option><option value="0"' + (versus.result == 0 ? ' selected="selected"' : '') + '>平</option><option value="1"' + (versus.result > 0 ? ' selected="selected"' : '') + '>' + versus.rightTeamName + '胜</option></select></div>';
 				str += '<div style="margin-top:4px;"><input type="button" value="修改" onclick="modifyVersus(' + versus.id + ')"></div>';
@@ -504,6 +488,9 @@ var modifyVersus = function(versusIdNumber) {
 			return;
 		}
 	}
+	
+	var leftTeamScore = $.trim($("#" + versusId).find(".leftTeamScore").val());
+	var rightTeamScore = $.trim($("#" + versusId).find(".rightTeamScore").val());
 	loadData({
 		url : "administration/matchVersusUpdate",
 		data : {
@@ -512,7 +499,9 @@ var modifyVersus = function(versusIdNumber) {
 			"boCount" : boCount,
 			"realBoCount" : realBoCount,
 			"status" : status,
-			"result" : result
+			"result" : result,
+			"leftTeamScore" : leftTeamScore,
+			"rightTeamScore" : rightTeamScore
 		},
 		success : function(data){
 			showMsg(data.msg);
@@ -637,12 +626,14 @@ var sportIdChange = function(){
 		</tr>
 		<tr align="center">
 			<td><strong>id</strong></td>
+			<td><strong>项目</strong></td>
 			<td><strong>赛事</strong></td>
 			<td><strong>名称</strong></td>
 			<td><strong>对阵</strong></td>
 			<td><strong>开始时间</strong></td>
 			<td><strong>结束时间</strong></td>
 			<td><strong>状态</strong></td>
+			<td><strong>比分</strong></td>
 			<td><strong>比赛局数</strong></td>
 			<td><strong>实际比赛局数</strong></td>
 			<td><strong>比赛结果</strong></td>

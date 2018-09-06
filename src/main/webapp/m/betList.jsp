@@ -5,22 +5,22 @@
 <%@include file="/m/head-common.jsp"%>
 <script src="m/js/bet.js"></script>
 <script>
-var balance = 0;
 $(document).ready(function(){
 	$("#vux-scroller-60yre").height($(window).height() - 132);//设置高度
-
-	$("div.vux-tab-item").on("tap", function(){
-		//alert(index);
-	});
 	
+	scrollEvent($("#vux-scroller-60yre"), function(){
+		alert("top");
+	}, function(){alert("bottom");});
+	
+	numberInputShow(function(amount){
+		alert(amount);
+	});
+
 	var str = '';
-	for(var i=0; i<100; i++) {
+	for(var i=0; i<25; i++) {
 		str += betList();
 	}
 	$("#betListContainer").append(str);
-	
-	
-	
 });
 </script>
 </head>
@@ -47,13 +47,13 @@ $(document).ready(function(){
 							<div data-v-de9ae73a="" class="vux-tab-wrap match-tab">
 								<div class="vux-tab-container">
 									<div class="vux-tab">
-										<div data-v-de9ae73a="" class="vux-tab-item vux-tab-selected" style="border:none;color:rgb(255, 255, 255);">今日<span data-v-de9ae73a="" class="match-number">17</span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(1)" class="vux-tab-item vux-tab-selected" style="border:none;color:rgb(255, 255, 255);">今日<span data-v-de9ae73a="" class="match-number">17</span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">进行中<span data-v-de9ae73a="" class="match-number">0</span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(2)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">进行中<span data-v-de9ae73a="" class="match-number">0</span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">赛前<span data-v-de9ae73a="" class="match-number">57</span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(3)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">赛前<span data-v-de9ae73a="" class="match-number">57</span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">已结束</div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(4)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">已结束</div>
 										<span data-v-de9ae73a="" class="column-line"></span>
 										<div class="vux-tab-ink-bar vux-tab-ink-bar-transition-backward" style="display:block;height:22px;background-color:transparent;left:0%;right:75%;"></div>
 									</div>
@@ -273,95 +273,6 @@ $(document).ready(function(){
 				</div>
 			</div>
 		</div>
-
-		<!--
-		<div data-v-60a57f0c="" class="vux-popup-dialog bet-slip-pop vux-popup-bottom vux-popup-show vux-popup-dialog-73jz6" style="height:auto;">
-			<section data-v-60a57f0c="" class="bet-slip-pop-header">
-				<div data-v-60a57f0c="" class="slip-number">1</div>
-				<div data-v-60a57f0c="" class="remove-all">删除全部</div>
-				<div data-v-60a57f0c="" class="pop-header-text">
-					<div data-v-60a57f0c="" class="pop-header-balance">余额</div>
-					<div data-v-60a57f0c="">0.00</div>
-				</div>
-				<div data-v-60a57f0c="" class="pop-header-close"></div>
-			</section>
-			<section data-v-60a57f0c="" class="bet-slip-pop-body">
-				<div data-v-60a57f0c="" class="pop-scroll" id="vux-scroller-bomdf" style="touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative; overflow:auto;">
-					<div class="xs-container" style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) translateZ(0px);">
-						<div data-v-60a57f0c=""
-							style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);">
-							<div data-v-60a57f0c="" class="vux-checker-box odds-list">
-								<div data-v-60a57f0c="">
-									<div data-v-60a57f0c="" class="vux-checker-item odds-item vux-tap-active">
-										<div data-v-60a57f0c="" class="odds-list-line"></div>
-										<section data-v-60a57f0c="" class="remove-odds" style="visibility:hidden;">
-											<div data-v-60a57f0c="" class="remove-odds-icon"></div>
-										</section>
-										<section data-v-60a57f0c="" class="odds-item-match">
-											<div data-v-60a57f0c="" class="odds-name">SaveBuyBackPlz</div>
-											<div data-v-60a57f0c="">全场 获胜者</div>
-											<div data-v-60a57f0c="">Athletico Esport - VS - SaveBuyBackPlz</div>
-										</section>
-										<section data-v-60a57f0c="" class="odds-item-money">
-											<div data-v-60a57f0c="" class="item-money">
-												<div data-v-60a57f0c="" class="money-odds">@3.97</div>
-												<div data-v-60a57f0c="" class="stake-input stake-input-focus">
-													<span data-v-60a57f0c="" class="input-placeholder" id="inputValueSpan" data-value="">输入金额</span>
-												</div>
-											</div>
-											<div data-v-60a57f0c="" class="item-return">预计还返 <span data-v-60a57f0c="" class="return-amount">0</span></div>
-										</section>
-									</div>
-									<div data-v-90afda32="" data-v-60a57f0c="" class="base-Keyboard single-keyboard">
-										<div data-v-90afda32="" class="content">
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('1')"><div data-v-90afda32="">1</div></div>
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('2')"><div data-v-90afda32="">2</div></div>
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('3')"><div data-v-90afda32="">3</div></div>
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('4')"><div data-v-90afda32="">4</div></div>
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('5')"><div data-v-90afda32="">5</div></div>
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('6')"><div data-v-90afda32="">6</div></div>
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('7')"><div data-v-90afda32="">7</div></div>
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('8')"><div data-v-90afda32="">8</div></div>
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('9')"><div data-v-90afda32="">9</div></div>
-											<div data-v-90afda32="" class="content-number" onclick="numberInput('0')"><div data-v-90afda32="">0</div></div>
-										</div>
-										<div data-v-90afda32="" class="content">
-											<div data-v-90afda32="" class="max-btn">
-												<div data-v-90afda32="">最大投注</div>
-											</div>
-											<div data-v-90afda32="" class="del-btn" onclick="numberInput('x')">
-												<div data-v-90afda32="" class="del-icon"></div>
-											</div>
-											<div data-v-90afda32="" class="confirm-btn">
-												<div data-v-90afda32="">确认</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class=" xs-fixed-container"></div>
-				</div>
-			</section>
-		</div>
-		-->
-
-		<!--
-		<section data-v-60a57f0c="" class="bet-slip-tab">
-			<div data-v-60a57f0c="" class="tab-content">
-				<div data-v-60a57f0c="" class="content-left">
-					<div data-v-60a57f0c="" class="bet-amount">
-						<div data-v-60a57f0c="">投注金额 <span data-v-60a57f0c="">0.00</span></div>
-						<div data-v-60a57f0c="" style="height:2px;"></div>
-						<div data-v-60a57f0c="">最高还返 <span data-v-60a57f0c="" class="total-return">0.00</span></div>
-					</div>
-					<div data-v-60a57f0c="" class="toggle-tab">收起</div>
-				</div>
-				<div data-v-60a57f0c="" class="bet-btn">确认投注</div>
-			</div>
-		</section>
-		-->
 
 		<!--
 		<div data-v-60a57f0c="" class="vux-confirm order-confirm">

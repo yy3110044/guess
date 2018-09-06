@@ -131,6 +131,12 @@ CREATE TABLE `guess_match_versus` (
   `leftTeamName` varchar(128) NOT NULL COMMENT '比赛队伍名',
   `rightTeamId` int(11) NOT NULL COMMENT '比赛队伍，关联team表id',
   `rightTeamName` varchar(128) NOT NULL COMMENT '比赛队伍名',
+  
+  `leftTeamLogoUrl` varchar(512) COMMENT '左team logo',
+  `righTeamtLogoUrl` varchar(512) COMMENT '右team logo',
+  `leftTeamScore` int(11) COMMENT '左team得分或者bo胜局',
+  `rightTeamScore` int(11) COMMENT '右team得分或者bo胜局',
+  
   `startTime` datetime COMMENT '对阵开始时间',
   `endTime` datetime COMMENT '对阵结束时间',
   `status` enum('未开始', '进行中', '已结束', '未比赛') COMMENT '比赛状态',

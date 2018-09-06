@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.yy.fast4j.Fast4jUtils;
 import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.ResponseObject;

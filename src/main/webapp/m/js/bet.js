@@ -1,3 +1,12 @@
+//用户余额
+var userBalance = 6;
+
+//更新余额方法
+var updateBalance = function(balance){
+	userBalance = balance;
+	$("#userBalanceDiv").html(balance.toFixed(2));
+};
+
 //输入按钮
 var numberInput = function(num){
 	var e = $("#inputValueSpan");
@@ -13,13 +22,107 @@ var numberInput = function(num){
 	}
 
 	e.attr("data-value", value);
-	
+
 	if(!empty(value)) {
+		var amount = parseInt(value, 10);
+		if(amount > userBalance) {
+			e.parent().addClass("stake-input-over");
+		} else {
+			e.parent().removeClass("stake-input-over");
+		}
 		e.attr("class", "input-text");
 		e.html(value);
 	} else {
+		e.parent().removeClass("stake-input-over");
 		e.attr("class", "input-placeholder");
 		e.html("输入金额");
+	}
+};
+/**
+ * 输入框
+ * ok_callback按ok的回调函数
+ */
+var numberInput_ok_callback = null;
+var numberInputShow = function(ok_callback) {
+	numberInput_ok_callback = ok_callback;
+	var str = '';
+	str += '<div data-v-60a57f0c="" id="numberInputDiv" class="vux-popup-dialog bet-slip-pop vux-popup-bottom vux-popup-show vux-popup-dialog-73jz6" style="height:auto;bottom:0;">';
+	str += '	<section data-v-60a57f0c="" class="bet-slip-pop-header">';
+	str += '		<div data-v-60a57f0c="" class="slip-number">1</div>';
+	str += '		<div data-v-60a57f0c="" class="remove-all">删除全部</div>';
+	str += '		<div data-v-60a57f0c="" class="pop-header-text">';
+	str += '			<div data-v-60a57f0c="" class="pop-header-balance">余额</div>';
+	str += '			<div data-v-60a57f0c="" id="userBalanceDiv">' + userBalance.toFixed(2) + '</div>';
+	str += '		</div>';
+	str += '		<div data-v-60a57f0c="" class="pop-header-close" onclick="numberInputClose()"></div>';
+	str += '	</section>';
+	str += '	<section data-v-60a57f0c="" class="bet-slip-pop-body">';
+	str += '		<div data-v-60a57f0c="" class="pop-scroll" id="vux-scroller-bomdf" style="touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative; overflow:auto;">';
+	str += '			<div class="xs-container" style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) translateZ(0px);">';
+	str += '				<div data-v-60a57f0c="" style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);">';
+	str += '					<div data-v-60a57f0c="" class="vux-checker-box odds-list">';
+	str += '						<div data-v-60a57f0c="">';
+	str += '							<div data-v-60a57f0c="" class="vux-checker-item odds-item vux-tap-active">';
+	str += '								<div data-v-60a57f0c="" class="odds-list-line"></div>';
+	str += '								<section data-v-60a57f0c="" class="remove-odds" style="visibility:hidden;">';
+	str += '									<div data-v-60a57f0c="" class="remove-odds-icon"></div>';
+	str += '								</section>';
+	str += '								<section data-v-60a57f0c="" class="odds-item-match">';
+	str += '									<div data-v-60a57f0c="" class="odds-name">SaveBuyBackPlz</div>';
+	str += '									<div data-v-60a57f0c="">全场 获胜者</div>';
+	str += '									<div data-v-60a57f0c="">Athletico Esport - VS - SaveBuyBackPlz</div>';
+	str += '								</section>';
+	str += '								<section data-v-60a57f0c="" class="odds-item-money">';
+	str += '									<div data-v-60a57f0c="" class="item-money">';
+	str += '										<div data-v-60a57f0c="" class="money-odds">@3.97</div>';
+	str += '										<div data-v-60a57f0c="" class="stake-input stake-input-focus">';
+	str += '											<span data-v-60a57f0c="" class="input-placeholder" id="inputValueSpan" data-value="">输入金额</span>';
+	str += '										</div>';
+	str += '									</div>';
+	str += '									<div data-v-60a57f0c="" class="item-return">预计还返 <span data-v-60a57f0c="" class="return-amount">0</span></div>';
+	str += '								</section>';
+	str += '							</div>';
+	str += '							<div data-v-90afda32="" data-v-60a57f0c="" class="base-Keyboard single-keyboard">';
+	str += '								<div data-v-90afda32="" class="content">';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'1\')"><div data-v-90afda32="">1</div></div>';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'2\')"><div data-v-90afda32="">2</div></div>';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'3\')"><div data-v-90afda32="">3</div></div>';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'4\')"><div data-v-90afda32="">4</div></div>';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'5\')"><div data-v-90afda32="">5</div></div>';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'6\')"><div data-v-90afda32="">6</div></div>';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'7\')"><div data-v-90afda32="">7</div></div>';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'8\')"><div data-v-90afda32="">8</div></div>';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'9\')"><div data-v-90afda32="">9</div></div>';
+	str += '									<div data-v-90afda32="" class="content-number" onclick="numberInput(\'0\')"><div data-v-90afda32="">0</div></div>';
+	str += '								</div>';
+	str += '								<div data-v-90afda32="" class="content">';
+	str += '									<div data-v-90afda32="" class="max-btn"><div data-v-90afda32="">最大投注</div></div>';
+	str += '									<div data-v-90afda32="" class="del-btn" onclick="numberInput(\'x\')"><div data-v-90afda32="" class="del-icon"></div></div>';
+	str += '									<div data-v-90afda32="" class="confirm-btn" onclick="numberInputOk()"><div data-v-90afda32="">确认</div></div>';
+	str += '								</div>';
+	str += '							</div>';
+	str += '						</div>';
+	str += '					</div>';
+	str += '				</div>';
+	str += '			</div>';
+	str += '			<div class=" xs-fixed-container"></div>';
+	str += '		</div>';
+	str += '	</section>';
+	str += '</div>';
+	$("#numberInputDiv").remove();
+	$("body").append(str);
+};
+var numberInputClose = function(){
+	$("#numberInputDiv").remove();
+};
+var numberInputOk = function(){
+	if(numberInput_ok_callback != null) {
+		var inputValueSpan = $.trim($("#inputValueSpan").attr("data-value"));
+		var amount = 0;
+		if(!empty(inputValueSpan)) {
+			amount = parseInt(inputValueSpan, 10);
+		}
+		numberInput_ok_callback(amount);
 	}
 };
 

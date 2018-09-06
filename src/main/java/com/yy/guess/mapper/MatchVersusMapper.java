@@ -2,6 +2,8 @@ package com.yy.guess.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
 import com.yy.guess.po.MatchVersus;
 import com.yy.fast4j.QueryCondition;
 
@@ -16,5 +18,6 @@ public interface MatchVersusMapper {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
     
+    @Select("select distinct(name) from guess_match_versus where matchId = #{matchId}")
     List<String> getDistinctName(int matchId);
 }

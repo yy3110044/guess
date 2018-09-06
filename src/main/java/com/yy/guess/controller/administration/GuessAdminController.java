@@ -452,6 +452,7 @@ public class GuessAdminController {
 		}
 		if(MatchStatus.已结束 == status || MatchStatus.未比赛 == status) {//关闭投注接口
 			bs.stopGuessByVerssuIdAndBo(versus.getId(), 0);
+			versus.setEndTime(new Date()); //设置结束时间
 		}
 		if(boCount != versus.getBoCount()) { //更改了boCount
 			versus.setBoCount(boCount);

@@ -131,7 +131,8 @@ CREATE TABLE `guess_match_versus` (
   `leftTeamName` varchar(128) NOT NULL COMMENT '比赛队伍名',
   `rightTeamId` int(11) NOT NULL COMMENT '比赛队伍，关联team表id',
   `rightTeamName` varchar(128) NOT NULL COMMENT '比赛队伍名',
-  `startTime` datetime COMMENT '比赛开始时间',
+  `startTime` datetime COMMENT '对阵开始时间',
+  `endTime` datetime COMMENT '对阵结束时间',
   `status` enum('未开始', '进行中', '已结束', '未比赛') COMMENT '比赛状态',
   `boCount` tinyint COMMENT '几局定胜负',
   `realBoCount` tinyint COMMENT '实际比赛局数',
@@ -140,7 +141,9 @@ CREATE TABLE `guess_match_versus` (
   PRIMARY KEY (`id`),
   KEY `matchId` (`matchId`),
   KEY `leftTeamId` (`leftTeamId`),
-  KEY `rightTeamId` (`rightTeamId`)
+  KEY `rightTeamId` (`rightTeamId`),
+  KEY `startTime` (`startTime`),
+  KEY `endTime` (`endTime`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8;
 
 /*赛事对阵bo表*/

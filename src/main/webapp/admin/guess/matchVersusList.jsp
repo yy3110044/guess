@@ -85,8 +85,9 @@ var query = function(pageSize, pageNo) {
 				{field : "id"},
 				{field : "matchName"},
 				{field : "name"},
-				{fn : function(obj){return obj.leftTeamName + '&nbsp;vs&nbsp;' + obj.rightTeamName;}},
+				{fn : function(obj){return '<span style="color:red;">' + obj.leftTeamName + '</span>&nbsp;vs&nbsp;<span style="color:green;">' + obj.rightTeamName + '</span>';}},
 				{field : "startTime"},
+				{field : "endTime"},
 				{fn : function(obj){
 					if("未开始" == obj.status) {
 						return '<span style="color:blue;">' + obj.status + '</span>';
@@ -640,6 +641,7 @@ var sportIdChange = function(){
 			<td><strong>名称</strong></td>
 			<td><strong>对阵</strong></td>
 			<td><strong>开始时间</strong></td>
+			<td><strong>结束时间</strong></td>
 			<td><strong>状态</strong></td>
 			<td><strong>比赛局数</strong></td>
 			<td><strong>实际比赛局数</strong></td>

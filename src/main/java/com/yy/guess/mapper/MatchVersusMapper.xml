@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into guess_match_versus(id, name, matchId, matchName, leftTeamId, leftTeamName, rightTeamId, rightTeamName, startTime, status, boCount, realBoCount, result, createTime)
-        values(#{id}, #{name}, #{matchId}, #{matchName}, #{leftTeamId}, #{leftTeamName}, #{rightTeamId}, #{rightTeamName}, #{startTime}, #{status}, #{boCount}, #{realBoCount}, #{result}, #{createTime})
+        insert into guess_match_versus(id, name, matchId, matchName, leftTeamId, leftTeamName, rightTeamId, rightTeamName, startTime, endTime, status, boCount, realBoCount, result, createTime)
+        values(#{id}, #{name}, #{matchId}, #{matchName}, #{leftTeamId}, #{leftTeamName}, #{rightTeamId}, #{rightTeamName}, #{startTime}, #{endTime}, #{status}, #{boCount}, #{realBoCount}, #{result}, #{createTime})
     </insert>
 
     <delete id="delete" parameterType="int">
@@ -17,12 +17,12 @@
 
     <update id="update" parameterType="com.yy.guess.po.MatchVersus">
         update guess_match_versus set
-        name = #{name}, matchId = #{matchId}, matchName = #{matchName}, leftTeamId = #{leftTeamId}, leftTeamName = #{leftTeamName}, rightTeamId = #{rightTeamId}, rightTeamName = #{rightTeamName}, startTime = #{startTime}, status = #{status}, boCount = #{boCount}, realBoCount = #{realBoCount}, result = #{result}, createTime = #{createTime}
+        name = #{name}, matchId = #{matchId}, matchName = #{matchName}, leftTeamId = #{leftTeamId}, leftTeamName = #{leftTeamName}, rightTeamId = #{rightTeamId}, rightTeamName = #{rightTeamName}, startTime = #{startTime}, endTime = #{endTime}, status = #{status}, boCount = #{boCount}, realBoCount = #{realBoCount}, result = #{result}, createTime = #{createTime}
         where id = #{id}
     </update>
 
     <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.MatchVersus">
-        select id, name, matchId, matchName, leftTeamId, leftTeamName, rightTeamId, rightTeamName, startTime, status, boCount, realBoCount, result, createTime from guess_match_versus
+        select id, name, matchId, matchName, leftTeamId, leftTeamName, rightTeamId, rightTeamName, startTime, endTime, status, boCount, realBoCount, result, createTime from guess_match_versus
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -44,12 +44,12 @@
     </select>
 
     <select id="findById" parameterType="int" resultType="com.yy.guess.po.MatchVersus">
-        select id, name, matchId, matchName, leftTeamId, leftTeamName, rightTeamId, rightTeamName, startTime, status, boCount, realBoCount, result, createTime from guess_match_versus
+        select id, name, matchId, matchName, leftTeamId, leftTeamName, rightTeamId, rightTeamName, startTime, endTime, status, boCount, realBoCount, result, createTime from guess_match_versus
         where id = #{id}
     </select>
 
     <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.MatchVersus">
-        select id, name, matchId, matchName, leftTeamId, leftTeamName, rightTeamId, rightTeamName, startTime, status, boCount, realBoCount, result, createTime from guess_match_versus
+        select id, name, matchId, matchName, leftTeamId, leftTeamName, rightTeamId, rightTeamName, startTime, endTime, status, boCount, realBoCount, result, createTime from guess_match_versus
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">

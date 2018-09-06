@@ -13,6 +13,7 @@ public class MatchVersus {
 	private int rightTeamId;
 	private String rightTeamName;
 	private Date startTime;
+	private Date endTime;
 	private MatchStatus status;
 	private int boCount;
 	private int realBoCount;
@@ -71,6 +72,12 @@ public class MatchVersus {
 	}
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
+	}
+	public Date getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
 	}
 	public MatchStatus getStatus() {
 		return status;

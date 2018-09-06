@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.yy.fast4j.Fast4jUtils;
 import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.enums.BetDirection;
@@ -61,4 +63,13 @@ public class BetInfoController {
 	public ResponseObject getNewestOdds(@RequestParam int playTypeId, @RequestParam BetDirection betDirection) {
 		return new ResponseObject(100, "返回成功", bs.getOdds(playTypeId, betDirection));
 	}
+
+	/**
+	 * 返回对阵列表
+	 * @return
+	 */
+	public ResponseObject getMatchVersusByToday() {
+		long startTime = Fast4jUtils.getEveryDayStartTime(System.currentTimeMillis());
+	}
+	//public ResponseObject getMatchVersus
 }

@@ -2,6 +2,8 @@ package com.yy.guess.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import com.yy.guess.po.Sport;
 import com.yy.fast4j.QueryCondition;
 
@@ -15,4 +17,6 @@ public interface SportMapper {
     List<Sport> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+    
+    List<Sport> queryInSportId(@Param("ids") List<Integer> ids);
 }

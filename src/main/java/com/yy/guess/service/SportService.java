@@ -13,4 +13,6 @@ public interface SportService {
     List<Sport> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+    
+    List<Sport> queryInSportId(List<Integer> ids);
 }

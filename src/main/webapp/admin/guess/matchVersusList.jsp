@@ -293,7 +293,7 @@ var playTypeChange = function(boCount){
 					var support = data.result.support;
 					var templateParamInfos = data.result.templateParamInfos;
 					
-					$("#addPlayTypeName").val(data.result.description);
+					//$("#addPlayTypeName").val(data.result.description);
 					
 					if(templateParamInfos != null && templateParamInfos.length > 0) { //有参数
 						var paramInfosDiv = '<div style="margin-top:4px;" class="addPlayTypeParamDiv">';

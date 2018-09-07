@@ -1,16 +1,17 @@
 package com.yy.guess.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.yy.guess.mapper.MatchVersusBoMapper;
 import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.service.MatchVersusService;
+import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 
 @Repository("matchVersusService")
@@ -91,5 +92,43 @@ public class MatchVersusServiceImpl implements MatchVersusService {
 		mvbm.deleteByVersusId(obj.getId());
 		mvbm.addList(boList);
 		ptm.deleteByVersusId(obj.getId());
+	}
+
+	@Override
+	public List<MatchVersus> queryInSportIdScroll(List<Integer> sportIdList, Date endTime, Date startTime, Page page) {
+		if(sportIdList != null && sportIdList.size() == 0) {
+			sportIdList = null;
+		}
+		if(endTime == null) {
+			endTime = new Date();
+		}
+		return mapper.queryInSportIdScroll(sportIdList, endTime, startTime, page);
+	}
+
+	@Override
+	public int queryInSportIdScrollCount(List<Integer> sportIdList, Date endTime, Date startTime) {
+		if(sportIdList != null && sportIdList.size() == 0) {
+			sportIdList = null;
+		}
+		if(endTime == null) {
+			endTime = new Date();
+		}
+		return mapper.queryInSportIdScrollCount(sportIdList, endTime, startTime);
+	}
+
+	@Override
+	public List<MatchVersus> queryInSportIdStartTime(List<Integer> sportIdList, Date startTime, Date endTime, Page page) {
+		if(sportIdList != null && sportIdList.size() == 0) {
+			sportIdList = null;
+		}
+		return mapper.queryInSportIdStartTime(sportIdList, startTime, endTime, page);
+	}
+
+	@Override
+	public int queryInSportIdStartTimeCount(List<Integer> sportIdList, Date startTime, Date endTime) {
+		if(sportIdList != null && sportIdList.size() == 0) {
+			sportIdList = null;
+		}
+		return mapper.queryInSportIdStartTimeCount(sportIdList, startTime, endTime);
 	}
 }

@@ -13,4 +13,5 @@ public interface UserNoticeService {
     List<UserNotice> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+    void setHadRead(boolean hadRead, int userId, int noticeId);
 }

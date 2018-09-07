@@ -360,8 +360,10 @@ public class GuessAdminController {
 		mv.setName(name);
 		mv.setMatchId(matchId);
 		mv.setMatchName(match.getName());
+		mv.setMatchLogoUrl(match.getLogoUrl());
 		mv.setSportId(sport.getId());
 		mv.setSportName(sport.getName());
+		mv.setSportLogoUrl(sport.getLogoUrl());
 		mv.setLeftTeamId(leftTeamId);
 		mv.setLeftTeamName(leftTeam.getName());
 		mv.setRightTeamId(rightTeamId);

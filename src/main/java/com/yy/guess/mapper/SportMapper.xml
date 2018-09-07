@@ -85,4 +85,9 @@
         </if>
     </select>
     <!--****************************************************************分隔线****************************************************************-->
+    
+    <select id="queryInSportId" parameterType="java.util.Collection" resultType="com.yy.guess.po.Sport">
+		select id, name, logoUrl, description, createTime from guess_sport
+		where id in (<foreach collection="ids" item="obj" separator=",">#{obj}</foreach>)
+    </select>
 </mapper>

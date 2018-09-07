@@ -53,7 +53,7 @@ var loadData = function(obj){
 			}
 		},
 		"error" : function(XMLHttpRequest, textStatus, errorThrown){
-			showMsg(textStatus);
+			m_toast(textStatus);
 			if(obj.error != null) {
 				obj.error(XMLHttpRequest, textStatus, errorThrown);
 			}

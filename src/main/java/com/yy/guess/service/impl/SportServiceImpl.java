@@ -1,5 +1,6 @@
 package com.yy.guess.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -50,4 +51,13 @@ public class SportServiceImpl implements SportService {
         return mapper.getCount(qc);
     }
     /*****************************************************************分隔线************************************************************************/
+
+	@Override
+	public List<Sport> queryInSportId(List<Integer> ids) {
+		if(ids != null && ids.size() > 0) {
+			return mapper.queryInSportId(ids);
+		} else {
+			return new ArrayList<Sport>();
+		}
+	}
 }

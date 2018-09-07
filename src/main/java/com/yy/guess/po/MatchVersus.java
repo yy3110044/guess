@@ -19,8 +19,10 @@ public class MatchVersus {
 	private String name;
 	private int matchId;
 	private String matchName;
+	private String matchLogoUrl;
 	private int sportId;
 	private String sportName;
+	private String sportLogoUrl;
 	private int leftTeamId;
 	private String leftTeamName;
 	private int rightTeamId;
@@ -61,6 +63,12 @@ public class MatchVersus {
 	public void setMatchName(String matchName) {
 		this.matchName = matchName;
 	}
+	public String getMatchLogoUrl() {
+		return matchLogoUrl;
+	}
+	public void setMatchLogoUrl(String matchLogoUrl) {
+		this.matchLogoUrl = matchLogoUrl;
+	}
 	public int getSportId() {
 		return sportId;
 	}
@@ -72,6 +80,12 @@ public class MatchVersus {
 	}
 	public void setSportName(String sportName) {
 		this.sportName = sportName;
+	}
+	public String getSportLogoUrl() {
+		return sportLogoUrl;
+	}
+	public void setSportLogoUrl(String sportLogoUrl) {
+		this.sportLogoUrl = sportLogoUrl;
 	}
 	public int getLeftTeamId() {
 		return leftTeamId;
@@ -168,5 +182,8 @@ public class MatchVersus {
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+	public static Date getDefaultendtime() {
+		return defaultEndTime;
 	}
 }

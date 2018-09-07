@@ -1,8 +1,10 @@
 package com.yy.guess.service;
 
+import java.util.Date;
 import java.util.List;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
+import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 
 public interface MatchVersusService {
@@ -19,4 +21,10 @@ public interface MatchVersusService {
     void deleteVersus(int id);
     List<String> getDistinctName(int matchId);
     void update(MatchVersus obj, List<MatchVersusBo> boList);
+
+    List<MatchVersus> queryInSportIdScroll(List<Integer> sportIdList, Date endTime, Date startTime, Page page);
+    int queryInSportIdScrollCount(List<Integer> sportIdList, Date endTime, Date startTime);
+
+    List<MatchVersus> queryInSportIdStartTime(List<Integer> sportIdList, Date startTime, Date endTime, Page page);
+    int queryInSportIdStartTimeCount(List<Integer> sportIdList, Date startTime, Date endTime);
 }

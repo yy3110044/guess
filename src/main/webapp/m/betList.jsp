@@ -8,21 +8,14 @@
 $(document).ready(function(){
 	$("#vux-scroller-60yre").height($(window).height() - 132);//设置高度
 	
-	scrollEvent($("#vux-scroller-60yre"), function(){
-		alert("top");
-	}, function(){alert("bottom");});
-	
+	loadAllSport();
+	loadMatchVersus();
 	/*
 	numberInputShow(function(amount){
 		alert(amount);
 	});
 	*/
 
-	var str = '';
-	for(var i=0; i<25; i++) {
-		str += betList();
-	}
-	$("#betListContainer").append(str);
 });
 </script>
 </head>
@@ -49,33 +42,31 @@ $(document).ready(function(){
 							<div data-v-de9ae73a="" class="vux-tab-wrap match-tab">
 								<div class="vux-tab-container">
 									<div class="vux-tab">
-										<div data-v-de9ae73a="" onclick="tabBarChange(1)" class="vux-tab-item vux-tab-selected" style="border:none;color:rgb(255, 255, 255);">今日<span data-v-de9ae73a="" class="match-number">17</span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(1, this)" class="vux-tab-item" style="border:none;color:rgb(186, 206, 241);">今日&nbsp;<span data-v-de9ae73a="" class="match-number">17</span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" onclick="tabBarChange(2)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">进行中<span data-v-de9ae73a="" class="match-number">0</span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(2, this)" class="vux-tab-item vux-tab-selected" style="border: none; color: rgb(255, 255, 255);">滚盘&nbsp;<span data-v-de9ae73a="" class="match-number">0</span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" onclick="tabBarChange(3)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">赛前<span data-v-de9ae73a="" class="match-number">57</span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(3, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">赛前&nbsp;<span data-v-de9ae73a="" class="match-number">57</span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" onclick="tabBarChange(4)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">已结束</div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(4, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">已结束</div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div class="vux-tab-ink-bar vux-tab-ink-bar-transition-backward" style="display:block;height:22px;background-color:transparent;left:0%;right:75%;"></div>
+										<div class="vux-tab-ink-bar vux-tab-ink-bar-transition-backward" style="display:block;height:22px;background-color:transparent;left:25%;right:50%;"></div>
 									</div>
 								</div>
 							</div>
-							<div data-v-de9ae73a="" class="show-filter-games-btn"></div>
+							<div data-v-de9ae73a="" class="show-filter-games-btn" onclick="showSportSelect()"></div>
 						</section>
-						<section data-v-de9ae73a="" class="filter-games" style="display: none;">
-							<div data-v-de9ae73a="" class="hide-filter-games-btn" style="visibility: hidden;">完成</div>
+						<section data-v-de9ae73a="" class="filter-games" style="display:none;">
+							<div data-v-de9ae73a="" class="hide-filter-games-btn" style="visibility:hidden;">完成</div>
 							<div data-v-de9ae73a="">筛选游戏</div>
-							<div data-v-de9ae73a="" class="hide-filter-games-btn">
-								<div data-v-de9ae73a="" class="btn-content">✓</div>
-							</div>
+							<div data-v-de9ae73a="" class="hide-filter-games-btn" onclick="sportSelectOk()"><div data-v-de9ae73a="" class="btn-content">✓</div></div>
 						</section>
 					</div>
 					
 					<div data-v-cd1e9d3c="" data-v-bf66ef20="">
-						<div data-v-cd1e9d3c="" class="vux-popup-dialog games-picker vux-popup-top vux-popup-dialog vux-popup-dialog-mfqea" style="height: calc(100% - 92px); display: none;">
+						<div data-v-cd1e9d3c="" class="vux-popup-dialog games-picker vux-popup-top vux-popup-dialog vux-popup-dialog-mfqea" style="height:calc(100% - 92px);display:none;">
 							<div data-v-cd1e9d3c="" class="vux-checker-box checker-content">
-								<div data-v-cd1e9d3c="" class="default-checker-item selected-checker-item">
+								<div data-v-cd1e9d3c="" onclick="sportSelect(0, this)" id="selected-allSport" class="default-checker-item selected-checker-item">
 									<div data-v-cd1e9d3c="" style="height: 2px;">&nbsp;</div>
 									<div data-v-cd1e9d3c="" class="games-info">
 										<div data-v-cd1e9d3c="" class="games-icon all-games-icon"></div>
@@ -83,41 +74,10 @@ $(document).ready(function(){
 									</div>
 									<div data-v-cd1e9d3c="" class="selected-checker-light"></div>
 								</div>
-								<div data-v-cd1e9d3c="" class="vux-checker-item vux-tap-active default-checker-item selected-all-games">
-									<div data-v-cd1e9d3c="" style="height: 2px;">&nbsp;</div>
-									<div data-v-cd1e9d3c="" class="games-info">
-										<div data-v-cd1e9d3c="" class="games-icon" style="background-image: url(&quot;//yuanjududu.com//file/d511f1c87538e99ca914ef559dfa68ba.svg&quot;);"></div>
-										<div data-v-cd1e9d3c="">DOTA2</div>
-									</div>
-									<div data-v-cd1e9d3c="" class="selected-checker-light"></div>
-								</div>
-								<div data-v-cd1e9d3c="" class="vux-checker-item vux-tap-active default-checker-item selected-all-games">
-									<div data-v-cd1e9d3c="" style="height: 2px;">&nbsp;</div>
-									<div data-v-cd1e9d3c="" class="games-info">
-										<div data-v-cd1e9d3c="" class="games-icon" style="background-image: url(&quot;//yuanjududu.com//file/98c6eb475bf90d035c0d6b7f31fd59d0.svg&quot;);"></div>
-										<div data-v-cd1e9d3c="">CSGO</div>
-									</div>
-									<div data-v-cd1e9d3c="" class="selected-checker-light"></div>
-								</div>
-								<div data-v-cd1e9d3c="" class="vux-checker-item vux-tap-active default-checker-item selected-all-games">
-									<div data-v-cd1e9d3c="" style="height: 2px;">&nbsp;</div>
-									<div data-v-cd1e9d3c="" class="games-info">
-										<div data-v-cd1e9d3c="" class="games-icon" style="background-image: url(&quot;//yuanjududu.com//file/cb9287b9cbdc7414adeb287df1feeebb.svg&quot;);"></div>
-										<div data-v-cd1e9d3c="">英雄联盟</div>
-									</div>
-									<div data-v-cd1e9d3c="" class="selected-checker-light"></div>
-								</div>
-								<div data-v-cd1e9d3c="" class="vux-checker-item vux-tap-active default-checker-item selected-all-games">
-									<div data-v-cd1e9d3c="" style="height: 2px;">&nbsp;</div>
-									<div data-v-cd1e9d3c="" class="games-info">
-										<div data-v-cd1e9d3c="" class="games-icon" style="background-image: url(&quot;//yuanjududu.com//file/aebc1f0c88b9eab27a72511d0e1a9d8e.svg&quot;);"></div>
-										<div data-v-cd1e9d3c="">王者荣耀</div>
-									</div>
-									<div data-v-cd1e9d3c="" class="selected-checker-light"></div>
-								</div>
 							</div>
 						</div>
 					</div>
+
 
 					<div data-v-bf66ef20="" class="match-card-list">
 						<section data-v-bf66ef20="" class="content-hearer">
@@ -139,6 +99,7 @@ $(document).ready(function(){
 						<div data-v-bf66ef20="" id="vux-scroller-60yre" style="touch-action:auto;user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);position:relative;overflow:scroll;">
 							<div class="xs-container">
 								<div data-v-bf66ef20="">
+								
 									<div data-v-bf66ef20="" id="betListContainer">
 
 										<div data-v-18da170e="" data-v-bf66ef20="" class="home-match-card">

@@ -50,4 +50,9 @@ public class UserNoticeServiceImpl implements UserNoticeService {
         return mapper.getCount(qc);
     }
     /*****************************************************************分隔线************************************************************************/
+
+	@Override
+	public void setHadRead(boolean hadRead, int userId, int noticeId) {
+		mapper.setHadRead(hadRead, userId, noticeId);
+	}
 }

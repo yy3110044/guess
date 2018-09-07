@@ -230,7 +230,7 @@ var nameSelectChange = function(){
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">比赛名称：</td>
 			<td>
-				<input type="text" id="name" placeholder="如：小组赛、半绝赛，没有则不填" style="width:200px;">
+				<input type="text" id="name" placeholder="如：小组赛、半决赛，没有则不填" style="width:200px;">
 				<select id="nameSelect" onclick="nameSelectChange()"></select>
 			</td>
 		</tr>

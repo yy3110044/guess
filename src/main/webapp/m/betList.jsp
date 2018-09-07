@@ -3,7 +3,7 @@
 <head>
 <title>下注列表 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <%@include file="/m/head-common.jsp"%>
-<script src="m/js/bet.js"></script>
+<script src="m/js/betList.js"></script>
 <script>
 $(document).ready(function(){
 	$("#vux-scroller-60yre").height($(window).height() - 132);//设置高度
@@ -341,7 +341,7 @@ $(document).ready(function(){
 
 
 	
-	<div data-v-bf66ef20="" class="home-page">
+	<div data-v-bf66ef20="" class="home-page" style="display:none;">
 		<div data-v-bf66ef20="" class="vux-popup-dialog base-popup vux-popup-bottom vux-popup-dialog vux-popup-dialog-bwpzr" style="height:auto;max-height:70vh;">
 			<div class="popup-header">
 				<div></div>

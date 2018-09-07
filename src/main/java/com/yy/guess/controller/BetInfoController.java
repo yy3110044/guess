@@ -18,9 +18,11 @@ import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.ResponseObject;
 import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.guess.po.MatchVersus;
+import com.yy.guess.po.Sport;
 import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.service.BetService;
 import com.yy.guess.service.MatchVersusService;
+import com.yy.guess.service.SportService;
 import com.yy.guess.util.CachePre;
 
 /**
@@ -40,6 +42,9 @@ public class BetInfoController {
 	
 	@Autowired
 	private MatchVersusService mvs;
+	
+	@Autowired
+	private SportService ss;
 
 	/**
 	 * 返回奖金池
@@ -125,6 +130,15 @@ public class BetInfoController {
 		return new ResponseObject(100, "返回成功", list);
 	}
 	
+	/**
+	 * 分页返回MatchVersus
+	 * @param sportId
+	 * @param pageSize
+	 * @param pageNo
+	 * @param showCount
+	 * @return
+	 */
+	@RequestMapping("/getMatchVersus")
 	public ResponseObject getMatchVersus(Integer sportId,
                                          @RequestParam(defaultValue="20") int pageSize,
                                          @RequestParam(defaultValue="1") int pageNo,
@@ -140,5 +154,15 @@ public class BetInfoController {
 		List<MatchVersus> list = mvs.query(qc);
 		Page page = qc.getPage(mvs.getCount(qc));
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
+	}
+
+	/**
+	 * 返回所有的运动项目
+	 * @return
+	 */
+	@RequestMapping("/getAllSport")
+	public ResponseObject getAllSport() {
+		List<Sport> list = ss.query(null);
+		return new ResponseObject(100, "返回成功", list);
 	}
 }

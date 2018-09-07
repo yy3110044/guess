@@ -1,5 +1,5 @@
 //用户余额
-var userBalance = 6;
+var userBalance = 0;
 
 //更新余额方法
 var updateBalance = function(balance){
@@ -7,37 +7,6 @@ var updateBalance = function(balance){
 	$("#userBalanceDiv").html(balance.toFixed(2));
 };
 
-//输入按钮
-var numberInput = function(num){
-	var e = $("#inputValueSpan");
-	var value = e.attr("data-value");
-	if("x" == num) {
-		if(!empty(value)) {
-			value = value.substring(0, value.length - 1);
-		}
-	} else {
-		if(value.length < 6) {
-			value = value + num;
-		}
-	}
-
-	e.attr("data-value", value);
-
-	if(!empty(value)) {
-		var amount = parseInt(value, 10);
-		if(amount > userBalance) {
-			e.parent().addClass("stake-input-over");
-		} else {
-			e.parent().removeClass("stake-input-over");
-		}
-		e.attr("class", "input-text");
-		e.html(value);
-	} else {
-		e.parent().removeClass("stake-input-over");
-		e.attr("class", "input-placeholder");
-		e.html("输入金额");
-	}
-};
 /**
  * 输入框
  * ok_callback按ok的回调函数
@@ -125,6 +94,38 @@ var numberInputOk = function(){
 		numberInput_ok_callback(amount);
 	}
 };
+//输入按钮
+var numberInput = function(num){
+	var e = $("#inputValueSpan");
+	var value = e.attr("data-value");
+	if("x" == num) {
+		if(!empty(value)) {
+			value = value.substring(0, value.length - 1);
+		}
+	} else {
+		if(value.length < 6) {
+			value = value + num;
+		}
+	}
+
+	e.attr("data-value", value);
+
+	if(!empty(value)) {
+		var amount = parseInt(value, 10);
+		if(amount > userBalance) {
+			e.parent().addClass("stake-input-over");
+		} else {
+			e.parent().removeClass("stake-input-over");
+		}
+		e.attr("class", "input-text");
+		e.html(value);
+	} else {
+		e.parent().removeClass("stake-input-over");
+		e.attr("class", "input-placeholder");
+		e.html("输入金额");
+	}
+};
+
 
 //滚动条变换
 var tabBarChange = function(index) {

@@ -10,10 +10,12 @@ public class PlayType {
 	private String paramStr;
 	private String templateClass;
 	private boolean guessStart;
-	private double leftOdds;
-	private double rightOdds;
+	private double leftWinRate;
+	private double rightWinRate;
 	private double leftBonusPool;
 	private double rightBonusPool;
+	private double leftPayBonus;
+	private double rightPayBonus;
 	private boolean fixedOdds;
 	private Date createTime = new Date();
 	public int getId() {
@@ -58,17 +60,17 @@ public class PlayType {
 	public void setGuessStart(boolean guessStart) {
 		this.guessStart = guessStart;
 	}
-	public double getLeftOdds() {
-		return leftOdds;
+	public double getLeftWinRate() {
+		return leftWinRate;
 	}
-	public void setLeftOdds(double leftOdds) {
-		this.leftOdds = leftOdds;
+	public void setLeftWinRate(double leftWinRate) {
+		this.leftWinRate = leftWinRate;
 	}
-	public double getRightOdds() {
-		return rightOdds;
+	public double getRightWinRate() {
+		return rightWinRate;
 	}
-	public void setRightOdds(double rightOdds) {
-		this.rightOdds = rightOdds;
+	public void setRightWinRate(double rightWinRate) {
+		this.rightWinRate = rightWinRate;
 	}
 	public double getLeftBonusPool() {
 		return leftBonusPool;
@@ -81,6 +83,18 @@ public class PlayType {
 	}
 	public void setRightBonusPool(double rightBonusPool) {
 		this.rightBonusPool = rightBonusPool;
+	}
+	public double getLeftPayBonus() {
+		return leftPayBonus;
+	}
+	public void setLeftPayBonus(double leftPayBonus) {
+		this.leftPayBonus = leftPayBonus;
+	}
+	public double getRightPayBonus() {
+		return rightPayBonus;
+	}
+	public void setRightPayBonus(double rightPayBonus) {
+		this.rightPayBonus = rightPayBonus;
 	}
 	public boolean isFixedOdds() {
 		return fixedOdds;

@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into guess_play_type(id, versusId, name, bo, paramStr, templateClass, guessStart, leftOdds, rightOdds, leftBonusPool, rightBonusPool, fixedOdds, createTime)
-        values(#{id}, #{versusId}, #{name}, #{bo}, #{paramStr}, #{templateClass}, #{guessStart}, #{leftOdds}, #{rightOdds}, #{leftBonusPool}, #{rightBonusPool}, #{fixedOdds}, #{createTime})
+        insert into guess_play_type(id, versusId, name, bo, paramStr, templateClass, guessStart, leftWinRate, rightWinRate, leftBonusPool, rightBonusPool, leftPayBonus, rightPayBonus, fixedOdds, createTime)
+        values(#{id}, #{versusId}, #{name}, #{bo}, #{paramStr}, #{templateClass}, #{guessStart}, #{leftWinRate}, #{rightWinRate}, #{leftBonusPool}, #{rightBonusPool}, #{leftPayBonus}, #{rightPayBonus} #{fixedOdds}, #{createTime})
     </insert>
 
     <delete id="delete" parameterType="int">
@@ -17,12 +17,12 @@
 
     <update id="update" parameterType="com.yy.guess.po.PlayType">
         update guess_play_type set
-        versusId = #{versusId}, name = #{name}, bo = #{bo}, paramStr = #{paramStr}, templateClass = #{templateClass}, guessStart = #{guessStart}, leftOdds = #{leftOdds}, rightOdds = #{rightOdds}, leftBonusPool = #{leftBonusPool}, rightBonusPool = #{rightBonusPool}, fixedOdds = #{fixedOdds}, createTime = #{createTime}
+        versusId = #{versusId}, name = #{name}, bo = #{bo}, paramStr = #{paramStr}, templateClass = #{templateClass}, guessStart = #{guessStart}, leftWinRate = #{leftWinRate}, rightWinRate = #{rightWinRate}, leftBonusPool = #{leftBonusPool}, rightBonusPool = #{rightBonusPool}, leftPayBonus = #{leftPayBonus}, rightPayBonus = #{rightPayBonus}, fixedOdds = #{fixedOdds}, createTime = #{createTime}
         where id = #{id}
     </update>
 
     <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.PlayType">
-        select id, versusId, name, bo, paramStr, templateClass, guessStart, leftOdds, rightOdds, leftBonusPool, rightBonusPool, fixedOdds, createTime from guess_play_type
+        select id, versusId, name, bo, paramStr, templateClass, guessStart, leftWinRate, rightWinRate, leftBonusPool, rightBonusPool, leftPayBonus, rightPayBonus, fixedOdds, createTime from guess_play_type
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -44,12 +44,12 @@
     </select>
 
     <select id="findById" parameterType="int" resultType="com.yy.guess.po.PlayType">
-        select id, versusId, name, bo, paramStr, templateClass, guessStart, leftOdds, rightOdds, leftBonusPool, rightBonusPool, fixedOdds, createTime from guess_play_type
+        select id, versusId, name, bo, paramStr, templateClass, guessStart, leftWinRate, rightWinRate, leftBonusPool, rightBonusPool, leftPayBonus, rightPayBonus, fixedOdds, createTime from guess_play_type
         where id = #{id}
     </select>
 
     <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.PlayType">
-        select id, versusId, name, bo, paramStr, templateClass, guessStart, leftOdds, rightOdds, leftBonusPool, rightBonusPool, fixedOdds, createTime from guess_play_type
+        select id, versusId, name, bo, paramStr, templateClass, guessStart, leftWinRate, rightWinRate, leftBonusPool, rightBonusPool, leftPayBonus, rightPayBonus, fixedOdds, createTime from guess_play_type
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -85,16 +85,12 @@
         </if>
     </select>
     <!--****************************************************************分隔线****************************************************************-->
-    
-    <delete id="deleteByVersusId" parameterType="int">
-    	delete from guess_play_type where versusId = #{versusId}
-    </delete>
-    
+
     <insert id="addList" parameterType="java.util.Collection">
-		insert into guess_play_type(id, versusId, name, bo, paramStr, templateClass, guessStart, leftOdds, rightOdds, leftBonusPool, rightBonusPool, fixedOdds, createTime)
+		insert into guess_play_type(id, versusId, name, bo, paramStr, templateClass, guessStart, leftWinRate, rightWinRate, leftBonusPool, rightBonusPool, leftPayBonus, rightPayBonus, fixedOdds, createTime)
 		values
 		<foreach collection="ptList" item="obj" separator=",">
-			(#{obj.id}, #{obj.versusId}, #{obj.name}, #{obj.bo}, #{obj.paramStr}, #{obj.templateClass}, #{obj.guessStart}, #{obj.leftOdds}, #{obj.rightOdds}, #{obj.leftBonusPool}, #{obj.rightBonusPool}, #{obj.fixedOdds}, #{obj.createTime})
+			(#{obj.id}, #{obj.versusId}, #{obj.name}, #{obj.bo}, #{obj.paramStr}, #{obj.templateClass}, #{obj.guessStart}, #{obj.leftWinRate}, #{obj.rightWinRate}, #{obj.leftBonusPool}, #{obj.rightBonusPool}, #{obj.leftPayBonus}, #{obj.rightPayBonus}, #{obj.fixedOdds}, #{obj.createTime})
 		</foreach>
     </insert>
 </mapper>

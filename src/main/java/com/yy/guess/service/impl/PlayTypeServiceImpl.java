@@ -1,28 +1,52 @@
 package com.yy.guess.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.PostConstruct;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.yy.guess.component.ConfigComponent;
+import com.yy.guess.mapper.BetMapper;
 import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.po.PlayType;
+import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.service.PlayTypeService;
+import com.yy.guess.util.CachePre;
 import com.yy.fast4j.QueryCondition;
+import com.yy.fast4j.RedisUtil;
 
 @Repository("playTypeService")
 @Transactional
 public class PlayTypeServiceImpl implements PlayTypeService {
+	private static final Logger logger = LogManager.getLogger(PlayTypeServiceImpl.class);
+	
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
+	
+	@Autowired
+	private ConfigComponent cfgCom;
+	
     @Autowired
     private PlayTypeMapper mapper;
     
     @Autowired
     private MatchVersusMapper mvm;
+    
+    @Autowired
+    private BetMapper bm;
 
     @Override
     public void add(PlayType obj) {
         mapper.add(obj);
+        if(obj.isGuessStart()) {
+        	startedPlayTypeMap.put(obj.getId(), obj);
+        }
     }
 
     @Override
@@ -32,11 +56,15 @@ public class PlayTypeServiceImpl implements PlayTypeService {
         if(pt != null) {
         	mvm.plusPlayTypeCount(-1, pt.getVersusId());//更新versus中的玩法数
         }
+        startedPlayTypeMap.remove(id);
     }
 
     @Override
     public void update(PlayType obj) {
         mapper.update(obj);
+        if(obj.isGuessStart()) {
+        	startedPlayTypeMap.put(obj.getId(), obj);
+        }
     }
 
     @Override
@@ -60,14 +88,352 @@ public class PlayTypeServiceImpl implements PlayTypeService {
     }
     /*****************************************************************分隔线************************************************************************/
 
-	@Override
+    @Override
 	public void addList(List<PlayType> ptList, int versusId) {
 		mapper.addList(ptList);
 		mvm.plusPlayTypeCount(ptList.size(), versusId);//更新versus中的玩法数
+		loadStartedPlayTypeToMap(); //重新加载PlayType
+	}
+    
+    private final Map<Integer, PlayType> startedPlayTypeMap = new ConcurrentHashMap<Integer, PlayType>();
+    @Override
+    @PostConstruct//系统启动时加载
+    public void loadStartedPlayTypeToMap() {
+    	List<PlayType> list = mapper.query(new QueryCondition().addCondition("guessStart", "=", true));
+    	for(PlayType pt : list) {
+    		startedPlayTypeMap.put(pt.getId(), pt);
+    	}
+    }
+
+    @Override
+	public PlayType getStartPlayTypeByMap(int id) {
+		return startedPlayTypeMap.get(id);
 	}
 
 	@Override
-	public void updateFixedOdds(boolean fixedOdds, double leftOdds, double rightOdds, int playTypeId) {
-		mapper.updateFixedOdds(fixedOdds, leftOdds, rightOdds, playTypeId);
+	public void deleteByVersusId(int versusId) {
+		List<Integer> playTypeIdList = mapper.getPlayTypeIdList(versusId);
+		mapper.deleteByVersusId(versusId);
+		for(Integer id : playTypeIdList) {
+			startedPlayTypeMap.remove(id);
+		}
+	}
+
+	@Override
+	public void deleteByVersusIdAndBo(int versusId, int bo) {
+		List<Integer> playTypeIdList = mapper.getPlayTypeIdList(versusId, bo);
+		mapper.deleteByVersusIdAndBo(versusId, bo);
+		for(Integer id : playTypeIdList) {
+			startedPlayTypeMap.remove(id);
+		}
+	}
+
+	@Override
+	public void updateGuessStartByPlayTypeId(boolean guessStart, int playTypeId) {
+		mapper.updateGuessStartByPlayTypeId(guessStart, playTypeId);
+		if(guessStart) { //开
+			PlayType playType = mapper.findById(playTypeId);
+			if(playType != null) {
+				this.startedPlayTypeMap.put(playType.getId(), playType);
+			}
+		} else { //关
+			this.startedPlayTypeMap.remove(playTypeId);
+		}
+	}
+
+	@Override
+	public void updateGuessStartByVersusId(boolean guessStart, int versusId) {
+		mapper.updateGuessStartByVersusId(guessStart, versusId);
+		if(guessStart) {
+			List<PlayType> list = mapper.query(new QueryCondition().addCondition("versusId", "=", versusId));
+			for(PlayType playType : list) {
+				this.startedPlayTypeMap.put(playType.getId(), playType);
+			}
+		} else {
+			List<Integer> idList = mapper.getPlayTypeIdList(versusId);
+			for(Integer id : idList) {
+				this.startedPlayTypeMap.remove(id);
+			}
+		}
+	}
+
+	@Override
+	public void updateGuessStartByVersusIdAndBo(boolean guessStart, int versusId, int bo) {
+		mapper.updateGuessStartByVersusIdAndBo(guessStart, versusId, bo);
+		if(guessStart) {
+			List<PlayType> list = mapper.query(new QueryCondition().addCondition("versusId", "=", versusId).addCondition("bo", "=", bo));
+			for(PlayType playType : list) {
+				this.startedPlayTypeMap.put(playType.getId(), playType);
+			}
+		} else {
+			List<Integer> idList = mapper.getPlayTypeIdList(versusId, bo);
+			for(Integer id : idList) {
+				this.startedPlayTypeMap.remove(id);
+			}
+		}
+	}
+	
+	@Override
+	public void updateWinRate(double leftWinRate, double rightWinRate, int playTypeId) {
+		mapper.updateWinRate(leftWinRate, rightWinRate, playTypeId);
+		PlayType playType = this.startedPlayTypeMap.get(playTypeId);
+		if(playType != null) {
+			playType.setLeftWinRate(leftWinRate);
+			playType.setRightWinRate(rightWinRate);
+		}
+	}
+	
+	@Override
+	public void updateFixedOdds(boolean fixedOdds, int playTypeId) {
+		mapper.updateFixedOdds(fixedOdds, playTypeId);
+		PlayType playType = this.startedPlayTypeMap.get(playTypeId);
+		if(playType != null) {
+			playType.setFixedOdds(fixedOdds);
+		}
+	}
+	
+	@Override
+	public void updateWinRateAndFixedOdds(double leftWinRate, double rightWinRate, boolean fixedOdds, int playTypeId) {
+		mapper.updateWinRateAndFixedOdds(leftWinRate, rightWinRate, fixedOdds, playTypeId);
+		PlayType playType = this.startedPlayTypeMap.get(playTypeId);
+		if(playType != null) {
+			playType.setLeftWinRate(leftWinRate);
+			playType.setRightWinRate(rightWinRate);
+			playType.setFixedOdds(fixedOdds);
+		}
+	}
+
+	@Override
+	public void updateWinRateByVersusId(double leftWinRate, double rightWinRate, int versusId) {
+		mapper.updateWinRateByVersusId(leftWinRate, rightWinRate, versusId);
+		List<Integer> ids = mapper.getPlayTypeIdList(versusId);
+		for(Integer id : ids) {
+			PlayType playType = this.startedPlayTypeMap.get(id);
+			if(playType != null) {
+				playType.setLeftWinRate(leftWinRate);
+				playType.setRightWinRate(rightWinRate);
+			}
+		}
+	}
+
+	@Override
+	public void updateFixedOddsByVersusId(boolean fixedOdds, int versusId) {
+		mapper.updateFixedOddsByVersusId(fixedOdds, versusId);
+		List<Integer> ids = mapper.getPlayTypeIdList(versusId);
+		for(Integer id : ids) {
+			PlayType playType = this.startedPlayTypeMap.get(id);
+			if(playType != null) {
+				playType.setFixedOdds(fixedOdds);
+			}
+		}
+	}
+	
+	@Override
+	public void updateWinRateAndFixedOddsByVersusId(double leftWinRate, double rightWinRate, boolean fixedOdds, int versusId) {
+		mapper.updateWinRateAndFixedOddsByVersusId(leftWinRate, rightWinRate, fixedOdds, versusId);
+		List<Integer> ids = mapper.getPlayTypeIdList(versusId);
+		for(Integer id : ids) {
+			PlayType playType = this.startedPlayTypeMap.get(id);
+			if(playType != null) {
+				playType.setLeftWinRate(leftWinRate);
+				playType.setRightWinRate(rightWinRate);
+				playType.setFixedOdds(fixedOdds);
+			}
+		}
+	}
+
+	@Override
+	public void updateWinRateByVersusIdAndBo(double leftWinRate, double rightWinRate, int versusId, int bo) {
+		mapper.updateWinRateByVersusIdAndBo(leftWinRate, rightWinRate, versusId, bo);
+		List<Integer> ids = mapper.getPlayTypeIdList(versusId, bo);
+		for(Integer id : ids) {
+			PlayType playType = this.startedPlayTypeMap.get(id);
+			if(playType != null) {
+				playType.setLeftWinRate(leftWinRate);
+				playType.setRightWinRate(rightWinRate);
+			}
+		}
+	}
+
+	@Override
+	public void updateFixedOddsByVersusIdAndBo(boolean fixedOdds, int versusId, int bo) {
+		mapper.updateFixedOddsByVersusIdAndBo(fixedOdds, versusId, bo);
+		List<Integer> ids = mapper.getPlayTypeIdList(versusId, bo);
+		for(Integer id : ids) {
+			PlayType playType = this.startedPlayTypeMap.get(id);
+			if(playType != null) {
+				playType.setFixedOdds(fixedOdds);
+			}
+		}
+	}
+
+	@Override
+	public void updateWinRateAndFixedOddsByVersusIdAndBo(double leftWinRate, double rightWinRate, boolean fixedOdds, int versusId, int bo) {
+		mapper.updateWinRateAndFixedOddsByVersusIdAndBo(leftWinRate, rightWinRate, fixedOdds, versusId, bo);
+		List<Integer> ids = mapper.getPlayTypeIdList(versusId, bo);
+		for(Integer id : ids) {
+			PlayType playType = this.startedPlayTypeMap.get(id);
+			if(playType != null) {
+				playType.setLeftWinRate(leftWinRate);
+				playType.setRightWinRate(rightWinRate);
+				playType.setFixedOdds(fixedOdds);
+			}
+		}
+	}
+	
+	@Override
+	public double getOdds(BetDirection direction, int playTypeId) {
+		PlayType playType = startedPlayTypeMap.get(playTypeId);
+		if(playType == null) {
+			RuntimeException e = new RuntimeException("玩法未开启竞猜或不存在");
+			logger.error(e.toString());
+			throw e;
+		}
+		if(playType.isFixedOdds()) { //固定赔率
+			return getFixedOdds(direction, playType);
+		} else { //变动赔率
+			double[] bonusPool = this.getBonusPool(playTypeId);
+			if(bonusPool[0] == 0 || bonusPool[1] == 0) { //投注额为零，返回固定赔率
+				return this.getFixedOdds(direction, playType);
+			} else {
+				switch(direction) {
+				case LEFT:
+					return this.cfgCom.getReturnRate() / (bonusPool[0] / (bonusPool[0] + bonusPool[1]));
+				case RIGHT:
+					return this.cfgCom.getReturnRate() / (bonusPool[1] / (bonusPool[0] + bonusPool[1]));
+				default:
+					RuntimeException e = new RuntimeException("未知的下注方：" + direction);
+					logger.error(e.toString());
+					throw e;
+				}
+			}
+		}
+	}
+	//返回固定赔率
+	private double getFixedOdds(BetDirection direction, PlayType playType) {
+		switch(direction) {
+		case LEFT:
+			return cfgCom.getReturnRate() / playType.getLeftWinRate();
+		case RIGHT:
+			return cfgCom.getReturnRate() / playType.getRightWinRate();
+		default:
+			RuntimeException e = new RuntimeException("未知的下注方：" + direction);
+			logger.error(e.toString());
+			throw e;
+		}
+	}
+	private double[] getFixedOdds(PlayType playType) {
+		return new double[] {cfgCom.getReturnRate() / playType.getLeftWinRate(), cfgCom.getReturnRate() / playType.getRightWinRate()};
+	}
+	
+	@Override
+	public double[] getOdds(int playTypeId) {
+		PlayType playType = this.startedPlayTypeMap.get(playTypeId);
+		if(playType == null) {
+			RuntimeException e = new RuntimeException("玩法未开启竞猜或不存在");
+			logger.error(e.toString());
+			throw e;
+		}
+		if(playType.isFixedOdds()) { //固定赔率
+			return this.getFixedOdds(playType);
+		} else { //变动赔率
+			double[] bonusPool = this.getBonusPool(playTypeId);
+			if(bonusPool[0] == 0 || bonusPool[1] == 0) { //投注额为零，返回固定赔率
+				return this.getFixedOdds(playType);
+			} else {
+				double totalBonusPool = bonusPool[0] + bonusPool[1];
+				double returnRate = cfgCom.getReturnRate();
+				return new double[] {returnRate / (bonusPool[0] / totalBonusPool), returnRate / (bonusPool[1] / totalBonusPool)};
+			}
+		}
+	}
+	
+	@Override
+	public void cleanPlayTypeCache(int playTypeId) {
+		String key = String.valueOf(playTypeId);
+		RedisUtil.delete(redisTemplate, CachePre.GUESS_LEFT_BONUS_POOL, key);
+		RedisUtil.delete(redisTemplate, CachePre.GUESS_RIGHT_BONUS_POOL, key);
+	}
+
+	@Override
+	public void stopGuessByPlayTypeId(int playTypeId) {
+		this.updateGuessStartByPlayTypeId(false, playTypeId); //关闭状态
+		this.cleanPlayTypeCache(playTypeId);//清除缓存
+		double[] bonusPool = this.getBonusPool(playTypeId); //奖金池
+		Double leftPayBonus = bm.getSumBetAmount(playTypeId, BetDirection.LEFT);
+		Double rightPayBonus = bm.getSumBetAmount(playTypeId, BetDirection.RIGHT);
+		mapper.updateBonusPoolAndPayBonus(bonusPool[0], bonusPool[1], leftPayBonus, rightPayBonus, playTypeId);
+	}
+
+	@Override
+	public void stopGuessByVersusId(int versusId) {
+		this.updateGuessStartByVersusId(false, versusId);
+		List<Integer> idList = mapper.getPlayTypeIdList(versusId);
+		for(Integer id : idList) {
+			this.cleanPlayTypeCache(id); //清除缓存
+			double[] bonusPool = this.getBonusPool(id);
+			Double leftPayBonus = bm.getSumBetAmount(id, BetDirection.LEFT);
+			Double rightPayBonus = bm.getSumBetAmount(id, BetDirection.RIGHT);
+			mapper.updateBonusPoolAndPayBonus(bonusPool[0], bonusPool[1], leftPayBonus, rightPayBonus, id);
+		}
+	}
+
+	@Override
+	public void stopGuessByVersusIdAndBo(int versusId, int bo) {
+		this.updateGuessStartByVersusIdAndBo(false, versusId, bo);
+		List<Integer> idList = mapper.getPlayTypeIdList(versusId, bo);
+		for(Integer id : idList) {
+			this.cleanPlayTypeCache(id); //清除缓存
+			double[] bonusPool = this.getBonusPool(id);
+			Double leftPayBonus = bm.getSumBetAmount(id, BetDirection.LEFT);
+			Double rightPayBonus = bm.getSumBetAmount(id, BetDirection.RIGHT);
+			mapper.updateBonusPoolAndPayBonus(bonusPool[0], bonusPool[1], leftPayBonus, rightPayBonus, id);
+		}
+	}
+
+	@Override
+	public double getBonusPool(BetDirection betDirection, int playTypeId) {
+		String key = String.valueOf(playTypeId);
+		switch(betDirection) {
+		case LEFT:
+			Double leftBonusPoolDouble = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_LEFT_BONUS_POOL, key);
+			return leftBonusPoolDouble == null ? 0 : leftBonusPoolDouble;
+		case RIGHT:
+			Double rightBonusPoolDouble = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_RIGHT_BONUS_POOL, key);
+			return rightBonusPoolDouble == null ? 0 : rightBonusPoolDouble;
+		default:
+			RuntimeException e = new RuntimeException("未知的下注方：" + betDirection);
+			logger.error(e.toString());
+			throw e;
+		}
+	}
+
+	@Override
+	public double[] getBonusPool(int playTypeId) {
+		String key = String.valueOf(playTypeId);
+		Double leftBonusPoolDouble = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_LEFT_BONUS_POOL, key);
+		Double rightBonusPoolDouble = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_RIGHT_BONUS_POOL, key);
+		double leftBonusPool = leftBonusPoolDouble == null ? 0 : leftBonusPoolDouble;
+		double rightBonusPool = rightBonusPoolDouble == null ? 0 : rightBonusPoolDouble;
+		return new double[] {leftBonusPool, rightBonusPool};
+	}
+
+	@Override
+	public void plusBonusPool(double amount, BetDirection betDirection, int playTypeId) {
+		String key = String.valueOf(playTypeId);
+		switch(betDirection) {
+		case LEFT:
+			Double leftBonusPool = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_LEFT_BONUS_POOL, key);
+			RedisUtil.set(redisTemplate, CachePre.GUESS_LEFT_BONUS_POOL, key, leftBonusPool == null ? amount : leftBonusPool + amount);
+			break;
+		case RIGHT:
+			Double rightBonusPool = RedisUtil.getDouble(redisTemplate, CachePre.GUESS_RIGHT_BONUS_POOL, key);
+			RedisUtil.set(redisTemplate, CachePre.GUESS_RIGHT_BONUS_POOL, key, rightBonusPool == null ? amount : rightBonusPool + amount);
+			break;
+		default:
+			RuntimeException e = new RuntimeException("未知的betDirection：" + betDirection);
+			logger.error(e.toString());
+			throw e;
+		}
 	}
 }

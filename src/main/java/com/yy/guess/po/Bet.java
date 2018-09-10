@@ -12,6 +12,8 @@ public class Bet {
 	private int userId;
 	private String userName;
 	private BetDirection betDirection;
+	private double leftOdds;
+	private double rightOdds;
 	private double betAmount;
 	private BetStatus status;
 	private Date createTime = new Date();
@@ -56,6 +58,18 @@ public class Bet {
 	}
 	public void setBetDirection(BetDirection betDirection) {
 		this.betDirection = betDirection;
+	}
+	public double getLeftOdds() {
+		return leftOdds;
+	}
+	public void setLeftOdds(double leftOdds) {
+		this.leftOdds = leftOdds;
+	}
+	public double getRightOdds() {
+		return rightOdds;
+	}
+	public void setRightOdds(double rightOdds) {
+		this.rightOdds = rightOdds;
 	}
 	public double getBetAmount() {
 		return betAmount;

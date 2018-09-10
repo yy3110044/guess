@@ -3,6 +3,9 @@ package com.yy.guess.component;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,7 @@ public class ConfigComponent {
 
 	private Map<String, String> configMap = new ConcurrentHashMap<String, String>();
 	
+	@PostConstruct
 	public void loadConfigToCache() {
 		List<Config> list = this.getAllConfig();
 		for(Config config : list) {

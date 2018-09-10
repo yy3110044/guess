@@ -17,18 +17,9 @@ public interface BetService {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
     
-    void loadStartedGuess(); //从数据库读取已开启的竞猜
-    boolean startGuessByVersusId(int versusId); //开启对阵下的所有竞猜
-    boolean stopGuessByVersusId(int versusId); //关闭对阵下的的有竞猜
-    boolean stopGuessByVerssuIdAndBo(int versusId, int bo); //关闭对阵下的
-    boolean startGuessByPlayTypeId(int playTypeId); //开启某个竞猜
-    boolean stopGuessByPlayTypeId(int playTypeId); //关闭某个竞猜
-    boolean checkGuessStarted(int playTypeId); //查看某个玩法是否已开启竞猜
-    void cleanGuessCache(int playTypeId); //清除相关缓存
-    double getOdds(int playTypeId, BetDirection betDirection);//返回赔率
     boolean bet(int playTypeId, int userId, String userName, BetDirection betDirection, double betAmount);//下注
     
     void settlementOrRefund(Bet bet); //结算
-    void settlement(Bet bet, MatchVersus versus, List<MatchVersusBo> boList); //计算结果
+    void settlement(Bet bet, MatchVersus versus, List<MatchVersusBo> boList); //结算
     void refund(Bet bet, String description); //退款
 }

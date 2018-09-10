@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into guess_bet(id, versusId, bo, playTypeId, userId, userName, betDirection, betAmount, status, createTime)
-        values(#{id}, #{versusId}, #{bo}, #{playTypeId}, #{userId}, #{userName}, #{betDirection}, #{betAmount}, #{status}, #{createTime})
+        insert into guess_bet(id, versusId, bo, playTypeId, userId, userName, betDirection, leftOdds, rightOdds, betAmount, status, createTime)
+        values(#{id}, #{versusId}, #{bo}, #{playTypeId}, #{userId}, #{userName}, #{betDirection}, #{leftOdds}, #{rightOdds}, #{betAmount}, #{status}, #{createTime})
     </insert>
 
     <delete id="delete" parameterType="int">
@@ -17,12 +17,12 @@
 
     <update id="update" parameterType="com.yy.guess.po.Bet">
         update guess_bet set
-        versusId = #{versusId}, bo = #{bo}, playTypeId = #{playTypeId}, userId = #{userId}, userName = #{userName}, betDirection = #{betDirection}, betAmount = #{betAmount}, status = #{status}, createTime = #{createTime}
+        versusId = #{versusId}, bo = #{bo}, playTypeId = #{playTypeId}, userId = #{userId}, userName = #{userName}, betDirection = #{betDirection}, leftOdds = #{leftOdds}, rightOdds = #{rightOdds}, betAmount = #{betAmount}, status = #{status}, createTime = #{createTime}
         where id = #{id}
     </update>
 
     <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.Bet">
-        select id, versusId, bo, playTypeId, userId, userName, betDirection, betAmount, status, createTime from guess_bet
+        select id, versusId, bo, playTypeId, userId, userName, betDirection, leftOdds, rightOdds, betAmount, status, createTime from guess_bet
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -44,12 +44,12 @@
     </select>
 
     <select id="findById" parameterType="int" resultType="com.yy.guess.po.Bet">
-        select id, versusId, bo, playTypeId, userId, userName, betDirection, betAmount, status, createTime from guess_bet
+        select id, versusId, bo, playTypeId, userId, userName, betDirection, leftOdds, rightOdds, betAmount, status, createTime from guess_bet
         where id = #{id}
     </select>
 
     <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.Bet">
-        select id, versusId, bo, playTypeId, userId, userName, betDirection, betAmount, status, createTime from guess_bet
+        select id, versusId, bo, playTypeId, userId, userName, betDirection, leftOdds, rightOdds, betAmount, status, createTime from guess_bet
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">

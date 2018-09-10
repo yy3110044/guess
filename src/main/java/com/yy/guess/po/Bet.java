@@ -15,6 +15,7 @@ public class Bet {
 	private double leftOdds;
 	private double rightOdds;
 	private double betAmount;
+	private double realPayBonus;
 	private BetStatus status;
 	private Date createTime = new Date();
 	public int getId() {
@@ -76,6 +77,12 @@ public class Bet {
 	}
 	public void setBetAmount(double betAmount) {
 		this.betAmount = betAmount;
+	}
+	public double getRealPayBonus() {
+		return realPayBonus;
+	}
+	public void setRealPayBonus(double realPayBonus) {
+		this.realPayBonus = realPayBonus;
 	}
 	public BetStatus getStatus() {
 		return status;

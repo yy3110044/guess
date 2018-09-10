@@ -14,8 +14,6 @@ public class PlayType {
 	private double rightWinRate;
 	private double leftBonusPool;
 	private double rightBonusPool;
-	private double leftPayBonus;
-	private double rightPayBonus;
 	private boolean fixedOdds;
 	private Date createTime = new Date();
 	public int getId() {
@@ -83,18 +81,6 @@ public class PlayType {
 	}
 	public void setRightBonusPool(double rightBonusPool) {
 		this.rightBonusPool = rightBonusPool;
-	}
-	public double getLeftPayBonus() {
-		return leftPayBonus;
-	}
-	public void setLeftPayBonus(double leftPayBonus) {
-		this.leftPayBonus = leftPayBonus;
-	}
-	public double getRightPayBonus() {
-		return rightPayBonus;
-	}
-	public void setRightPayBonus(double rightPayBonus) {
-		this.rightPayBonus = rightPayBonus;
 	}
 	public boolean isFixedOdds() {
 		return fixedOdds;

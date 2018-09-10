@@ -26,10 +26,10 @@ import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.Sport;
 import com.yy.guess.po.Team;
 import com.yy.guess.po.enums.MatchStatus;
-import com.yy.guess.service.BetService;
 import com.yy.guess.service.MatchService;
 import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
+import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.service.SportService;
 import com.yy.guess.service.TeamService;
 
@@ -59,7 +59,7 @@ public class GuessAdminController {
 	private MatchVersusBoService mvbs;
 	
 	@Autowired
-	private BetService bs;
+	private PlayTypeService pts;
 	
 	/**
 	 * 添加运动项目
@@ -469,7 +469,7 @@ public class GuessAdminController {
 			versus.setResult(result);
 		}
 		if(MatchStatus.已结束 == status || MatchStatus.未比赛 == status) {//关闭投注接口
-			bs.stopGuessByVerssuIdAndBo(versus.getId(), 0);
+			pts.stopGuessByVersusIdAndBo(versus.getId(), 0);
 			versus.setEndTime(new Date()); //设置结束时间
 		}
 		if(boCount != versus.getBoCount()) { //更改了boCount
@@ -522,7 +522,7 @@ public class GuessAdminController {
 			versusBo.setResult(result);
 		}
 		if(MatchStatus.已结束 == status || MatchStatus.未比赛 == status) {//关闭投注接口
-			bs.stopGuessByVerssuIdAndBo(versusBo.getVersusId(), versusBo.getBo());
+			pts.stopGuessByVersusIdAndBo(versusBo.getVersusId(), versusBo.getBo());
 		}
 		mvbs.update(versusBo);
 		return new ResponseObject(100, "修改成功");

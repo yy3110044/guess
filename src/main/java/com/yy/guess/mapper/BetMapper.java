@@ -2,11 +2,8 @@ package com.yy.guess.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-
 import com.yy.guess.po.Bet;
-import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.po.enums.BetStatus;
 import com.yy.fast4j.QueryCondition;
 
@@ -22,8 +19,8 @@ public interface BetMapper {
     /*****************************************************************分隔线************************************************************************/
 
     @Update("update guess_bet set status = #{status} where id = #{betId}")
-    void setStatus(BetStatus status, int betId); //更改状态
-    
-    @Select("select sum(betAmount) from guess_bet where playTypeId = #{playTypeId} and betDirection = #{betDirection}")
-    Double getSumBetAmount(int playTypeId, BetDirection betDirection);
+    void updateStatus(BetStatus status, int betId); //更改状态
+
+    @Update("update guess_bet set status = #{status}, realPayBonus = #{realPayBonus} where id = #{betId}")
+    void updateStatusAndRealPayBonus(BetStatus status, double realPayBonus, int betId);
 }

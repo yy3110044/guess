@@ -66,12 +66,4 @@ public interface PlayTypeMapper {
     //更新奖金池
     @Update("update guess_play_type set leftBonusPool = #{leftBonusPool}, rightBonusPool = #{rightBonusPool} where id = #{playTypeId}")
     void updateBonusPool(double leftBonusPool, double rightBonusPool, int playTypeId);
-    
-    //更新PayBonus
-    @Update("update guess_play_type set leftPayBonus = #{leftPayBonus}, rightPayBonus = #{rightPayBonus} where id = #{playTypeId}")
-    void updatePayBonus(double leftPayBonus, double rightPayBonus, int playTypeId);
-    
-    //更新奖金池以及PayBonus
-    @Update("update guess_play_type set leftBonusPool = #{leftBonusPool}, rightBonusPool = #{rightBonusPool}, leftPayBonus = #{leftPayBonus}, rightPayBonus = #{rightPayBonus} where id = #{playTypeId}")
-    void updateBonusPoolAndPayBonus(double leftBonusPool, double rightBonusPool, double leftPayBonus, double rightPayBonus, int playTypeId);
 }

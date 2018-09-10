@@ -114,39 +114,41 @@ public class BetServiceImpl implements BetService {
     		return false;
     	}
     	
-    	//保存存bet到数据库
-    	double[] odds = pts.getOdds(playTypeId);
-    	Bet bet = new Bet();
-    	bet.setVersusId(playType.getVersusId());
-    	bet.setBo(playType.getBo());
-    	bet.setPlayTypeId(playType.getId());
-    	bet.setUserId(userId);
-    	bet.setUserName(userName);
-    	bet.setBetDirection(betDirection);
-    	bet.setLeftOdds(odds[0]);
-    	bet.setRightOdds(odds[1]);
-    	bet.setBetAmount(betAmount);
-    	bet.setStatus(BetStatus.已下注);
-    	mapper.add(bet);
-    	
-    	//修改缓存奖金池
-    	pts.plusBonusPool(betAmount, betDirection, playTypeId);
-    	
-    	
-    	//查询用户原余额
-		double preBalance = um.getBalance(userId);
-		//修改用户余额
-		um.plusBalance(0 - betAmount, userId);
-		
-		//添加流水记录
-		TradeFlow flow = new TradeFlow();
-		flow.setUserId(userId);
-		flow.setUserName(userName);
-		flow.setPreBalance(preBalance);
-		flow.setAmount(0 - betAmount);
-		flow.setType(TradeType.下注);
-		tfm.add(flow);
-		return true;
+    	synchronized(playType) {
+	    	//保存存bet到数据库
+	    	double[] odds = pts.getOdds(playTypeId);
+	    	Bet bet = new Bet();
+	    	bet.setVersusId(playType.getVersusId());
+	    	bet.setBo(playType.getBo());
+	    	bet.setPlayTypeId(playType.getId());
+	    	bet.setUserId(userId);
+	    	bet.setUserName(userName);
+	    	bet.setBetDirection(betDirection);
+	    	bet.setLeftOdds(odds[0]);
+	    	bet.setRightOdds(odds[1]);
+	    	bet.setBetAmount(betAmount);
+	    	bet.setStatus(BetStatus.已下注);
+	    	mapper.add(bet);
+	    	
+	    	//修改缓存奖金池
+	    	pts.plusBonusPool(betAmount, betDirection, playTypeId);
+	    	
+	    	
+	    	//查询用户原余额
+			double preBalance = um.getBalance(userId);
+			//修改用户余额
+			um.plusBalance(0 - betAmount, userId);
+			
+			//添加流水记录
+			TradeFlow flow = new TradeFlow();
+			flow.setUserId(userId);
+			flow.setUserName(userName);
+			flow.setPreBalance(preBalance);
+			flow.setAmount(0 - betAmount);
+			flow.setType(TradeType.下注);
+			tfm.add(flow);
+			return true;
+    	}
     }
 
     @Override
@@ -199,7 +201,7 @@ public class BetServiceImpl implements BetService {
 		} else {
 			//为平时不处理
 		}
-		mapper.setStatus(BetStatus.未猜中, bet.getId());
+		mapper.updateStatus(BetStatus.未猜中, bet.getId());
 	}
 	private void settlement(int betId, int userId, double amount, double platformRate) {
 		User user = um.findById(userId); //取出未更改前用户
@@ -209,7 +211,7 @@ public class BetServiceImpl implements BetService {
 		
 		um.plusBalance(shide, userId);//更改余额
 		
-		mapper.setStatus(BetStatus.已结算, betId);//更改bet状态
+		mapper.updateStatusAndRealPayBonus(BetStatus.已结算, shide, betId);//更改bet状态
 		
 		//添加流水记录
 		TradeFlow flow = new TradeFlow();
@@ -271,7 +273,7 @@ public class BetServiceImpl implements BetService {
 		um.plusBalance(bet.getBetAmount(), bet.getUserId());
 		
 		//更改bet状态
-		mapper.setStatus(BetStatus.已退回, bet.getId());
+		mapper.updateStatus(BetStatus.已退回, bet.getId());
 		
 		//添加流水记录
 		TradeFlow flow = new TradeFlow();

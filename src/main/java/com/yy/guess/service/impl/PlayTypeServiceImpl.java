@@ -11,7 +11,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yy.guess.component.ConfigComponent;
-import com.yy.guess.mapper.BetMapper;
 import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.po.PlayType;
@@ -37,9 +36,6 @@ public class PlayTypeServiceImpl implements PlayTypeService {
     
     @Autowired
     private MatchVersusMapper mvm;
-    
-    @Autowired
-    private BetMapper bm;
 
     @Override
     public void add(PlayType obj) {
@@ -360,9 +356,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 		this.updateGuessStartByPlayTypeId(false, playTypeId); //关闭状态
 		this.cleanPlayTypeCache(playTypeId);//清除缓存
 		double[] bonusPool = this.getBonusPool(playTypeId); //奖金池
-		Double leftPayBonus = bm.getSumBetAmount(playTypeId, BetDirection.LEFT);
-		Double rightPayBonus = bm.getSumBetAmount(playTypeId, BetDirection.RIGHT);
-		mapper.updateBonusPoolAndPayBonus(bonusPool[0], bonusPool[1], leftPayBonus, rightPayBonus, playTypeId);
+		mapper.updateBonusPool(bonusPool[0], bonusPool[1], playTypeId);
 	}
 
 	@Override
@@ -372,9 +366,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 		for(Integer id : idList) {
 			this.cleanPlayTypeCache(id); //清除缓存
 			double[] bonusPool = this.getBonusPool(id);
-			Double leftPayBonus = bm.getSumBetAmount(id, BetDirection.LEFT);
-			Double rightPayBonus = bm.getSumBetAmount(id, BetDirection.RIGHT);
-			mapper.updateBonusPoolAndPayBonus(bonusPool[0], bonusPool[1], leftPayBonus, rightPayBonus, id);
+			mapper.updateBonusPool(bonusPool[0], bonusPool[1], id);
 		}
 	}
 
@@ -385,9 +377,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 		for(Integer id : idList) {
 			this.cleanPlayTypeCache(id); //清除缓存
 			double[] bonusPool = this.getBonusPool(id);
-			Double leftPayBonus = bm.getSumBetAmount(id, BetDirection.LEFT);
-			Double rightPayBonus = bm.getSumBetAmount(id, BetDirection.RIGHT);
-			mapper.updateBonusPoolAndPayBonus(bonusPool[0], bonusPool[1], leftPayBonus, rightPayBonus, id);
+			mapper.updateBonusPool(bonusPool[0], bonusPool[1], id);
 		}
 	}
 

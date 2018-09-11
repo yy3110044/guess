@@ -200,10 +200,24 @@ public class PlayTypeAdminController {
 		return new ResponseObject(100, "删除成功");
 	}
 	
-	//关闭或开启某个玩法的竞猜
-	@RequestMapping("/setGuessStart")
-	public ResponseObject setGuessStart(@RequestParam int playTypeId, @RequestParam boolean guessStart) {
-		pts.updateGuessStartByPlayTypeId(guessStart, playTypeId);
+	//更改暂停状态
+	@RequestMapping("/setPause")
+	public ResponseObject setPause(@RequestParam int playTypeId, @RequestParam boolean pause) {
+		pts.updatePause(pause, playTypeId);
+		return new ResponseObject(100, "操作成功");
+	}
+	
+	//更改预计胜率
+	@RequestMapping("/updateWinRate")
+	public ResponseObject updateWinRate(@RequestParam double leftWinRate, @RequestParam double rightWinRate, @RequestParam int playTypeId) {
+		pts.updateWinRate(leftWinRate, rightWinRate, playTypeId);
+		return new ResponseObject(100, "操作成功");
+	}
+	
+	//更改是否固定赔率
+	@RequestMapping("/updateFixedOdds")
+	public ResponseObject updateFixedOdds(@RequestParam boolean fixedOdds, @RequestParam int playTypeId) {
+		pts.updateFixedOdds(fixedOdds, playTypeId);
 		return new ResponseObject(100, "操作成功");
 	}
 }

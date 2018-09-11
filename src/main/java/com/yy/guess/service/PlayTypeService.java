@@ -46,4 +46,6 @@ public interface PlayTypeService {
     double[] getBonusPool(int playTypeId); //返回奖金池
     
     void plusBonusPool(double amount, BetDirection betDirection, int playTypeId); //增加到奖金池
+    
+    void updatePause(boolean pause, int playTypeId); //更改暂停状态
 }

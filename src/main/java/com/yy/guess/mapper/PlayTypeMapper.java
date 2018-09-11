@@ -66,4 +66,8 @@ public interface PlayTypeMapper {
     //更新奖金池
     @Update("update guess_play_type set leftBonusPool = #{leftBonusPool}, rightBonusPool = #{rightBonusPool} where id = #{playTypeId}")
     void updateBonusPool(double leftBonusPool, double rightBonusPool, int playTypeId);
+    
+    //更新暂停状态
+    @Update("update guess_play_type set pause = #{pause} where id = #{playTypeId}")
+    void updatePause(boolean pause, int playTypeId);
 }

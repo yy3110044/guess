@@ -426,4 +426,13 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 			throw e;
 		}
 	}
+
+	@Override
+	public void updatePause(boolean pause, int playTypeId) {
+		mapper.updatePause(pause, playTypeId);
+		PlayType playType = this.startedPlayTypeMap.get(playTypeId);
+		if(playType != null) {
+			playType.setPause(pause);
+		}
+	}
 }

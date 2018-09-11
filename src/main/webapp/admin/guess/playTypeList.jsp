@@ -14,6 +14,18 @@ var versusId = "${param.versusId}";
 var bo = "${param.bo}";
 var query = function(){
 	loadData({
+		url : "administration/getMatchVersus",
+		data : {"versusId" : versusId},
+		success : function(data){
+			if(data.code == 100) {
+				var versus = data.result.versus;
+				$("#versusTitle").html(versus.sportName + "&nbsp;" + versus.matchName + "&nbsp;" + versus.name + "</span>&nbsp;<span style='color:red;'>" + versus.leftTeamName + "</span>&nbsp;VS&nbsp;<span style='color:blue;'>" + versus.rightTeamName + "</span>");
+			} else {
+				showMsg(data.msg);
+			}
+		}
+	});
+	loadData({
 		url : "administration/getPlayType",
 		data : {"versusId" : versusId, "bo" : bo},
 		success : function(data){
@@ -38,57 +50,44 @@ var query = function(){
 						{field : "name"},
 						{field : "bo"},
 						{field : "paramStr"},
-						{field : "templateClass"},
 						{fn : function(obj){
 							var str = '';
-							str += '<select onchange="guessStartChange(' + obj.id + ', this)" style="width:60px;">';
-							str += '<option value="true"' + (obj.guessStart ? ' selected="selected"' : '') + '>开启</option>';
-							str += '<option value="false"' + (obj.guessStart ? '' : ' selected="selected"') + '>关闭</option>';
+							str += '<select onchange="pauseChange(' + obj.id + ', this)" style="width:50px;">';
+							str += '<option value="true"' + (obj.pause ? ' selected="selected"' : '') + '>是</option>';
+							str += '<option value="false"' + (obj.pause ? '' : ' selected="selected"') + '>否</option>';
 							str += '</select>';
 							return str;
 						}},
 						{fn : function(obj){
 							var str = '';
-							str += (obj.fixedOdds ? '<span style="color:green;">固定赔率</span>' : '<span style="color:red;">变动赔率</span>');
-							str += '&nbsp;&nbsp;';
-							str += '<a href="javascript:;" onclick="updateOdds(' + obj.id + ', ' + obj.fixedOdds + ', ' + obj.leftOdds + ', ' + obj.rightOdds + ', this)">更改</a>';
+							str += (obj.leftWinRate * 100).toFixed(0) + '%&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;' + (obj.rightWinRate * 100).toFixed(0) + '%';
+							str += '&nbsp;&nbsp;<a href="javascript:;" onclick="updateWinRate(' + obj.leftWinRate + ', ' + obj.rightWinRate + ', ' + obj.id + ', this)">更改</a>';
 							return str;
 						}},
 						{fn : function(obj){
 							if(obj.guessStart) {
-								if(obj.fixedOdds) {
-									return obj.leftOdds;
-								} else {
-									return '<span data-playTypeId="' + obj.id + '" class="odds" data-betDirection="LEFT"></span>';
-								}
+								var str = '';
+								str += '<span data-playTypeId="' + obj.id + '" class="odds"></span>';
+								str += '&nbsp;<select onchange="fixedOddsChange(' + obj.id + ', this)" style="width:60px;">';
+								str += '<option value="true"' + (obj.fixedOdds ? ' selected="selected"' : '') + '>固定</option>';
+								str += '<option value="false"' + (obj.fixedOdds ? '' : ' selected="selected"') + '>变动</option>';
+								str += '</select>';
+								return str;
 							} else {
-								return obj.leftOdds;
+								return '<span>竞猜已结束</span>';
 							}
 						}},
 						{fn : function(obj){
 							if(obj.guessStart) {
-								if(obj.fixedOdds) {
-									return obj.rightOdds;
-								} else {
-									return '<span data-playTypeId="' + obj.id + '" class="odds" data-betDirection="RIGHT"></span>';
-								}
+								return '<span data-playTypeId="' + obj.id + '" class="bonusPool"></span>';
 							} else {
-								return obj.rightOdds;
+								return '<span>' + obj.leftBonusPool.toFixed(2) + '</span>%&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;<span>' + obj.rightBonusPool.toFixed(2) + '</span>';
 							}
 						}},
 						{fn : function(obj){
-							if(obj.guessStart) {
-								return '<span data-playTypeId="' + obj.id + '" class="bonusPool" data-betDirection="LEFT"></span>';
-							} else {
-								return obj.leftBonusPool.toFixed(2);
-							}
-						}},
-						{fn : function(obj){
-							if(obj.guessStart) {
-								return '<span data-playTypeId="' + obj.id + '" class="bonusPool" data-betDirection="RIGHT"></span>';
-							} else {
-								return obj.rightBonusPool.toFixed(2);
-							}
+							var str = '';
+							str += '<a href="javascript:;" onclick="del(' + obj.id + ')">删除</a>';
+							return str;
 						}}
 					]
 				});
@@ -101,111 +100,139 @@ var query = function(){
 	});
 };
 
-//更新赔率类型
-var updateOdds = function(playTypeId, fixedOdds, leftOdds, rightOdds, e){
-	var str = '<tr class="contentTr updateOddsTr"><td colspan="99">';
-	str += '<select id="updateOddsFixedOdds" style="width:80px;" onchange="oddsChange(' + leftOdds + ', ' + rightOdds + ', this)">';
-	str += '<option value="true"' + (fixedOdds ? ' selected="selected"' : '') + '>固定赔率</option>';
-	str += '<option value="false"' + (fixedOdds ? '' : ' selected="selected"') + '>变动赔率</option>';
-	str += '</select>';
-	if(fixedOdds) {
-		str += '<span id="oddsUpdateInput">';
-		str += '&nbsp;&nbsp;左方赔率:<input id="updateLeftOdds" type="text" value="' + leftOdds + '" style="width:60px;">';
-		str += '&nbsp;&nbsp;右方赔率:<input id="updateRightOdds" type="text" value="' + rightOdds + '" style="width:60px;">';
-		str += '</span>';
+//删除玩法
+var del = function(playTypeId){
+	if(confirm("确定删除？")) {
+		loadData({
+			url : "administration/playTypeDelete",
+			data : {"playTypeId" : playTypeId},
+			success : function(data) {
+				showMsg(data.msg);
+				if(data.code == 100) {
+					query();
+				}
+			}
+		});
 	}
-	str += '&nbsp;&nbsp;<input type="button" value="更改" onclick="updateOdds2(' + playTypeId + ')">';
+};
+
+//修改固定赔率
+var fixedOddsChange = function(playTypeId, e){
+	if(confirm("确定修改？")) {
+		loadData({
+			url : "administration/updateFixedOdds",
+			data : {
+				"fixedOdds" : $.trim($(e).val()),
+				"playTypeId" : playTypeId
+			},
+			success : function(data) {
+				showMsg(data.msg);
+				if(data.code == 100) {
+					query();
+				}
+			}
+		});
+	}
+};
+
+//修改预计胜率
+var updateWinRate = function(leftWinRate, rightWinRate, playTypeId, e){
+	var str = '<tr class="contentTr updateWinRateTr"><td colspan="99">';
+	str += '&nbsp;&nbsp;左方赔率:<input id="updateLeftWinRate" type="number" step="0.01" value="' + leftWinRate + '" style="width:60px;">';
+	str += '&nbsp;&nbsp;右方赔率:<input id="updateRightWinRate" type="number" step="0.01" value="' + rightWinRate + '" style="width:60px;">';
+	str += '&nbsp;&nbsp;<input type="button" value="确定" onclick="updateWinRate2(' + playTypeId + ')">';
+	str += '&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().remove()">';
 	str += '</td></tr>'
-	$("tr.updateOddsTr").remove();
+	$("tr.updateWinRateTr").remove();
 	$(e).parent().parent().after(str);
 };
-var updateOdds2 = function(playTypeId){
-	var fixedOdds = $.trim($("#updateOddsFixedOdds").val());
-	var leftOdds = $.trim($("#updateLeftOdds").val());
-	var rightOdds = $.trim($("#updateRightOdds").val());
-	loadData({
-		url : "administration/setFixedOdds",
-		data : {
-			"playTypeId" : playTypeId,
-			"fixedOdds" : fixedOdds,
-			"leftOdds" : empty(leftOdds) ? null : leftOdds,
-			"rightOdds" : empty(rightOdds) ? null : rightOdds
-		},
-		success : function(data) {
-			showMsg(data.msg);
-			if(data.code == 100) {
-				query();
+var updateWinRate2 = function(playTypeId) {
+	var leftWinRate = $.trim($("#updateLeftWinRate").val());
+	var rightWinRate = $.trim($("#updateRightWinRate").val());
+	if(confirm("确定更改？")) {
+		loadData({
+			url : "administration/updateWinRate",
+			data : {
+				"leftWinRate" : leftWinRate,
+				"rightWinRate" : rightWinRate,
+				"playTypeId" : playTypeId
+			},
+			success : function(data) {
+				showMsg(data.msg);
+				if(data.code == 100) {
+					query();
+				}
 			}
-		}
-	});
-};
-var oddsChange = function(leftOdds, rightOdds, e){
-	var value = $(e).val();
-	if("true" == value) {
-		var str = '';
-		str += '<span id="oddsUpdateInput">';
-		str += '&nbsp;&nbsp;左方赔率:<input id="updateLeftOdds" type="text" value="' + leftOdds + '" style="width:60px;">';
-		str += '&nbsp;&nbsp;右方赔率:<input id="updateRightOdds" type="text" value="' + rightOdds + '" style="width:60px;">';
-		str += '</span>';
-		$("#oddsUpdateInput").remove();
-		$(e).after(str);
-	} else if("false" == value) {
-		$("#oddsUpdateInput").remove();
+		});
 	}
 };
 
-var guessStartChange = function(playTypeId, e){
-	var value = $.trim($(e).val());
-	if(confirm("确定改变状态？")) {
+//暂停切换
+var pauseChange = function(playTypeId, e) {
+	if(confirm("确定更改？")) {
 		loadData({
-			url : "administration/setGuessStart",
+			url : "administration/setPause",
 			data : {
 				"playTypeId" : playTypeId,
-				"guessStart" : value
+				"pause" : $.trim($(e).val())
 			},
-			success : function(data){
+			success : function(data) {
+				showMsg(data.msg);
+				if(data.code == 100) {
+					query();
+				}
+			}
+		});
+	}
+};
+
+//加载赔率和奖金池
+var loadOddsAndBonusPool = function() {
+	var oddsPlayTypeId = new Array();
+	$("span.odds").each(function(){
+		oddsPlayTypeId.push($(this).attr("data-playTypeId"));
+	});
+	loadData({
+		url : "getBatchOdds",
+		data : {"playTypeId[]" : oddsPlayTypeId},
+		success : function(data) {
+			if(data.code == 100) {
+				var list = data.result;
+				$("span.odds").each(function(index){
+					var obj = list[index];
+					var str = '<span style="color:red;">' + obj.leftOdds.toFixed(2) + '</span>';
+					str += '&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;';
+					str += '<span style="color:blue;">' + obj.rightOdds.toFixed(2) + '</span>';
+					$(this).html(str);
+				});
+			} else {
 				showMsg(data.msg);
 			}
-		});
-	} else {
-		if("true" == value) {
-			$(e).val("false");
-		} else if("false" == value) {
-			$(e).val("true");
 		}
-	}
-};
-
-var loadOddsAndBonusPool = function() {
-	$("span.odds").each(function(){
-		var ts = $(this);
-		var playTypeId = $.trim(ts.attr("data-playTypeId"));
-		var betDirection = $.trim(ts.attr("data-betDirection"));
-		loadData({
-			url : "getNewestOdds",
-			data : {
-				"playTypeId" : playTypeId,
-				"betDirection" : betDirection
-			},
-			success : function(data) {
-				ts.html(data.result);
-			}
-		});
 	});
+
+	
+	var bonusPoolPlayTypeId = new Array();
 	$("span.bonusPool").each(function(){
-		var ts = $(this);
-		var playTypeId = $.trim(ts.attr("data-playTypeId"));
-		var betDirection = $.trim(ts.attr("data-betDirection"));
-		loadData({
-			url : "getBonusPool",
-			data : {
-				"playTypeId" : playTypeId,
-				"betDirection" : betDirection
-			},
-			success : function(data) {
-				ts.html(data.result.toFixed(2));
+		bonusPoolPlayTypeId.push($(this).attr("data-playTypeId"));
+	});
+	loadData({
+		url : "getBatchBonusPool",
+		data : {"playTypeId[]" : bonusPoolPlayTypeId},
+		success : function(data) {
+			if(data.code == 100) {
+				var list = data.result;
+				$("span.bonusPool").each(function(index){
+					var obj = list[index];
+					var str = '<span style="color:red;">' + obj.leftBonusPool.toFixed(2) + '</span>';
+					str += '&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;';
+					str += '<span style="color:blue;">' + obj.rightBonusPool.toFixed(2) + '</span>';
+					$(this).html(str);
+				});
+			} else {
+				showMsg(data.msg);
 			}
-		});
+		}
 	});
 };
 
@@ -229,19 +256,22 @@ $(document).ready(function(){
 	</div>
 	<div class="title_right"><strong>玩法列表</strong><span style="color:red;font-size:18px;padding-left:200px;" id="showMsg"></span></div>
 	<table class="table table-bordered table-striped table-hover">
+		<tr>
+			<td colspan="99" style="padding:3px;line-height:30px;">
+				<span id="versusTitle"></span>&nbsp;&nbsp;<a href="admin/guess/playTypeAdd.jsp" target="_blank">添加玩法</a>
+			</td>
+		</tr>
 		<tr align="center">
 			<td><strong>ID</strong></td>
 			<td><strong>versusId</strong></td>
 			<td><strong>名称</strong></td>
 			<td><strong>对局</strong></td>
 			<td><strong>参数</strong></td>
-			<td><strong>模版</strong></td>
-			<td><strong>竞猜</strong></td>
+			<td><strong>暂停下注</strong></td>
+			<td><strong>预计胜率</strong></td>
 			<td><strong>赔率</strong></td>
-			<td><strong>左方赔率</strong></td>
-			<td><strong>右方赔率</strong></td>
-			<td><strong>左方奖金池</strong></td>
-			<td><strong>右方奖金池</strong></td>
+			<td><strong>奖金池</strong></td>
+			<td><strong>操作</strong></td>
 		</tr>
 	</table>
 	<table class="margin-bottom-20 table no-border">

@@ -55,6 +55,27 @@ public class BetInfoController {
 		double[] bonusPool = pts.getBonusPool(playTypeId);
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("leftBonusPool", bonusPool[0]).set("rightBonusPool", bonusPool[1]));
 	}
+	/**
+	 *批量返回奖金池
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping("/getBatchBonusPool")
+	public ResponseObject getBatchBonusPool(HttpServletRequest req) {
+		String[] playTypeId = req.getParameterValues("playTypeId[]");
+		if(playTypeId != null && playTypeId.length > 0) {
+			JsonResultMap[] maps = new JsonResultMap[playTypeId.length];
+			for(int i=0; i<playTypeId.length; i++) {
+				double[] bonusPool = pts.getBonusPool(Integer.parseInt(playTypeId[i]));
+				maps[i] = new JsonResultMap();
+				maps[i].put("leftBonusPool", bonusPool[0]);
+				maps[i].put("rightBonusPool", bonusPool[1]);
+			}
+			return new ResponseObject(100, "返回成功", maps);
+		} else {
+			return new ResponseObject(101, "参数为空");
+		}
+	}
 
 	/**
 	 * 返回最新赔率
@@ -84,8 +105,8 @@ public class BetInfoController {
 			for(int i=0; i<playTypeId.length; i++) {
 				double[] odds = pts.getOdds(Integer.parseInt(playTypeId[i]));
 				maps[i] = new JsonResultMap();
-				maps[i].put("leftBonusPool", odds[0]);
-				maps[i].put("rightBonusPool", odds[1]);
+				maps[i].put("leftOdds", odds[0]);
+				maps[i].put("rightOdds", odds[1]);
 			}
 			return new ResponseObject(100, "返回成功", maps);
 		} else {

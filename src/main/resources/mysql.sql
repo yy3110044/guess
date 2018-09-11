@@ -185,6 +185,7 @@ CREATE TABLE `guess_play_type` (
   `bo` tinyint COMMENT '对应比赛场次，从1开始，0代表总对阵',
   `paramStr` varchar(128) COMMENT '此玩法需要用到的参数，json格式字符串',
   `templateClass` varchar(128) COMMENT '模版类class',
+  `pause` bit(1) COMMENT '是否暂停竞猜',
   `guessStart` bit(1) COMMENT '是否开启竞猜',
   `leftWinRate` decimal(15, 6) COMMENT '左方预计胜率(根据这个算出初始赔率)',
   `rightWinRate` decimal(15, 6) COMMENT '右方预计胜率(根据这个算出始赔率)',

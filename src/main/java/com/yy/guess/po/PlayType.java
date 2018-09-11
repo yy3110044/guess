@@ -9,6 +9,7 @@ public class PlayType {
 	private int bo;
 	private String paramStr;
 	private String templateClass;
+	private boolean pause;
 	private boolean guessStart;
 	private double leftWinRate;
 	private double rightWinRate;
@@ -51,6 +52,12 @@ public class PlayType {
 	}
 	public void setTemplateClass(String templateClass) {
 		this.templateClass = templateClass;
+	}
+	public boolean isPause() {
+		return pause;
+	}
+	public void setPause(boolean pause) {
+		this.pause = pause;
 	}
 	public boolean isGuessStart() {
 		return guessStart;

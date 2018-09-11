@@ -20,7 +20,6 @@ import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.enums.MatchStatus;
-import com.yy.guess.service.BetService;
 import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
 import com.yy.guess.service.PlayTypeService;
@@ -31,10 +30,7 @@ import com.yy.guess.service.PlayTypeService;
 public class PlayTypeAdminController {
 	@Autowired
 	private PlayTypeService pts;
-	
-	@Autowired
-	private BetService bs;
-	
+
 	@Autowired
 	private MatchVersusService mvs;
 	
@@ -47,6 +43,9 @@ public class PlayTypeAdminController {
                                       @RequestParam int bo,
                                       @RequestParam String name,
                                       @RequestParam String templateClass,
+                                      @RequestParam double leftWinRate,
+                                      @RequestParam double rightWinRate,
+                                      @RequestParam boolean fixedOdds,
                                       HttpServletRequest req) {
 		String[] params = req.getParameterValues("params[]");
 		MatchVersus versus = mvs.findById(versusId);
@@ -60,6 +59,9 @@ public class PlayTypeAdminController {
 		List<MatchVersusBo> boList = mvbs.query(new QueryCondition().addCondition("versusId", "=", versusId).addSort("bo", SortType.ASC));
 		if(bo > boList.size()) {
 			return new ResponseObject(103, "bo超出范围");
+		}
+		if(leftWinRate <= 0 || rightWinRate <= 0) {
+			return new ResponseObject(104, "预计胜率不能小于等于零");
 		}
 		
 		//参数字符串
@@ -81,6 +83,9 @@ public class PlayTypeAdminController {
 			versusPy.setName(name);
 			versusPy.setBo(0);
 			versusPy.setParamStr(paramStr);
+			versusPy.setLeftWinRate(leftWinRate);
+			versusPy.setRightWinRate(rightWinRate);
+			versusPy.setFixedOdds(fixedOdds);
 			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
 				versusPy.setGuessStart(true);
 			} else {
@@ -95,6 +100,9 @@ public class PlayTypeAdminController {
 				boPy.setName(name);
 				boPy.setBo(versusBo.getBo());
 				boPy.setParamStr(paramStr);
+				boPy.setLeftWinRate(leftWinRate);
+				boPy.setRightWinRate(rightWinRate);
+				boPy.setFixedOdds(fixedOdds);
 				if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
 					boPy.setGuessStart(true);
 				} else {
@@ -105,13 +113,16 @@ public class PlayTypeAdminController {
 			}
 		} else if(bo > 0) { //只应用到bo
 			if(template.getSupport() == 0) {
-				return new ResponseObject(104, "玩法模版不支持");
+				return new ResponseObject(105, "玩法模版不支持");
 			}
 			PlayType boPy = new PlayType();
 			boPy.setVersusId(versus.getId());
 			boPy.setName(name);
 			boPy.setBo(bo);
 			boPy.setParamStr(paramStr);
+			boPy.setLeftWinRate(leftWinRate);
+			boPy.setRightWinRate(rightWinRate);
+			boPy.setFixedOdds(fixedOdds);
 			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
 				boPy.setGuessStart(true);
 			} else {
@@ -121,13 +132,16 @@ public class PlayTypeAdminController {
 			ptList.add(boPy);
 		} else { //只应用到总盘口
 			if(template.getSupport() > 0) {
-				return new ResponseObject(104, "玩法模版不支持");
+				return new ResponseObject(105, "玩法模版不支持");
 			}
 			PlayType versusPy = new PlayType();//总盘口玩法
 			versusPy.setVersusId(versus.getId());
 			versusPy.setName(name);
 			versusPy.setBo(0);
 			versusPy.setParamStr(paramStr);
+			versusPy.setLeftWinRate(leftWinRate);
+			versusPy.setRightWinRate(rightWinRate);
+			versusPy.setFixedOdds(fixedOdds);
 			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
 				versusPy.setGuessStart(true);
 			} else {
@@ -146,11 +160,11 @@ public class PlayTypeAdminController {
 		for(PlayType pt : ptList) {
 			existsQc.addCondition("bo", "=", pt.getBo());
 			if(pts.find(existsQc) != null) {
-				return new ResponseObject(105, "已添加相同的玩法，请不要重复添加");
+				return new ResponseObject(106, "已添加相同的玩法，请不要重复添加");
 			}
 		}
 		pts.addList(ptList, versusId);
-		bs.loadStartedGuess();//重新加载一次
+		pts.loadStartedPlayTypeToMap();//重新加载一次
 		return new ResponseObject(100, "添加成功");
 	}
 	
@@ -189,18 +203,7 @@ public class PlayTypeAdminController {
 	//关闭或开启某个玩法的竞猜
 	@RequestMapping("/setGuessStart")
 	public ResponseObject setGuessStart(@RequestParam int playTypeId, @RequestParam boolean guessStart) {
-		if(guessStart) {
-			bs.startGuessByPlayTypeId(playTypeId);
-		} else {
-			bs.stopGuessByPlayTypeId(playTypeId);
-		}
+		pts.updateGuessStartByPlayTypeId(guessStart, playTypeId);
 		return new ResponseObject(100, "操作成功");
-	}
-	
-	//更改赔率状态以及赔率
-	@RequestMapping("/setFixedOdds")
-	public ResponseObject setFixedOdds(@RequestParam int playTypeId, @RequestParam boolean fixedOdds, @RequestParam(defaultValue="0") double leftOdds, @RequestParam(defaultValue="0") double rightOdds) {
-		pts.updateFixedOdds(fixedOdds, leftOdds, rightOdds, playTypeId);
-		return new ResponseObject(100, "更改成功");
 	}
 }

@@ -108,7 +108,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 
 	@Override
 	public void deleteByVersusId(int versusId) {
-		List<Integer> playTypeIdList = mapper.getPlayTypeIdList(versusId);
+		List<Integer> playTypeIdList = mapper.getPlayTypeIdListByVersusId(versusId);
 		mapper.deleteByVersusId(versusId);
 		for(Integer id : playTypeIdList) {
 			startedPlayTypeMap.remove(id);
@@ -117,7 +117,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 
 	@Override
 	public void deleteByVersusIdAndBo(int versusId, int bo) {
-		List<Integer> playTypeIdList = mapper.getPlayTypeIdList(versusId, bo);
+		List<Integer> playTypeIdList = mapper.getPlayTypeIdListByVersusIdAndBo(versusId, bo);
 		mapper.deleteByVersusIdAndBo(versusId, bo);
 		for(Integer id : playTypeIdList) {
 			startedPlayTypeMap.remove(id);
@@ -146,7 +146,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 				this.startedPlayTypeMap.put(playType.getId(), playType);
 			}
 		} else {
-			List<Integer> idList = mapper.getPlayTypeIdList(versusId);
+			List<Integer> idList = mapper.getPlayTypeIdListByVersusId(versusId);
 			for(Integer id : idList) {
 				this.startedPlayTypeMap.remove(id);
 			}
@@ -162,7 +162,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 				this.startedPlayTypeMap.put(playType.getId(), playType);
 			}
 		} else {
-			List<Integer> idList = mapper.getPlayTypeIdList(versusId, bo);
+			List<Integer> idList = mapper.getPlayTypeIdListByVersusIdAndBo(versusId, bo);
 			for(Integer id : idList) {
 				this.startedPlayTypeMap.remove(id);
 			}
@@ -202,7 +202,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	@Override
 	public void updateWinRateByVersusId(double leftWinRate, double rightWinRate, int versusId) {
 		mapper.updateWinRateByVersusId(leftWinRate, rightWinRate, versusId);
-		List<Integer> ids = mapper.getPlayTypeIdList(versusId);
+		List<Integer> ids = mapper.getPlayTypeIdListByVersusId(versusId);
 		for(Integer id : ids) {
 			PlayType playType = this.startedPlayTypeMap.get(id);
 			if(playType != null) {
@@ -215,7 +215,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	@Override
 	public void updateFixedOddsByVersusId(boolean fixedOdds, int versusId) {
 		mapper.updateFixedOddsByVersusId(fixedOdds, versusId);
-		List<Integer> ids = mapper.getPlayTypeIdList(versusId);
+		List<Integer> ids = mapper.getPlayTypeIdListByVersusId(versusId);
 		for(Integer id : ids) {
 			PlayType playType = this.startedPlayTypeMap.get(id);
 			if(playType != null) {
@@ -227,7 +227,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	@Override
 	public void updateWinRateAndFixedOddsByVersusId(double leftWinRate, double rightWinRate, boolean fixedOdds, int versusId) {
 		mapper.updateWinRateAndFixedOddsByVersusId(leftWinRate, rightWinRate, fixedOdds, versusId);
-		List<Integer> ids = mapper.getPlayTypeIdList(versusId);
+		List<Integer> ids = mapper.getPlayTypeIdListByVersusId(versusId);
 		for(Integer id : ids) {
 			PlayType playType = this.startedPlayTypeMap.get(id);
 			if(playType != null) {
@@ -241,7 +241,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	@Override
 	public void updateWinRateByVersusIdAndBo(double leftWinRate, double rightWinRate, int versusId, int bo) {
 		mapper.updateWinRateByVersusIdAndBo(leftWinRate, rightWinRate, versusId, bo);
-		List<Integer> ids = mapper.getPlayTypeIdList(versusId, bo);
+		List<Integer> ids = mapper.getPlayTypeIdListByVersusIdAndBo(versusId, bo);
 		for(Integer id : ids) {
 			PlayType playType = this.startedPlayTypeMap.get(id);
 			if(playType != null) {
@@ -254,7 +254,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	@Override
 	public void updateFixedOddsByVersusIdAndBo(boolean fixedOdds, int versusId, int bo) {
 		mapper.updateFixedOddsByVersusIdAndBo(fixedOdds, versusId, bo);
-		List<Integer> ids = mapper.getPlayTypeIdList(versusId, bo);
+		List<Integer> ids = mapper.getPlayTypeIdListByVersusIdAndBo(versusId, bo);
 		for(Integer id : ids) {
 			PlayType playType = this.startedPlayTypeMap.get(id);
 			if(playType != null) {
@@ -266,7 +266,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	@Override
 	public void updateWinRateAndFixedOddsByVersusIdAndBo(double leftWinRate, double rightWinRate, boolean fixedOdds, int versusId, int bo) {
 		mapper.updateWinRateAndFixedOddsByVersusIdAndBo(leftWinRate, rightWinRate, fixedOdds, versusId, bo);
-		List<Integer> ids = mapper.getPlayTypeIdList(versusId, bo);
+		List<Integer> ids = mapper.getPlayTypeIdListByVersusIdAndBo(versusId, bo);
 		for(Integer id : ids) {
 			PlayType playType = this.startedPlayTypeMap.get(id);
 			if(playType != null) {
@@ -362,7 +362,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	@Override
 	public void stopGuessByVersusId(int versusId) {
 		this.updateGuessStartByVersusId(false, versusId);
-		List<Integer> idList = mapper.getPlayTypeIdList(versusId);
+		List<Integer> idList = mapper.getPlayTypeIdListByVersusId(versusId);
 		for(Integer id : idList) {
 			this.cleanPlayTypeCache(id); //清除缓存
 			double[] bonusPool = this.getBonusPool(id);
@@ -373,7 +373,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	@Override
 	public void stopGuessByVersusIdAndBo(int versusId, int bo) {
 		this.updateGuessStartByVersusIdAndBo(false, versusId, bo);
-		List<Integer> idList = mapper.getPlayTypeIdList(versusId, bo);
+		List<Integer> idList = mapper.getPlayTypeIdListByVersusIdAndBo(versusId, bo);
 		for(Integer id : idList) {
 			this.cleanPlayTypeCache(id); //清除缓存
 			double[] bonusPool = this.getBonusPool(id);

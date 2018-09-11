@@ -320,6 +320,17 @@ public class GuessAdminController {
 	}
 	
 	/**
+	 * 返回某个赛事下的所有对阵
+	 * @param matchId
+	 * @return
+	 */
+	@RequestMapping("/getAllMatchVersusByMatch")
+	public ResponseObject getAllMatchVersusByMatch(@RequestParam int matchId) {
+		List<MatchVersus> list = mvs.query(new QueryCondition().addCondition("matchId", "=", matchId));
+		return new ResponseObject(100, "返回成功", list);
+	}
+	
+	/**
 	 * 添加对阵
 	 * @param matchId
 	 * @param leftTeamId

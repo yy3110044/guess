@@ -38,9 +38,9 @@ public interface PlayTypeMapper {
     
     //返回id
     @Select("select id from guess_play_type where versusId = #{versusId}")
-    List<Integer> getPlayTypeIdList(int versusId);
+    List<Integer> getPlayTypeIdListByVersusId(int versusId);
     @Select("select id from guess_play_type where versusId = #{versusId} and bo = #{bo}")
-    List<Integer> getPlayTypeIdList(int versusId, int bo);
+    List<Integer> getPlayTypeIdListByVersusIdAndBo(int versusId, int bo);
     
     
     //更新预计胜率以及固定赔率开关

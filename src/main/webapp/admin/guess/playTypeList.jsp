@@ -81,7 +81,7 @@ var query = function(){
 							if(obj.guessStart) {
 								return '<span data-playTypeId="' + obj.id + '" class="bonusPool"></span>';
 							} else {
-								return '<span>' + obj.leftBonusPool.toFixed(2) + '</span>%&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;<span>' + obj.rightBonusPool.toFixed(2) + '</span>';
+								return '<span style="color:red;">' + obj.leftBonusPool.toFixed(2) + '</span>&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;<span style="color:blue;">' + obj.rightBonusPool.toFixed(2) + '</span>';
 							}
 						}},
 						{fn : function(obj){

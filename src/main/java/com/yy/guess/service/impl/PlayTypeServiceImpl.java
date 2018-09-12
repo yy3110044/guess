@@ -1,5 +1,6 @@
 package com.yy.guess.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,12 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.yy.guess.component.ConfigComponent;
 import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
+import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.util.CachePre;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.RedisUtil;
+import com.yy.fast4j.QueryCondition.SortType;
 
 @Repository("playTypeService")
 @Transactional
@@ -433,6 +436,49 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 		PlayType playType = this.startedPlayTypeMap.get(playTypeId);
 		if(playType != null) {
 			playType.setPause(pause);
+		}
+	}
+	
+	@Override
+	public List<PlayType> getFirstPlayTypeByVersusList(List<MatchVersus> versusList) {
+		List<PlayType> list = new ArrayList<PlayType>();
+		for(MatchVersus versus : versusList) {
+			list.add(this.getFirstPlayTypeByVersusId(versus.getId()));
+		}
+		return list;
+	}
+
+	@Override
+	public List<PlayType> getFirstPlayTypeByVersusIdList(List<Integer> versusIdList) {
+		List<PlayType> list = new ArrayList<PlayType>();
+		for(Integer versusId : versusIdList) {
+			list.add(this.getFirstPlayTypeByVersusId(versusId));
+		}
+		return list;
+	}
+	private PlayType getFirstPlayTypeByVersusId(int versusId) {
+		QueryCondition qc = new QueryCondition();
+		qc.addCondition("versusId", "=", versusId);
+		qc.addSort("bo", SortType.ASC);
+		return mapper.find(qc);
+	}
+
+	@Override
+	public void updateName(String name, int playTypeId) {
+		mapper.updateName(name, playTypeId);
+		PlayType pt = this.startedPlayTypeMap.get(playTypeId);
+		if(pt != null) {
+			pt.setName(name);
+		}
+	}
+
+	@Override
+	public void updateGuessName(String leftGuessName, String rightGuessName, int playTypeId) {
+		mapper.updateGuessName(leftGuessName, rightGuessName, playTypeId);
+		PlayType pt = this.startedPlayTypeMap.get(playTypeId);
+		if(pt != null) {
+			pt.setLeftGuessName(leftGuessName);
+			pt.setRightGuessName(rightGuessName);
 		}
 	}
 }

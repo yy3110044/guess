@@ -66,8 +66,8 @@ public class PlayTypeAdminController {
 		
 		//参数字符串
 		String paramStr = null;
+		Map<String, String> paramMap = new LinkedHashMap<String, String>();
 		if(params != null && params.length > 0) {
-			Map<String, String> paramMap = new LinkedHashMap<String, String>();
 			for(String param : params) {
 				String[] strs = param.split("\\|");
 				paramMap.put(strs[0], strs[1]);
@@ -78,38 +78,46 @@ public class PlayTypeAdminController {
 		
 		List<PlayType> ptList = new ArrayList<PlayType>();
 		if(bo < 0) { //应用到所有
-			PlayType versusPy = new PlayType();//总盘口玩法
-			versusPy.setVersusId(versus.getId());
-			versusPy.setName(name);
-			versusPy.setBo(0);
-			versusPy.setParamStr(paramStr);
-			versusPy.setLeftWinRate(leftWinRate);
-			versusPy.setRightWinRate(rightWinRate);
-			versusPy.setFixedOdds(fixedOdds);
-			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
-				versusPy.setGuessStart(true);
-			} else {
-				versusPy.setGuessStart(false);
-			}
-			versusPy.setTemplateClass(template.getClass().getName());
-			ptList.add(versusPy);
-			for(int i=0; i<boList.size(); i++) { //bo
-				MatchVersusBo versusBo = boList.get(i);
-				PlayType boPy = new PlayType();
-				boPy.setVersusId(versus.getId());
-				boPy.setName(name);
-				boPy.setBo(versusBo.getBo());
-				boPy.setParamStr(paramStr);
-				boPy.setLeftWinRate(leftWinRate);
-				boPy.setRightWinRate(rightWinRate);
-				boPy.setFixedOdds(fixedOdds);
+			if(template.getSupport() <= 0) {
+				PlayType versusPy = new PlayType();//总盘口玩法
+				versusPy.setVersusId(versus.getId());
+				versusPy.setName(name);
+				versusPy.setBo(0);
+				versusPy.setParamStr(paramStr);
+				versusPy.setLeftWinRate(leftWinRate);
+				versusPy.setRightWinRate(rightWinRate);
+				versusPy.setFixedOdds(fixedOdds);
 				if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
-					boPy.setGuessStart(true);
+					versusPy.setGuessStart(true);
 				} else {
-					boPy.setGuessStart(false);
+					versusPy.setGuessStart(false);
 				}
-				boPy.setTemplateClass(template.getClass().getName());
-				ptList.add(boPy);
+				versusPy.setTemplateClass(template.getClass().getName());
+				versusPy.setLeftGuessName(template.getLeftGuessName(versus, boList, paramMap));
+				versusPy.setRightGuessName(template.getRightGuessName(versus, boList, paramMap));
+				ptList.add(versusPy);
+			}
+			if(template.getSupport() < 0 || template.getSupport() > 0) {
+				for(int i=0; i<boList.size(); i++) { //bo
+					MatchVersusBo versusBo = boList.get(i);
+					PlayType boPy = new PlayType();
+					boPy.setVersusId(versus.getId());
+					boPy.setName(name);
+					boPy.setBo(versusBo.getBo());
+					boPy.setParamStr(paramStr);
+					boPy.setLeftWinRate(leftWinRate);
+					boPy.setRightWinRate(rightWinRate);
+					boPy.setFixedOdds(fixedOdds);
+					if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
+						boPy.setGuessStart(true);
+					} else {
+						boPy.setGuessStart(false);
+					}
+					boPy.setTemplateClass(template.getClass().getName());
+					boPy.setLeftGuessName(template.getLeftGuessName(versus, boList, paramMap));
+					boPy.setRightGuessName(template.getRightGuessName(versus, boList, paramMap));
+					ptList.add(boPy);
+				}
 			}
 		} else if(bo > 0) { //只应用到bo
 			if(template.getSupport() == 0) {
@@ -129,6 +137,8 @@ public class PlayTypeAdminController {
 				boPy.setGuessStart(false);
 			}
 			boPy.setTemplateClass(template.getClass().getName());
+			boPy.setLeftGuessName(template.getLeftGuessName(versus, boList, paramMap));
+			boPy.setRightGuessName(template.getRightGuessName(versus, boList, paramMap));
 			ptList.add(boPy);
 		} else { //只应用到总盘口
 			if(template.getSupport() > 0) {
@@ -148,7 +158,13 @@ public class PlayTypeAdminController {
 				versusPy.setGuessStart(false);
 			}
 			versusPy.setTemplateClass(template.getClass().getName());
+			versusPy.setLeftGuessName(template.getLeftGuessName(versus, boList, paramMap));
+			versusPy.setRightGuessName(template.getRightGuessName(versus, boList, paramMap));
 			ptList.add(versusPy);
+		}
+		
+		if(ptList.size() <= 0) {
+			return new ResponseObject(107, "添加失败，未添加任何玩法");
 		}
 		
 		QueryCondition existsQc = new QueryCondition();
@@ -218,6 +234,20 @@ public class PlayTypeAdminController {
 	@RequestMapping("/updateFixedOdds")
 	public ResponseObject updateFixedOdds(@RequestParam boolean fixedOdds, @RequestParam int playTypeId) {
 		pts.updateFixedOdds(fixedOdds, playTypeId);
+		return new ResponseObject(100, "操作成功");
+	}
+	
+	//更新名称
+	@RequestMapping("/updateName")
+	public ResponseObject updateName(@RequestParam String name, @RequestParam int playTypeId) {
+		pts.updateName(name, playTypeId);
+		return new ResponseObject(100, "操作成功");
+	}
+	
+	//更新双方竞猜名
+	@RequestMapping("/updateGuessName")
+	public ResponseObject updateGuessName(@RequestParam String leftGuessName, @RequestParam String rightGuessName, @RequestParam int playTypeId) {
+		pts.updateGuessName(leftGuessName, rightGuessName, playTypeId);
 		return new ResponseObject(100, "操作成功");
 	}
 }

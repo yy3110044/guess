@@ -21,16 +21,14 @@ public class KillTimeGuessPlayTemplate implements GuessPlayTemplate {
 	}
 	
 	@Override
-	public String getLeftGuessName(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType) {
-		Map<String, String> map = this.getParamMap(playType.getParamStr());
-		int intervalTime = Integer.parseInt(map.get("intervalTime"));
+	public String getLeftGuessName(MatchVersus versus, List<MatchVersusBo> boList, Map<String, String> paramMap) {
+		int intervalTime = Integer.parseInt(paramMap.get("intervalTime"));
 		return "小于" + formatTime(intervalTime);
 	}
 	
 	@Override
-	public String getRightGuessName(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType) {
-		Map<String, String> map = this.getParamMap(playType.getParamStr());
-		int intervalTime = Integer.parseInt(map.get("intervalTime"));
+	public String getRightGuessName(MatchVersus versus, List<MatchVersusBo> boList, Map<String, String> paramMap) {
+		int intervalTime = Integer.parseInt(paramMap.get("intervalTime"));
 		return "大于等于" + formatTime(intervalTime);
 	}
 	

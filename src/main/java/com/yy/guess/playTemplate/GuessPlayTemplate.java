@@ -20,12 +20,12 @@ public interface GuessPlayTemplate {
 	}
 
 	//返回左队伍名
-	default String getLeftGuessName(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType) {
+	default String getLeftGuessName(MatchVersus versus, List<MatchVersusBo> boList, Map<String, String> paramMap) {
 		return versus.getLeftTeamName();
 	}
 
 	//返回右队伍名
-	default String getRightGuessName(MatchVersus versus, List<MatchVersusBo> boList, PlayType playType) {
+	default String getRightGuessName(MatchVersus versus, List<MatchVersusBo> boList, Map<String, String> paramMap) {
 		return versus.getRightTeamName();
 	}
 

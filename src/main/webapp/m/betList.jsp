@@ -42,11 +42,11 @@ $(document).ready(function(){
 							<div data-v-de9ae73a="" class="vux-tab-wrap match-tab">
 								<div class="vux-tab-container">
 									<div class="vux-tab">
-										<div data-v-de9ae73a="" onclick="tabBarChange(1, this)" class="vux-tab-item" style="border:none;color:rgb(186, 206, 241);">今日&nbsp;<span data-v-de9ae73a="" class="match-number">17</span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(1, this)" class="vux-tab-item" style="border:none;color:rgb(186, 206, 241);">今日&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" onclick="tabBarChange(2, this)" class="vux-tab-item vux-tab-selected" style="border: none; color: rgb(255, 255, 255);">滚盘&nbsp;<span data-v-de9ae73a="" class="match-number">0</span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(2, this)" class="vux-tab-item vux-tab-selected" style="border: none; color: rgb(255, 255, 255);">滚盘&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" onclick="tabBarChange(3, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">赛前&nbsp;<span data-v-de9ae73a="" class="match-number">57</span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(3, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">赛前&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
 										<div data-v-de9ae73a="" onclick="tabBarChange(4, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">已结束</div>
 										<span data-v-de9ae73a="" class="column-line"></span>

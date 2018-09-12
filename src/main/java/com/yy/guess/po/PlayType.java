@@ -11,6 +11,8 @@ public class PlayType {
 	private String templateClass;
 	private boolean pause;
 	private boolean guessStart;
+	private String leftGuessName;
+	private String rightGuessName;
 	private double leftWinRate;
 	private double rightWinRate;
 	private double leftBonusPool;
@@ -64,6 +66,18 @@ public class PlayType {
 	}
 	public void setGuessStart(boolean guessStart) {
 		this.guessStart = guessStart;
+	}
+	public String getLeftGuessName() {
+		return leftGuessName;
+	}
+	public void setLeftGuessName(String leftGuessName) {
+		this.leftGuessName = leftGuessName;
+	}
+	public String getRightGuessName() {
+		return rightGuessName;
+	}
+	public void setRightGuessName(String rightGuessName) {
+		this.rightGuessName = rightGuessName;
 	}
 	public double getLeftWinRate() {
 		return leftWinRate;

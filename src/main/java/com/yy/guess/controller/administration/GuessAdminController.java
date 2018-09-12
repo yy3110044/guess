@@ -578,6 +578,7 @@ public class GuessAdminController {
 		map.put("description", template.getDescription());
 		map.put("support", template.getSupport());
 		map.put("templateParamInfos", template.getTemplateParamInfos());
+
 		return new ResponseObject(100, "返回成功", map);
 	}
 

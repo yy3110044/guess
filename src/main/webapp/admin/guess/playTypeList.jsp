@@ -47,7 +47,20 @@ var query = function(){
 							}
 						}},
 						{field : "versusId"},
-						{field : "name"},
+						{fn : function(obj){
+							var str = '';
+							str += obj.name;
+							str += '&nbsp;<a href="javascript:;" onclick="modifyName(' + obj.id + ', \'' + obj.name + '\', this)">修改</a>';
+							return str;
+						}},
+						{fn : function(obj){
+							var str = '';
+							str += '<span style="color:red;">' + obj.leftGuessName + '</span>';
+							str += '&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;';
+							str += '<span style="color:blue;">' + obj.rightGuessName + '</span>';
+							str += '&nbsp;<a href="javascript:;" onclick="modifyGuessName(' + obj.id + ', \'' + obj.leftGuessName + '\', \'' + obj.rightGuessName + '\', this)">修改</a>';
+							return str;
+						}},
 						{field : "bo"},
 						{field : "paramStr"},
 						{fn : function(obj){
@@ -100,6 +113,71 @@ var query = function(){
 	});
 };
 
+//修改名称
+var modifyName = function(playTypeId, name, e) {
+	var str = '<tr class="contentTr updatePlayTypeTr"><td colspan="99">';
+	str += '&nbsp;&nbsp;名称：<input type="text" id="modifyNameInput" value="' + name + '">';
+	str += '&nbsp;&nbsp;<input type="button" value="修改" onclick="modifyName2(' + playTypeId + ')">';
+	str += '&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().remove()">';
+	str += '</td></tr>'
+	$("tr.updatePlayTypeTr").remove();
+	$(e).parent().parent().after(str);
+};
+var modifyName2 = function(playTypeId) {
+	var name = $.trim($("#modifyNameInput").val());
+	if(empty(name)) {
+		showMsg("名称不能为空");
+		return;
+	}
+	loadData({
+		url : "administration/updateName",
+		data : {
+			"name" : name,
+			"playTypeId" : playTypeId
+		},
+		success : function(data){
+			showMsg(data.msg);
+			if(data.code == 100) {
+				query();
+			}
+		}
+	});
+}
+
+//修改双方竞猜名
+var modifyGuessName = function(playTypeId, leftGuessName, rightGuessName, e) {
+	var str = '<tr class="contentTr updatePlayTypeTr"><td colspan="99">';
+	str += '&nbsp;&nbsp;左方显示名：<input type="text" id="modifyLeftGuessNameInput" value="' + leftGuessName + '">';
+	str += '&nbsp;&nbsp;左方显示名：<input type="text" id="modifyRightGuessNameInput" value="' + rightGuessName + '">';
+	str += '&nbsp;&nbsp;<input type="button" value="修改" onclick="modifyGuessName2(' + playTypeId + ')">';
+	str += '&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().remove()">';
+	str += '</td></tr>'
+	$("tr.updatePlayTypeTr").remove();
+	$(e).parent().parent().after(str);
+};
+var modifyGuessName2 = function(playTypeId){
+	var leftGuessName = $.trim($("#modifyLeftGuessNameInput").val());
+	var rightGuessName = $.trim($("#modifyRightGuessNameInput").val());
+	if(empty(leftGuessName) || empty(rightGuessName)) {
+		showMsg("显示名不能为空");
+		return;
+	}
+	loadData({
+		url : "administration/updateGuessName",
+		data : {
+			"leftGuessName" : leftGuessName,
+			"rightGuessName" : rightGuessName,
+			"playTypeId" : playTypeId
+		},
+		success : function(data) {
+			showMsg(data.msg);
+			if(data.code == 100) {
+				query();
+			}
+		}
+	});
+};
+
 //删除玩法
 var del = function(playTypeId){
 	if(confirm("确定删除？")) {
@@ -137,13 +215,13 @@ var fixedOddsChange = function(playTypeId, e){
 
 //修改预计胜率
 var updateWinRate = function(leftWinRate, rightWinRate, playTypeId, e){
-	var str = '<tr class="contentTr updateWinRateTr"><td colspan="99">';
+	var str = '<tr class="contentTr updatePlayTypeTr"><td colspan="99">';
 	str += '&nbsp;&nbsp;左方赔率:<input id="updateLeftWinRate" type="number" step="0.01" value="' + leftWinRate + '" style="width:60px;">';
 	str += '&nbsp;&nbsp;右方赔率:<input id="updateRightWinRate" type="number" step="0.01" value="' + rightWinRate + '" style="width:60px;">';
 	str += '&nbsp;&nbsp;<input type="button" value="确定" onclick="updateWinRate2(' + playTypeId + ')">';
 	str += '&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().remove()">';
 	str += '</td></tr>'
-	$("tr.updateWinRateTr").remove();
+	$("tr.updatePlayTypeTr").remove();
 	$(e).parent().parent().after(str);
 };
 var updateWinRate2 = function(playTypeId) {
@@ -265,6 +343,7 @@ $(document).ready(function(){
 			<td><strong>ID</strong></td>
 			<td><strong>versusId</strong></td>
 			<td><strong>名称</strong></td>
+			<td><strong>双方竞猜显示名称</strong></td>
 			<td><strong>对局</strong></td>
 			<td><strong>参数</strong></td>
 			<td><strong>暂停下注</strong></td>

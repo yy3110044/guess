@@ -70,4 +70,12 @@ public interface PlayTypeMapper {
     //更新暂停状态
     @Update("update guess_play_type set pause = #{pause} where id = #{playTypeId}")
     void updatePause(boolean pause, int playTypeId);
+    
+    //更改名称
+    @Update("update guess_play_type set name = #{name} where id = #{playTypeId}")
+    void updateName(String name, int playTypeId);
+    
+    //更改双方竞猜名
+    @Update("update guess_play_type set leftGuessName = #{leftGuessName}, rightGuessName = #{rightGuessName} where id = #{playTypeId}")
+    void updateGuessName(String leftGuessName, String rightGuessName, int playTypeId);
 }

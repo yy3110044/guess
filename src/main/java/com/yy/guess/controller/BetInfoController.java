@@ -136,11 +136,19 @@ public class BetInfoController {
 			 							 @RequestParam(defaultValue="1") int pageNo,
 			 							 @RequestParam(defaultValue="5") int showCount,
 			 							 HttpServletRequest req) {
+		ResponseObject ro = null;
 		if(scroll) {
-			return this.getMatchVersus(today, req, pageSize, pageNo, showCount);
+			ro = this.getMatchVersus(today, req, pageSize, pageNo, showCount);
 		} else {
-			return this.getMatchVersus(queryDate, req, pageSize, pageNo, showCount);
+			ro = this.getMatchVersus(queryDate, req, pageSize, pageNo, showCount);
 		}
+		if(ro.getCode() == 100) {
+			JsonResultMap map = (JsonResultMap)ro.getResult();
+			@SuppressWarnings("unchecked")
+			List<MatchVersus> versusList = (List<MatchVersus>)map.get("list");
+			map.set("playTypeList", pts.getFirstPlayTypeByVersusList(versusList));
+		}
+		return ro;
 	}
 	//滚动
 	private ResponseObject getMatchVersus(boolean today, HttpServletRequest req, int pageSize, int pageNo, int showCount) {

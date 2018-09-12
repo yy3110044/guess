@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into guess_match_versus(id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, boCount, realBoCount, result, createTime)
-        values(#{id}, #{name}, #{matchId}, #{matchName}, #{matchLogoUrl}, #{sportId}, #{sportName}, #{sportLogoUrl}, #{leftTeamId}, #{leftTeamName}, #{rightTeamId}, #{rightTeamName}, #{leftTeamLogoUrl}, #{rightTeamLogoUrl}, #{leftTeamScore}, #{rightTeamScore}, #{playTypeCount}, #{startTime}, #{endTime}, #{status}, #{boCount}, #{realBoCount}, #{result}, #{createTime})
+        insert into guess_match_versus(id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, autoSwitchStatus, boCount, realBoCount, result, createTime)
+        values(#{id}, #{name}, #{matchId}, #{matchName}, #{matchLogoUrl}, #{sportId}, #{sportName}, #{sportLogoUrl}, #{leftTeamId}, #{leftTeamName}, #{rightTeamId}, #{rightTeamName}, #{leftTeamLogoUrl}, #{rightTeamLogoUrl}, #{leftTeamScore}, #{rightTeamScore}, #{playTypeCount}, #{startTime}, #{endTime}, #{status}, #{autoSwitchStatus}, #{boCount}, #{realBoCount}, #{result}, #{createTime})
     </insert>
 
     <delete id="delete" parameterType="int">
@@ -17,12 +17,12 @@
 
     <update id="update" parameterType="com.yy.guess.po.MatchVersus">
         update guess_match_versus set
-        name = #{name}, matchId = #{matchId}, matchName = #{matchName}, matchLogoUrl = #{matchLogoUrl}, sportId = #{sportId}, sportName = #{sportName}, sportLogoUrl = #{sportLogoUrl}, leftTeamId = #{leftTeamId}, leftTeamName = #{leftTeamName}, rightTeamId = #{rightTeamId}, rightTeamName = #{rightTeamName}, leftTeamLogoUrl = #{leftTeamLogoUrl}, rightTeamLogoUrl = #{rightTeamLogoUrl}, leftTeamScore = #{leftTeamScore}, rightTeamScore = #{rightTeamScore}, playTypeCount = #{playTypeCount}, startTime = #{startTime}, endTime = #{endTime}, status = #{status}, boCount = #{boCount}, realBoCount = #{realBoCount}, result = #{result}, createTime = #{createTime}
+        name = #{name}, matchId = #{matchId}, matchName = #{matchName}, matchLogoUrl = #{matchLogoUrl}, sportId = #{sportId}, sportName = #{sportName}, sportLogoUrl = #{sportLogoUrl}, leftTeamId = #{leftTeamId}, leftTeamName = #{leftTeamName}, rightTeamId = #{rightTeamId}, rightTeamName = #{rightTeamName}, leftTeamLogoUrl = #{leftTeamLogoUrl}, rightTeamLogoUrl = #{rightTeamLogoUrl}, leftTeamScore = #{leftTeamScore}, rightTeamScore = #{rightTeamScore}, playTypeCount = #{playTypeCount}, startTime = #{startTime}, endTime = #{endTime}, status = #{status}, autoSwitchStatus = #{autoSwitchStatus}, boCount = #{boCount}, realBoCount = #{realBoCount}, result = #{result}, createTime = #{createTime}
         where id = #{id}
     </update>
 
     <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.MatchVersus">
-        select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, boCount, realBoCount, result, createTime from guess_match_versus
+        select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, autoSwitchStatus, boCount, realBoCount, result, createTime from guess_match_versus
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -44,12 +44,12 @@
     </select>
 
     <select id="findById" parameterType="int" resultType="com.yy.guess.po.MatchVersus">
-        select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, boCount, realBoCount, result, createTime from guess_match_versus
+        select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, autoSwitchStatus, boCount, realBoCount, result, createTime from guess_match_versus
         where id = #{id}
     </select>
 
     <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.MatchVersus">
-        select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, boCount, realBoCount, result, createTime from guess_match_versus
+        select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, autoSwitchStatus, boCount, realBoCount, result, createTime from guess_match_versus
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -86,42 +86,18 @@
     </select>
     <!--****************************************************************分隔线****************************************************************-->
     
-    <select id="queryInSportIdScroll" resultType="com.yy.guess.po.MatchVersus">
-		select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, boCount, realBoCount, result, createTime from guess_match_versus
-		where
-		<if test="sportIdList != null">
-			sportId in (<foreach collection="sportIdList" item="obj" separator=",">#{obj}</foreach>) and
-		</if>
-		endTime >= #{endTime}
-		<if test="startTime != null">
-			and startTime &lt;= #{startTime}
-		</if>
-		and playTypeCount > 0
-		order by startTime ASC
-		<if test="page != null">
-			limit ${page.beginIndex}, ${page.pageSize}
-		</if>
-    </select>
-    <select id="queryInSportIdScrollCount" resultType="int">
-		select count(*) from guess_match_versus
-		where
-		<if test="sportIdList != null">
-			sportId in (<foreach collection="sportIdList" item="obj" separator=",">#{obj}</foreach>) and
-		</if>
-		endTime >= #{endTime}
-		<if test="startTime != null">
-			and startTime &lt;= #{startTime}
-		</if>
-		and playTypeCount > 0
-    </select>
-
-
-    <select id="queryInSportIdStartTime" resultType="com.yy.guess.po.MatchVersus">
-    	select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, boCount, realBoCount, result, createTime from guess_match_versus
-		where
-		<if test="sportIdList != null">
-			sportId in (<foreach collection="sportIdList" item="obj" separator=",">#{obj}</foreach>) and
-		</if>
+    
+    <select id="queryInSportId" resultType="com.yy.guess.po.MatchVersus">
+    	select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, autoSwitchStatus, boCount, realBoCount, result, createTime from guess_match_versus
+    	where
+    	<if test="sportIdList != null">
+    		sportId in (<foreach collection="sportIdList" item="obj" separator=",">#{obj}</foreach>) and
+    	</if>
+		<choose>
+			<when test="status > 0">(status = '已结束' or status = '未比赛') and</when><!-- status > 0：已结束、未比赛 -->
+			<when test="status &lt; 0">(status = '未开始' or status = '进行中') and</when><!-- status < 0：未开始、进行中 -->
+			<otherwise></otherwise>
+		</choose>
 		<if test="startTime != null">
 			startTime >= #{startTime} and
 		</if>
@@ -134,12 +110,17 @@
 			limit ${page.beginIndex}, ${page.pageSize}
 		</if>
     </select>
-    <select id="queryInSportIdStartTimeCount" resultType="int">
+    <select id="queryInSportIdCount" resultType="int">
     	select count(*) from guess_match_versus
     	where
     	<if test="sportIdList != null">
-			sportId in (<foreach collection="sportIdList" item="obj" separator=",">#{obj}</foreach>) and
-		</if>
+    		sportId in (<foreach collection="sportIdList" item="obj" separator=",">#{obj}</foreach>) and
+    	</if>
+		<choose>
+			<when test="status > 0">(status = '已结束' or status = '未比赛') and</when><!-- status > 0：已结束、未比赛 -->
+			<when test="status &lt; 0">(status = '未开始' or status = '进行中') and</when><!-- status < 0：未开始、进行中 -->
+			<otherwise></otherwise>
+		</choose>
 		<if test="startTime != null">
 			startTime >= #{startTime} and
 		</if>

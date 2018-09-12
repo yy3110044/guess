@@ -89,8 +89,14 @@ var query = function(pageSize, pageNo) {
 				{fn : function(obj){return '<span style="color:red;">' + obj.leftTeamName + '</span>&nbsp;vs&nbsp;<span style="color:green;">' + obj.rightTeamName + '</span>';}},
 				{field : "startTime"},
 				{fn : function(obj){
-					return obj.endTime == '2099-01-01 00:00:00' ? '' : obj.endTime;
+					var str = '';
+					str += '<select style="width:50px;" onchange="autoSwitchStatusChange(' + obj.id + ', this)">';
+					str += '<option value="true"' + (obj.autoSwitchStatus ? ' selected="selected"' : '') + '>是</option>';
+					str += '<option value="false"' + (obj.autoSwitchStatus ? '' : ' selected="selected"') + '>否</option>';
+					str += '</select>';
+					return str;
 				}},
+				{field : "endTime"},
 				{fn : function(obj){
 					if("未开始" == obj.status) {
 						return '<span style="color:blue;">' + obj.status + '</span>';
@@ -140,6 +146,20 @@ var query = function(pageSize, pageNo) {
 					return str;
 				}}
 			]);
+		}
+	});
+};
+
+//自动切换状态更新
+var autoSwitchStatusChange = function(versusId, e) {
+	loadData({
+		url : "administration/updateAutoSwitchStatus",
+		data : {
+			"autoSwitchStatus" : $.trim($(e).val()),
+			"versusId" : versusId
+		},
+		success : function(data) {
+			showMsg(data.msg);
 		}
 	});
 };
@@ -393,6 +413,7 @@ var sportIdChange = function(){
 			<td><strong>名称</strong></td>
 			<td><strong>对阵</strong></td>
 			<td><strong>开始时间</strong></td>
+			<td><strong>自动切换状态</strong></td>
 			<td><strong>结束时间</strong></td>
 			<td><strong>状态</strong></td>
 			<td><strong>比分</strong></td>

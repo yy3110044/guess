@@ -21,6 +21,7 @@ import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.service.MatchVersusService;
 import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.service.SportService;
+import com.yy.guess.util.QueryResult;
 
 /**
  * 下注相关信息
@@ -115,99 +116,6 @@ public class BetInfoController {
 	}
 	
 	/**
-	 * 返回对阵列表
-	 * @param scroll 是否返回滚动
-	 * @param today scroll为true时要用到的参数
-	 * @param queryDate scroll为false时要用到的参数
-	 * @param pageSize
-	 * @param pageNo
-	 * @param showCount
-	 * @param req
-	 * @return
-	 */
-	@RequestMapping("/getMatchVersus")
-	public ResponseObject getMatchVersus(@RequestParam(defaultValue="true") boolean scroll,
-
-										 @RequestParam(defaultValue="false") boolean today,
-			 							 /************************************************/
-			 							 @DateTimeFormat(pattern="yyyy-MM-dd") Date queryDate,
-
-			 							 @RequestParam(defaultValue="20") int pageSize,
-			 							 @RequestParam(defaultValue="1") int pageNo,
-			 							 @RequestParam(defaultValue="5") int showCount,
-			 							 HttpServletRequest req) {
-		ResponseObject ro = null;
-		if(scroll) {
-			ro = this.getMatchVersus(today, req, pageSize, pageNo, showCount);
-		} else {
-			ro = this.getMatchVersus(queryDate, req, pageSize, pageNo, showCount);
-		}
-		if(ro.getCode() == 100) {
-			JsonResultMap map = (JsonResultMap)ro.getResult();
-			@SuppressWarnings("unchecked")
-			List<MatchVersus> versusList = (List<MatchVersus>)map.get("list");
-			map.set("playTypeList", pts.getFirstPlayTypeByVersusList(versusList));
-		}
-		return ro;
-	}
-	//滚动
-	private ResponseObject getMatchVersus(boolean today, HttpServletRequest req, int pageSize, int pageNo, int showCount) {
-		List<Integer> sportIdList = null;
-		Date endTime = null;
-		Date startTime = null;
-		Page page = null;
-		/*---------------------------------------------------------------------------------------*/
-		String[] sportId = req.getParameterValues("sportId[]");
-		if(sportId != null && sportId.length > 0) {
-			sportIdList = new ArrayList<>();
-			for(int i=0; i<sportId.length; i++) {
-				sportIdList.add(Integer.valueOf(sportId[i]));
-			}
-		}
-		if(today) {
-			long currentMillis = System.currentTimeMillis();
-			long endTimeMillis = Fast4jUtils.getEveryDayStartTime(currentMillis) + Fast4jUtils._24HoursMillis - 1;
-			endTime = new Date(currentMillis);
-			startTime = new Date(endTimeMillis);
-		} else {
-			endTime = new Date();
-		}
-		page = new Page(pageSize, pageNo, showCount);
-		
-		List<MatchVersus> list = mvs.queryInSportIdScroll(sportIdList, endTime, startTime, page);
-		page.setRowCount(mvs.queryInSportIdScrollCount(sportIdList, endTime, startTime));
-		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
-	}
-	//按开始日期查询
-	private ResponseObject getMatchVersus(Date queryDate, HttpServletRequest req, int pageSize, int pageNo, int showCount) {
-		List<Integer> sportIdList = null;
-		Date startTime = null;
-		Date endTime = null;
-		Page page = null;
-		/**********************************************************************************/
-		String[] sportId = req.getParameterValues("sportId[]");
-		if(sportId != null && sportId.length > 0) {
-			sportIdList = new ArrayList<>();
-			for(int i=0; i<sportId.length; i++) {
-				sportIdList.add(Integer.valueOf(sportId[i]));
-			}
-		}
-		if(queryDate == null) {
-			return new ResponseObject(101, "查询日期不能为空");
-		}
-		long startTimeMillis = Fast4jUtils.getEveryDayStartTime(queryDate.getTime());
-		long endTimeMillis = startTimeMillis + Fast4jUtils._24HoursMillis - 1;
-		startTime = new Date(startTimeMillis);
-		endTime = new Date(endTimeMillis);
-		
-		page = new Page(pageSize, pageNo, showCount);
-		
-		List<MatchVersus> list = mvs.queryInSportIdStartTime(sportIdList, startTime, endTime, page);
-		page.setRowCount(mvs.queryInSportIdStartTimeCount(sportIdList, startTime, endTime));
-		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
-	}
-
-	/**
 	 * 返回所有的运动项目
 	 * @return
 	 */
@@ -215,5 +123,89 @@ public class BetInfoController {
 	public ResponseObject getAllSport() {
 		List<Sport> list = ss.query(null);
 		return new ResponseObject(100, "返回成功", list);
+	}
+	
+	/**
+	 * 返回MatchVersus
+	 * @param type：today、scroll、after、end
+	 * @param date
+	 * @param pageSize
+	 * @param pageNo
+	 * @param showCount
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping("/getMatchVersus")
+	public ResponseObject getMatchVersus(@RequestParam(defaultValue="scroll") String type,
+                                         @DateTimeFormat(pattern="yyyy-MM-dd") Date date,
+                                         @RequestParam(defaultValue="20") int pageSize,
+                                         @RequestParam(defaultValue="1") int pageNo,
+                                         @RequestParam(defaultValue="5") int showCount,
+                                         HttpServletRequest req) {
+		switch(type) {
+		case "today":
+			return this.getTodayMatchVersus(pageSize, pageNo, showCount, req);
+		case "scroll":
+			return this.getScrollMatchVersus(pageSize, pageNo, showCount, req);
+		case "after":
+			return this.getAfterMatchVersus(date, pageSize, pageNo, showCount, req);
+		case "end":
+			return this.getEndMatchVersus(date, pageSize, pageNo, showCount, req);
+		default:
+			return new ResponseObject(101, "未知的type：" + type);
+		}
+	}
+	private ResponseObject getTodayMatchVersus(int pageSize, int pageNo, int showCount, HttpServletRequest req) {
+		long currentMillis = System.currentTimeMillis();
+		long endTimeMillis = Fast4jUtils.getEveryDayStartTime(currentMillis) + Fast4jUtils._24HoursMillis - 1;
+		Date startTime = new Date(currentMillis);
+		Date endTime = new Date(endTimeMillis);
+		QueryResult<MatchVersus> result = mvs.queryInSportId(getSportIdList(req), -1, startTime, endTime, new Page(pageSize, pageNo, showCount));
+		JsonResultMap map = new JsonResultMap();
+		map.put("list", result.getList());
+		map.put("page", result.getPage());
+		map.put("playTypeList", pts.getFirstPlayTypeByVersusList(result.getList()));
+		return new ResponseObject(100, "返回成功", map);
+	}
+	private ResponseObject getScrollMatchVersus(int pageSize, int pageNo, int showCount, HttpServletRequest req) {
+		QueryResult<MatchVersus> result = mvs.queryInSportId(getSportIdList(req), -1, null, null, new Page(pageSize, pageNo, showCount));
+		JsonResultMap map = new JsonResultMap();
+		map.put("list", result.getList());
+		map.put("page", result.getPage());
+		map.put("playTypeList", pts.getFirstPlayTypeByVersusList(result.getList()));
+		return new ResponseObject(100, "返回成功", map);
+	}
+	private ResponseObject getAfterMatchVersus(Date date, int pageSize, int pageNo, int showCount, HttpServletRequest req) {
+		if(date == null) {//date为空时就默认设为明天
+			date = new Date(System.currentTimeMillis() + Fast4jUtils._24HoursMillis);
+		}
+		long startTimeMillis = Fast4jUtils.getEveryDayStartTime(date.getTime());
+		long endTimeMillis = startTimeMillis + Fast4jUtils._24HoursMillis - 1;
+		QueryResult<MatchVersus> result = mvs.queryInSportId(getSportIdList(req), 0, new Date(startTimeMillis), new Date(endTimeMillis), new Page(pageSize, pageNo, showCount));
+		JsonResultMap map = new JsonResultMap();
+		map.put("list", result.getList());
+		map.put("page", result.getPage());
+		map.put("playTypeList", pts.getFirstPlayTypeByVersusList(result.getList()));
+		return new ResponseObject(100, "返回成功", map);
+	}
+	private ResponseObject getEndMatchVersus(Date date, int pageSize, int pageNo, int showCount, HttpServletRequest req) {
+		if(date == null) {
+			date = new Date();
+		}
+		long startTimeMillis = Fast4jUtils.getEveryDayStartTime(date.getTime());
+		long endTimeMillis = startTimeMillis + Fast4jUtils._24HoursMillis - 1;
+		QueryResult<MatchVersus> result = mvs.queryInSportId(getSportIdList(req), 1, new Date(startTimeMillis), new Date(endTimeMillis), new Page(pageSize, pageNo, showCount));
+		return new ResponseObject(100, "返回成功", result);
+	}
+	private List<Integer> getSportIdList(HttpServletRequest req) {
+		List<Integer> sportIdList = null;
+		String[] sportId = req.getParameterValues("sportId[]");
+		if(sportId != null && sportId.length > 0) {
+			sportIdList = new ArrayList<Integer>();
+			for(int i=0; i<sportId.length; i++) {
+				sportIdList.add(Integer.valueOf(sportId[i]));
+			}
+		}
+		return sportIdList;
 	}
 }

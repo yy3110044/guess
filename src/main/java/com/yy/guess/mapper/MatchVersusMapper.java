@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import com.yy.guess.po.MatchVersus;
+import com.yy.guess.po.enums.MatchStatus;
 import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 
@@ -27,20 +28,21 @@ public interface MatchVersusMapper {
     @Update("update guess_match_versus set playTypeCount = playTypeCount + #{plus} where id = #{versusId}")
     void plusPlayTypeCount(int plus, int versusId);
     
-    List<MatchVersus> queryInSportIdScroll(@Param("sportIdList") List<Integer> sportIdList,
-    		                               @Param("endTime") Date endTime,
-                                           @Param("startTime") Date startTime,
-                                           @Param("page") Page page);
-    int queryInSportIdScrollCount(@Param("sportIdList") List<Integer> sportIdList,
-	    		                  @Param("endTime") Date endTime,
-	    		                  @Param("startTime") Date startTime);
+    @Update("update guess_match_versus set status = #{status} where id = #{versusId}")
+    void updateStatus(MatchStatus status, int versusId);
     
-    List<MatchVersus> queryInSportIdStartTime(@Param("sportIdList") List<Integer> sportIdList,
-    		                                  @Param("startTime") Date startTime,
-    		                                  @Param("endTime") Date endTime,
-    		                                  @Param("page") Page page);
+    @Update("update guess_match_versus set autoSwitchStatus = #{autoSwitchStatus} where id = #{versusId}")
+    void updateAutoSwitchStatus(boolean autoSwitchStatus, int versusId);
+
     
-    int queryInSportIdStartTimeCount(@Param("sportIdList") List<Integer> sportIdList,
-					                 @Param("startTime") Date startTime,
-					                 @Param("endTime") Date endTime);
+    List<MatchVersus> queryInSportId(@Param("sportIdList") List<Integer> sportIdList,
+                                     @Param("status") int status,
+                                     @Param("startTime") Date startTime,
+                                     @Param("endTime") Date endTime,
+                                     @Param("page") Page page);
+    
+    int queryInSportIdCount(@Param("sportIdList") List<Integer> sportIdList,
+    						@Param("status") int status,
+    						@Param("startTime") Date startTime,
+    						@Param("endTime") Date endTime);
 }

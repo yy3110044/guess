@@ -86,6 +86,7 @@ var add = function() {
 	var rightTeamId = $.trim($("#rightTeamId").val());
 	var startTime = $.trim($("#startTime").val());
 	var status = $.trim($("#status").val());
+	var autoSwitchStatus = $.trim($("#autoSwitchStatus").val());
 	var boCount = $.trim($("#boCount").val());
 	if(empty(matchId)) {
 		showMsg("请选择项目类型和赛事，没有则先添加");
@@ -120,6 +121,7 @@ var add = function() {
 			"rightTeamId" : rightTeamId,
 			"startTime" : startTime,
 			"status" : status,
+			"autoSwitchStatus" : autoSwitchStatus,
 			"boCount" : boCount
 		},
 		success : function(data) {
@@ -243,8 +245,12 @@ var nameSelectChange = function(){
 			<td><input type="text" id="startTime" placeholder="比赛开始时间" class="laydate-icon" onclick="laydate({istime:true,format:'YYYY-MM-DD hh:mm:ss'});" style="width:140px;cursor:pointer;" readonly="readonly"></td>
 		</tr>
 		<tr>
+			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">自动切换状态：</td>
+			<td><select id="autoSwitchStatus" style="width:50px;"><option value="true" selected="selected">是</option><option value="false">否</option></select>&nbsp;<span style="color:red;">当开始时间到达后，自动把状态切换为进行中</span></td>
+		</tr>
+		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">比赛状态：</td>
-			<td><%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "status")%></td>
+			<td><%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.MatchStatus.class, "status", "width:70px;", "未开始")%></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">比赛局数：</td>

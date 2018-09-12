@@ -347,6 +347,7 @@ public class GuessAdminController {
                                          @RequestParam int rightTeamId,
                                          @RequestParam @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime,
                                          @RequestParam MatchStatus status,
+                                         @RequestParam(defaultValue="true") boolean autoSwitchStatus,
                                          @RequestParam int boCount) {
 		Match match = ms.findById(matchId);
 		if(match == null) {
@@ -383,6 +384,7 @@ public class GuessAdminController {
 		mv.setRightTeamLogoUrl(rightTeam.getLogoUrl());
 		mv.setStartTime(startTime);
 		mv.setStatus(status);
+		mv.setAutoSwitchStatus(autoSwitchStatus);
 		mv.setBoCount(boCount);
 		List<MatchVersusBo> boList = new ArrayList<MatchVersusBo>();
 		for(int i=1; i<=boCount; i++) {

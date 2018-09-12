@@ -16,7 +16,7 @@ public class WinnerGuessPlayTemplate implements GuessPlayTemplate {
 
 	@Override
 	public String getDescription() {
-		return "猜胜负";
+		return "获胜者";
 	}
 
 	@Override

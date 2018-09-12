@@ -20,6 +20,14 @@ var query = function(){
 			if(data.code == 100) {
 				var versus = data.result.versus;
 				$("#versusTitle").html(versus.sportName + "&nbsp;" + versus.matchName + "&nbsp;" + versus.name + "</span>&nbsp;<span style='color:red;'>" + versus.leftTeamName + "</span>&nbsp;VS&nbsp;<span style='color:blue;'>" + versus.rightTeamName + "</span>");
+				
+				var versusBoOption = '';
+				versusBoOption += '<option value=""' + (empty(bo) ? ' selected="selected"' : '') + '>全部</option>';
+				versusBoOption += '<option value="0"' + (bo == "0" ? ' selected="selected"' : '') + '>总盘口</option>';
+				for(var i=1; i<=versus.boCount; i++) {
+					versusBoOption += '<option value="' + i + '"' + (bo == i ? ' selected="selected"' : '') + '>第' + i + '局</option>';
+				}
+				$("#versusBo").html(versusBoOption);
 			} else {
 				showMsg(data.msg);
 			}
@@ -61,7 +69,13 @@ var query = function(){
 							str += '&nbsp;<a href="javascript:;" onclick="modifyGuessName(' + obj.id + ', \'' + obj.leftGuessName + '\', \'' + obj.rightGuessName + '\', this)">修改</a>';
 							return str;
 						}},
-						{field : "bo"},
+						{fn : function(obj){
+							if(obj.bo == 0) {
+								return '总盘口';
+							} else {
+								return '第' + obj.bo + '局';
+							}
+						}},
 						{field : "paramStr"},
 						{fn : function(obj){
 							var str = '';
@@ -314,6 +328,11 @@ var loadOddsAndBonusPool = function() {
 	});
 };
 
+var versusBoChange = function(){
+	var versusBo = $.trim($("#versusBo").val());
+	window.location.href = "${basePath}admin/guess/playTypeList.jsp?versusId=" + versusId + "&bo=" + versusBo;
+};
+
 $(document).ready(function(){
 	query();
 });
@@ -336,7 +355,7 @@ $(document).ready(function(){
 	<table class="table table-bordered table-striped table-hover">
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
-				<span id="versusTitle"></span>&nbsp;&nbsp;<a href="admin/guess/playTypeAdd.jsp" target="_blank">添加玩法</a>
+				<span id="versusTitle"></span>&nbsp;&nbsp;局数：<select id="versusBo" onchange="versusBoChange()" style="width:70px;"></select>&nbsp;&nbsp;<a href="admin/guess/playTypeAdd.jsp" target="_blank">添加玩法</a>
 			</td>
 		</tr>
 		<tr align="center">

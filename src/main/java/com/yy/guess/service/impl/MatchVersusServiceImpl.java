@@ -10,7 +10,9 @@ import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
+import com.yy.guess.po.enums.MatchStatus;
 import com.yy.guess.service.MatchVersusService;
+import com.yy.guess.util.QueryResult;
 import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 
@@ -95,40 +97,24 @@ public class MatchVersusServiceImpl implements MatchVersusService {
 	}
 
 	@Override
-	public List<MatchVersus> queryInSportIdScroll(List<Integer> sportIdList, Date endTime, Date startTime, Page page) {
-		if(sportIdList != null && sportIdList.size() == 0) {
-			sportIdList = null;
-		}
-		if(endTime == null) {
-			endTime = new Date();
-		}
-		return mapper.queryInSportIdScroll(sportIdList, endTime, startTime, page);
+	public void updateStatus(MatchStatus status, int versusId) {
+		mapper.updateStatus(status, versusId);
 	}
 
 	@Override
-	public int queryInSportIdScrollCount(List<Integer> sportIdList, Date endTime, Date startTime) {
-		if(sportIdList != null && sportIdList.size() == 0) {
-			sportIdList = null;
-		}
-		if(endTime == null) {
-			endTime = new Date();
-		}
-		return mapper.queryInSportIdScrollCount(sportIdList, endTime, startTime);
+	public void updateAutoSwitchStatus(boolean autoSwitchStatus, int versusId) {
+		mapper.updateAutoSwitchStatus(autoSwitchStatus, versusId);
 	}
 
 	@Override
-	public List<MatchVersus> queryInSportIdStartTime(List<Integer> sportIdList, Date startTime, Date endTime, Page page) {
-		if(sportIdList != null && sportIdList.size() == 0) {
+	public QueryResult<MatchVersus> queryInSportId(List<Integer> sportIdList, int status, Date startTime, Date endTime, Page page) {
+		if(sportIdList != null && sportIdList.size() <= 0) {
 			sportIdList = null;
 		}
-		return mapper.queryInSportIdStartTime(sportIdList, startTime, endTime, page);
-	}
-
-	@Override
-	public int queryInSportIdStartTimeCount(List<Integer> sportIdList, Date startTime, Date endTime) {
-		if(sportIdList != null && sportIdList.size() == 0) {
-			sportIdList = null;
+		List<MatchVersus> list = mapper.queryInSportId(sportIdList, status, startTime, endTime, page);
+		if(page != null) {
+			page.setRowCount(mapper.queryInSportIdCount(sportIdList, status, startTime, endTime));
 		}
-		return mapper.queryInSportIdStartTimeCount(sportIdList, startTime, endTime);
+		return new QueryResult<MatchVersus>(list, page);
 	}
 }

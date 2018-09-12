@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
+import com.yy.guess.po.enums.MatchStatus;
+import com.yy.guess.util.QueryResult;
 import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 
@@ -21,10 +23,10 @@ public interface MatchVersusService {
     void deleteVersus(int id);
     List<String> getDistinctName(int matchId);
     void update(MatchVersus obj, List<MatchVersusBo> boList);
+    
+    //status > 0：已结束、未比赛   status < 0：未开始、进行中   status = 0：全部
+    QueryResult<MatchVersus> queryInSportId(List<Integer> sportIdList, int status, Date startTime, Date endTime, Page page);
 
-    List<MatchVersus> queryInSportIdScroll(List<Integer> sportIdList, Date endTime, Date startTime, Page page);
-    int queryInSportIdScrollCount(List<Integer> sportIdList, Date endTime, Date startTime);
-
-    List<MatchVersus> queryInSportIdStartTime(List<Integer> sportIdList, Date startTime, Date endTime, Page page);
-    int queryInSportIdStartTimeCount(List<Integer> sportIdList, Date startTime, Date endTime);
+    void updateStatus(MatchStatus status, int versusId);
+    void updateAutoSwitchStatus(boolean autoSwitchStatus, int versusId);
 }

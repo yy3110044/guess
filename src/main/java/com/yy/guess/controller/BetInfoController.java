@@ -156,9 +156,9 @@ public class BetInfoController {
 		}
 	}
 	private ResponseObject getTodayMatchVersus(int pageSize, int pageNo, int showCount, HttpServletRequest req) {
-		long currentMillis = System.currentTimeMillis();
-		long endTimeMillis = Fast4jUtils.getEveryDayStartTime(currentMillis) + Fast4jUtils._24HoursMillis - 1;
-		Date startTime = new Date(currentMillis);
+		long startTimeMillis = Fast4jUtils.getEveryDayStartTime();
+		long endTimeMillis = startTimeMillis + Fast4jUtils._24HoursMillis - 1;
+		Date startTime = new Date(startTimeMillis);
 		Date endTime = new Date(endTimeMillis);
 		QueryResult<MatchVersus> result = mvs.queryInSportId(getSportIdList(req), -1, startTime, endTime, new Page(pageSize, pageNo, showCount));
 		JsonResultMap map = new JsonResultMap();

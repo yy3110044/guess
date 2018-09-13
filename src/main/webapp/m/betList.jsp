@@ -4,18 +4,43 @@
 <title>下注列表 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <%@include file="/m/head-common.jsp"%>
 <script src="m/js/betList.js"></script>
+<script src="m/js/mescroll.min.js"></script>
+<link href="m/js/mescroll.min.css" rel="stylesheet">
 <script>
+var mescroll = null;
 $(document).ready(function(){
 	$("#vux-scroller-60yre").height($(window).height() - 132);//设置高度
-	
-	loadAllSport();
-	loadMatchVersus();
+
+	loadAllSport();//加载项目
+	//loadMatchVersus();//加载对阵
+
+	mescroll = new MeScroll("vux-scroller-60yre", {
+		"down" : {
+			"use" : true,
+			"auto" : false, //是否在初始化完毕之后自动执行下拉回调callback; 默认true
+			"callback" : function(){
+				alert("??");
+			}
+		},
+		"up" : {
+			"use" : true,
+			"auto" : false, //是否在初始化时以上拉加载的方式自动加载第一页数据; 默认false
+			"isBounce" : false, //此处禁止ios回弹
+			"toTop" :{ //配置回到顶部按钮
+				src : "http://www.lanrentuku.com/savepic/img/allimg/1206/5-120601155S5-50.png", //默认滚动到1000px显示,可配置offset修改
+				offset : 1000
+			},
+			"callback" : function(){
+				alert("????");
+			}
+		}
+	});
+
 	/*
 	numberInputShow(function(amount){
 		alert(amount);
 	});
 	*/
-
 });
 </script>
 </head>
@@ -96,138 +121,10 @@ $(document).ready(function(){
 							</div>
 						</section>
 
-						<div data-v-bf66ef20="" id="vux-scroller-60yre" style="touch-action:auto;user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);position:relative;overflow:scroll;">
+						<div data-v-bf66ef20="" id="vux-scroller-60yre" class="mescroll" style="touch-action:auto;user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);position:relative;overflow:scroll;">
 							<div class="xs-container">
 								<div data-v-bf66ef20="">
-								
-									<div data-v-bf66ef20="" id="betListContainer">
-
-										<div data-v-18da170e="" data-v-bf66ef20="" class="home-match-card">
-											<section data-v-18da170e="" class="card-header">
-												<img data-v-18da170e="" src="//yuanjududu.com//file/98c6eb475bf90d035c0d6b7f31fd59d0.svg" width="20px">
-												<div data-v-18da170e="" class="tournament-name">震中杯 EPICENTER 2018</div>
-												<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo3</div>
-												<div data-v-18da170e="" class="play-count">+25</div>
-											</section>
-											<section data-v-18da170e="" class="card-body">
-												<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="//yuanjududu.com//file/3f6ee3d22a5473a0f4460e04deb31c67.png" class="team-logo"></div>
-												<div data-v-18da170e="" class="card-body-center">
-													<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlt6Y8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTEyLjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlt6YiIHg9IjExMiIgeT0iMTk2NCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjgwIj48L3JlY3Q+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=" class="center-left">
-													<div data-v-18da170e="" class="start-time">18:10</div>
-													<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlj7M8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTc2LjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlj7MiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4OC4wMDAwMDAsIDIwMDQuMDAwMDAwKSBzY2FsZSgtMSwgMSkgdHJhbnNsYXRlKC0xODguMDAwMDAwLCAtMjAwNC4wMDAwMDApICIgeD0iMTc2IiB5PSIxOTY0IiB3aWR0aD0iMjQiIGhlaWdodD0iODAiPjwvcmVjdD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==" class="center-right">
-												</div>
-												<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="//yuanjududu.com//file/1c8b7b613eefd276a83219b668722c23.png" class="team-logo"></div>
-											</section>
-											<div data-v-8d7d541a="" data-v-18da170e="" class="odds-group-title">
-												<div data-v-8d7d541a="" class="empty-badge">&nbsp;</div>
-												<div data-v-8d7d541a="" class="title">获胜者</div>
-											</div>
-											<section data-v-18da170e="" class="card-footer">
-												<div data-v-18da170e="" class="card-odds-btn">
-													<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button btn-locked">
-														<div data-v-ba6efc5c="" class="button-dark-border">
-															<div data-v-ba6efc5c="" class="button-content">
-																<div data-v-ba6efc5c="" class="button-name">3DMAX</div>
-																<div data-v-ba6efc5c="" class="button-odds-content">
-																	<div data-v-ba6efc5c="" class="odds-rising-icon"></div>
-																	<div data-v-ba6efc5c="" class="btn-odds"></div>
-																	<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div data-v-18da170e="" class="match-status">
-													<div data-v-18da170e="" class="match-is-early">
-														<div data-v-18da170e="" class="status-icon early-icon"></div>
-														<div data-v-18da170e="" class="match-status-text">未开始</div>
-													</div>
-												</div>
-												<div data-v-18da170e="" class="card-odds-btn">
-													<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button">
-														<div data-v-ba6efc5c="" class="button-dark-border">
-															<div data-v-ba6efc5c="" class="button-content">
-																<div data-v-ba6efc5c="" class="button-name">Red Reserve</div>
-																<div data-v-ba6efc5c="" class="button-odds-content">
-																	<div data-v-ba6efc5c="" class="odds-rising-icon"></div>
-																	<div data-v-ba6efc5c="" class="btn-odds"><span data-v-ba6efc5c="">1.58</span></div>
-																	<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</section>
-										</div>
-
-										<div data-v-18da170e="" data-v-bf66ef20="" class="home-match-card">
-											<section data-v-18da170e="" class="card-header">
-												<img data-v-18da170e="" src="//yuanjududu.com//file/d511f1c87538e99ca914ef559dfa68ba.svg" width="20px">
-												<div data-v-18da170e="" class="tournament-name">ESL ANZ Championship</div>
-												<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo1</div>
-												<div data-v-18da170e="" class="play-count">+2</div>
-											</section>
-											<section data-v-18da170e="" class="card-body">
-												<div data-v-18da170e="" class="card-body-team">
-													<img data-v-18da170e="" src="//yuanjududu.com//file/1672db3ae01e54f06cce4dc44ec6ec7a.png" class="team-logo">
-												</div>
-												<div data-v-18da170e="" class="card-body-center">
-													<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlt6Y8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTEyLjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlt6YiIHg9IjExMiIgeT0iMTk2NCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjgwIj48L3JlY3Q+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=" class="center-left">
-													<div data-v-18da170e="" class="start-time">18:30</div>
-													<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlj7M8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTc2LjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlj7MiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4OC4wMDAwMDAsIDIwMDQuMDAwMDAwKSBzY2FsZSgtMSwgMSkgdHJhbnNsYXRlKC0xODguMDAwMDAwLCAtMjAwNC4wMDAwMDApICIgeD0iMTc2IiB5PSIxOTY0IiB3aWR0aD0iMjQiIGhlaWdodD0iODAiPjwvcmVjdD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==" class="center-right">
-												</div>
-												<div data-v-18da170e="" class="card-body-team">
-													<img data-v-18da170e="" src="//yuanjududu.com//file/2c1bc68e92c4b9f12feb1fe0095bfef1.png" class="team-logo">
-												</div>
-											</section>
-											<div data-v-8d7d541a="" data-v-18da170e="" class="odds-group-title">
-												<div data-v-8d7d541a="" class="empty-badge">&nbsp;</div>
-												<div data-v-8d7d541a="" class="title">获胜者</div>
-											</div>
-											<section data-v-18da170e="" class="card-footer">
-												<div data-v-18da170e="" class="card-odds-btn">
-													<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button">
-														<div data-v-ba6efc5c="" class="button-dark-border">
-															<div data-v-ba6efc5c="" class="button-content">
-																<div data-v-ba6efc5c="" class="button-name">Athletico Esport</div>
-																<div data-v-ba6efc5c="" class="button-odds-content">
-																	<div data-v-ba6efc5c="" class="odds-rising-icon"></div>
-																	<div data-v-ba6efc5c="" class="btn-odds">
-																		<span data-v-ba6efc5c="">1.20</span>
-																	</div>
-																	<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div data-v-18da170e="" class="match-status">
-													<div data-v-18da170e="" class="match-is-early">
-														<div data-v-18da170e="" class="status-icon early-icon"></div>
-														<div data-v-18da170e="" class="match-status-text">未开始</div>
-													</div>
-												</div>
-												<div data-v-18da170e="" class="card-odds-btn">
-													<div data-v-ba6efc5c="" data-v-18da170e=""
-														class="home-match-card-button btn-selected">
-														<div data-v-ba6efc5c="" class="button-dark-border">
-															<div data-v-ba6efc5c="" class="button-content">
-																<div data-v-ba6efc5c="" class="button-name">SaveBuyBackPlz</div>
-																<div data-v-ba6efc5c="" class="button-odds-content">
-																	<div data-v-ba6efc5c="" class="odds-rising-icon"></div>
-																	<div data-v-ba6efc5c="" class="btn-odds">
-																		<span data-v-ba6efc5c="">3.97</span>
-																	</div>
-																	<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</section>
-										</div>
-										
-									</div>
+									<div data-v-bf66ef20="" id="betListContainer"></div>
 								</div>
 							</div>
 						</div>

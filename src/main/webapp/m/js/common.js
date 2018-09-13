@@ -2,21 +2,6 @@ var empty = function(str) {
 	return str == null || "" == str;
 };
 
-//scrollTopAndBottom，滚动到顶部，和底部事件
-var scrollEvent = function(e, scrollTopCallback, scrollBottomCallback){
-	e.scroll(function(){
-		var scrollTop = e.scrollTop();
-		var offsetHeight = e[0].offsetHeight;
-		var scrollHeight = e[0].scrollHeight;
-		if(scrollTop <= 0) { //到顶了
-			if(scrollTopCallback != null) scrollTopCallback();
-		}
-		if(scrollTop + offsetHeight >= scrollHeight) { //到底了
-			if(scrollBottomCallback != null) scrollBottomCallback();
-		}
-	});
-};
-
 /**
  * obj.url：链接
  * obj.data：参数

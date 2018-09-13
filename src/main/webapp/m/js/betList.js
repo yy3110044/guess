@@ -78,7 +78,7 @@ var loadMatchVersus = function(){
 						str += getMatchVersusStr(list[i], playTypeList[i]);
 					}
 				} else {
-					str += '<div data-v-8f6bb958="" style="height: 60px;"></div><div data-v-bf66ef20="" class="empty-list" style="">比赛正在筹备中<br data-v-bf66ef20=""><br data-v-bf66ef20=""> 请耐心等待</div>';
+					str += '<div data-v-8f6bb958="" style="height: 60px;"></div><div data-v-bf66ef20="" class="empty-list" style="">比赛正在筹备中<br data-v-bf66ef20=""><br data-v-bf66ef20="">请耐心等待</div>';
 				}
 				$("div.vux-tab-selected .match-number").html(page.rowCount);
 				$("#betListContainer").empty();

@@ -118,7 +118,7 @@ public class BetInfoController {
 	/**
 	 * 批量返回最新赔率以及玩法状态
 	 * @param req
-	 * @return
+	 * @return status：为true时表示正常下注，为false表示不能投注
 	 */
 	@RequestMapping("/getBatchOddsAndPlayTypeStatus")
 	public ResponseObject getBatchOddsAndPlayTypeStatus(HttpServletRequest req) {

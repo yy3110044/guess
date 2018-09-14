@@ -396,7 +396,7 @@ var getRemainingTime = function(remainingTime){
 
 //计算versus是否不能投注
 var isVersusLock = function(versus, playType) {
-	if(playType.pause) {
+	if(playType.pause || !playType.guessStart) {
 		return true;
 	} else {
 		if("已结束" == versus.status || "未比赛" == versus.status) {

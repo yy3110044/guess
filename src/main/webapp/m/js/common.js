@@ -9,6 +9,7 @@ var empty = function(str) {
  * obj.error：失败回调函数
  * obj.redirectCode：跳转代码，默认为200
  * obj.redirectUrl：跳转url
+ * obj.complete：完成后执行(在success后调用)
  */
 var loadData = function(obj){
 	$.ajax({
@@ -35,6 +36,9 @@ var loadData = function(obj){
 			}
 			if(obj.success != null) {
 				obj.success(data, textStatus); //请求成功后调用
+			}
+			if(obj.complete != null) {
+				obj.complete();
 			}
 		},
 		"error" : function(XMLHttpRequest, textStatus, errorThrown){

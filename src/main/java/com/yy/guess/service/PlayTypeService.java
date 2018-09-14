@@ -56,5 +56,5 @@ public interface PlayTypeService {
     void updateName(String name, int playTypeId); //更改名称
     void updateGuessName(String leftGuessName, String rightGuessName, int playTypeId); //更改双方竞猜名
     
-    boolean getPlayTypeGuessStatus(int playTypeId); //返回玩法竞猜是否开启
+    boolean getPlayTypeGuessStatus(int playTypeId); //返回是否能正常投注
 }

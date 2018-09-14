@@ -483,7 +483,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	public boolean getPlayTypeGuessStatus(int playTypeId) {
 		PlayType pt = this.startedPlayTypeMap.get(playTypeId);
 		if(pt != null) {
-			return pt.isPause() && pt.isGuessStart();
+			return !pt.isPause() && pt.isGuessStart();
 		} else {
 			return false;
 		}

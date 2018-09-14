@@ -284,48 +284,52 @@ var loadOddsAndBonusPool = function() {
 	$("span.odds").each(function(){
 		oddsPlayTypeId.push($(this).attr("data-playTypeId"));
 	});
-	loadData({
-		url : "getBatchOdds",
-		data : {"playTypeId[]" : oddsPlayTypeId},
-		success : function(data) {
-			if(data.code == 100) {
-				var list = data.result;
-				$("span.odds").each(function(index){
-					var obj = list[index];
-					var str = '<span style="color:red;">' + obj.leftOdds.toFixed(2) + '</span>';
-					str += '&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;';
-					str += '<span style="color:blue;">' + obj.rightOdds.toFixed(2) + '</span>';
-					$(this).html(str);
-				});
-			} else {
-				showMsg(data.msg);
+	if(oddsPlayTypeId.length > 0) {
+		loadData({
+			url : "getBatchOdds",
+			data : {"playTypeId[]" : oddsPlayTypeId},
+			success : function(data) {
+				if(data.code == 100) {
+					var list = data.result;
+					$("span.odds").each(function(index){
+						var obj = list[index];
+						var str = '<span style="color:red;">' + obj.leftOdds.toFixed(2) + '</span>';
+						str += '&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;';
+						str += '<span style="color:blue;">' + obj.rightOdds.toFixed(2) + '</span>';
+						$(this).html(str);
+					});
+				} else {
+					showMsg(data.msg);
+				}
 			}
-		}
-	});
+		});
+	}
 
 	
 	var bonusPoolPlayTypeId = new Array();
 	$("span.bonusPool").each(function(){
 		bonusPoolPlayTypeId.push($(this).attr("data-playTypeId"));
 	});
-	loadData({
-		url : "getBatchBonusPool",
-		data : {"playTypeId[]" : bonusPoolPlayTypeId},
-		success : function(data) {
-			if(data.code == 100) {
-				var list = data.result;
-				$("span.bonusPool").each(function(index){
-					var obj = list[index];
-					var str = '<span style="color:red;">' + obj.leftBonusPool.toFixed(2) + '</span>';
-					str += '&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;';
-					str += '<span style="color:blue;">' + obj.rightBonusPool.toFixed(2) + '</span>';
-					$(this).html(str);
-				});
-			} else {
-				showMsg(data.msg);
+	if(bonusPoolPlayTypeId.length > 0) {
+		loadData({
+			url : "getBatchBonusPool",
+			data : {"playTypeId[]" : bonusPoolPlayTypeId},
+			success : function(data) {
+				if(data.code == 100) {
+					var list = data.result;
+					$("span.bonusPool").each(function(index){
+						var obj = list[index];
+						var str = '<span style="color:red;">' + obj.leftBonusPool.toFixed(2) + '</span>';
+						str += '&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;';
+						str += '<span style="color:blue;">' + obj.rightBonusPool.toFixed(2) + '</span>';
+						$(this).html(str);
+					});
+				} else {
+					showMsg(data.msg);
+				}
 			}
-		}
-	});
+		});
+	}
 };
 
 var versusBoChange = function(){

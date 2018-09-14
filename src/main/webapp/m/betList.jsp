@@ -8,40 +8,51 @@
 <link href="m/js/mescroll.min.css" rel="stylesheet">
 <script>
 var mescroll = null;
+var pageSize = 20;
 $(document).ready(function(){
 	$("#vux-scroller-60yre").height($(window).height() - 132);//设置高度
 
 	loadAllSport();//加载项目
-	//loadMatchVersus();//加载对阵
 
 	mescroll = new MeScroll("vux-scroller-60yre", {
 		"down" : {
 			"use" : true,
-			"auto" : false, //是否在初始化完毕之后自动执行下拉回调callback; 默认true
+			"auto" : true, //是否在初始化完毕之后自动执行下拉回调callback; 默认true
 			"callback" : function(){
-				alert("??");
+				loadMatchVersus(pageSize, 1);
 			}
 		},
 		"up" : {
 			"use" : true,
 			"auto" : false, //是否在初始化时以上拉加载的方式自动加载第一页数据; 默认false
 			"isBounce" : false, //此处禁止ios回弹
-			"toTop" :{ //配置回到顶部按钮
-				src : "http://www.lanrentuku.com/savepic/img/allimg/1206/5-120601155S5-50.png", //默认滚动到1000px显示,可配置offset修改
-				offset : 1000
+			"htmlNodata" : '<div data-v-bf66ef20="" class="empty-list">暂时没有更多比赛了</div>',
+			"onScroll" : function(){
+				intervalSecond = <%=com.yy.guess.util.Util.getConfigCom(application).getLoadMatchVersusInterval()%>;
 			},
-			"callback" : function(){
-				alert("????");
+			"callback" : function(page) {
+				loadMatchVersus(pageSize, page.num + 1);
 			}
 		}
 	});
-
+	
 	/*
 	numberInputShow(function(amount){
 		alert(amount);
 	});
 	*/
+	//setInterval("loadMatchVersusInterval()", 1000);
 });
+
+var intervalSecond = <%=com.yy.guess.util.Util.getConfigCom(application).getLoadMatchVersusInterval()%>;
+var loadMatchVersusInterval = function() {
+	if(intervalSecond <= 0) {
+		mescroll.triggerDownScroll();
+		intervalSecond = <%=com.yy.guess.util.Util.getConfigCom(application).getLoadMatchVersusInterval()%>;
+	} else {
+		intervalSecond --;
+	}
+};
 </script>
 </head>
 <body>
@@ -69,7 +80,7 @@ $(document).ready(function(){
 									<div class="vux-tab">
 										<div data-v-de9ae73a="" onclick="tabBarChange(1, this)" class="vux-tab-item" style="border:none;color:rgb(186, 206, 241);">今日&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" onclick="tabBarChange(2, this)" class="vux-tab-item vux-tab-selected" style="border: none; color: rgb(255, 255, 255);">滚盘&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(2, this)" class="vux-tab-item vux-tab-selected" style="border: none; color: rgb(255, 255, 255);">进行中&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
 										<div data-v-de9ae73a="" onclick="tabBarChange(3, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">赛前&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>

@@ -114,6 +114,30 @@ public class BetInfoController {
 			return new ResponseObject(101, "参数为空");
 		}
 	}
+
+	/**
+	 * 批量返回最新赔率以及玩法状态
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping("/getBatchOddsAndPlayTypeStatus")
+	public ResponseObject getBatchOddsAndPlayTypeStatus(HttpServletRequest req) {
+		String[] playTypeId = req.getParameterValues("playTypeId[]");
+		if(playTypeId != null && playTypeId.length > 0) {
+			JsonResultMap[] maps = new JsonResultMap[playTypeId.length];
+			for(int i=0; i<playTypeId.length; i++) {
+				int playTypeIdInt = Integer.parseInt(playTypeId[i]);
+				maps[i] = new JsonResultMap();
+				maps[i].put("status", pts.getPlayTypeGuessStatus(playTypeIdInt));
+				double[] odds = pts.getOdds(playTypeIdInt);
+				maps[i].put("leftOdds", odds[0]);
+				maps[i].put("rightOdds", odds[1]);
+			}
+			return new ResponseObject(100, "返回成功", maps);
+		} else {
+			return new ResponseObject(101, "参数为空");
+		}
+	}
 	
 	/**
 	 * 返回所有的运动项目
@@ -164,15 +188,22 @@ public class BetInfoController {
 		JsonResultMap map = new JsonResultMap();
 		map.put("list", result.getList());
 		map.put("page", result.getPage());
-		map.put("playTypeList", pts.getFirstPlayTypeByVersusList(result.getList()));
+		map.put("playTypeList", pts.getFirstStartedPlayTypeByVersusList(result.getList()));
 		return new ResponseObject(100, "返回成功", map);
 	}
 	private ResponseObject getScrollMatchVersus(int pageSize, int pageNo, int showCount, HttpServletRequest req) {
 		QueryResult<MatchVersus> result = mvs.queryInSportId(getSportIdList(req), -1, null, null, new Page(pageSize, pageNo, showCount));
+		List<MatchVersus> list = result.getList();
+		long current = System.currentTimeMillis();
+		List<Long> remainingTimeList = new ArrayList<Long>();
+		for(MatchVersus versus : list) {
+			remainingTimeList.add(versus.getStartTime().getTime() - current);
+		}
 		JsonResultMap map = new JsonResultMap();
-		map.put("list", result.getList());
+		map.put("list", list);
+		map.put("remainingTimeList", remainingTimeList);
 		map.put("page", result.getPage());
-		map.put("playTypeList", pts.getFirstPlayTypeByVersusList(result.getList()));
+		map.put("playTypeList", pts.getFirstStartedPlayTypeByVersusList(result.getList()));
 		return new ResponseObject(100, "返回成功", map);
 	}
 	private ResponseObject getAfterMatchVersus(Date date, int pageSize, int pageNo, int showCount, HttpServletRequest req) {
@@ -185,7 +216,7 @@ public class BetInfoController {
 		JsonResultMap map = new JsonResultMap();
 		map.put("list", result.getList());
 		map.put("page", result.getPage());
-		map.put("playTypeList", pts.getFirstPlayTypeByVersusList(result.getList()));
+		map.put("playTypeList", pts.getFirstStartedPlayTypeByVersusList(result.getList()));
 		return new ResponseObject(100, "返回成功", map);
 	}
 	private ResponseObject getEndMatchVersus(Date date, int pageSize, int pageNo, int showCount, HttpServletRequest req) {

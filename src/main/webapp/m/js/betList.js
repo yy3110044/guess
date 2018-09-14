@@ -6,8 +6,6 @@ var userBalance = 0;
 var sportId = new Array();
 var type = "scroll"; //today、scroll、after、end
 var date = null;//scroll为false时要用到
-var pageSize = 20;
-var pageNo = 1;
 /***********MatchVersus查询参数***********/
 
 //更新余额方法
@@ -53,11 +51,11 @@ var sportSelectOk = function(){
 		});
 	}
 	closeSportSelect();
-	loadMatchVersus();
+	loadMatchVersus(pageSize, 1);
 };
 
 //加载MatchVersus
-var loadMatchVersus = function(){
+var loadMatchVersus = function(pageSize, pageNo){
 	loadData({
 		url : "getMatchVersus",
 		data : {
@@ -72,20 +70,39 @@ var loadMatchVersus = function(){
 				var list = data.result.list;
 				var page = data.result.page;
 				var playTypeList = data.result.playTypeList;
+				var remainingTimeList = data.result.remainingTimeList;
 				var str = '';
 				if(list.length > 0) {
 					for(var i=0; i<list.length; i++) {
-						str += getMatchVersusStr(list[i], playTypeList[i]);
+						if(remainingTimeList != null) {
+							str += getMatchVersusStr(list[i], playTypeList[i], remainingTimeList[i]);
+						} else {
+							str += getMatchVersusStr(list[i], playTypeList[i]);
+						}
 					}
 				} else {
-					str += '<div data-v-8f6bb958="" style="height: 60px;"></div><div data-v-bf66ef20="" class="empty-list" style="">比赛正在筹备中<br data-v-bf66ef20=""><br data-v-bf66ef20="">请耐心等待</div>';
 				}
 				$("div.vux-tab-selected .match-number").html(page.rowCount);
-				$("#betListContainer").empty();
+				if(pageNo == 1) { //第一页清空
+					mescroll.scrollTo(0); //滚动到顶部
+					mescroll.setPageNum(1); //把页数重设为1
+					$("#betListContainer").empty();
+				}
 				$("#betListContainer").append(str);
+				
+				mescroll.endSuccess(page.pageSize, page.next);//在这里关闭加载提示
+				
+				if(list.length > 0) {
+					getBatchOddsAndPlayTypeStatus(); //加载赔率
+				}
 			} else {
 				m_toast(data.msg);
+				mescroll.endErr();//在这里关闭加载提示
 			}
+			
+		},
+		error : function(){
+			mescroll.endErr();//在这里关闭加载提示
 		}
 	});
 };
@@ -261,13 +278,13 @@ var tabBarChange = function(index, ts) {
 		e.css("left", "75%");
 		e.css("right", "0%");
 	}
-	loadMatchVersus();
+	loadMatchVersus(pageSize, 1);
 };
 
 //对阵str
-var getMatchVersusStr = function(versus, playType){
+var getMatchVersusStr = function(versus, playType, remainingTime){
 	var str = '';
-	str += '<div data-v-18da170e="" data-v-bf66ef20="" class="home-match-card"' + (playType == null ? ' style="height:125px !important;"' : '') + '>';
+	str += '<div data-v-18da170e="" data-v-bf66ef20="" data-versusId="' + versus.id + '" class="home-match-card"' + (playType == null ? ' style="height:125px !important;"' : '') + '>';
 	str += '	<section data-v-18da170e="" class="card-header">';
 	str += '		<img data-v-18da170e="" src="' + versus.matchLogoUrl + '" width="20px">';
 	str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name + '</div>';
@@ -287,12 +304,12 @@ var getMatchVersusStr = function(versus, playType){
 		}
 	} else if("scroll" == type) { //滚动
 		if("未开始" == versus.status) {
-			str += '			<div data-v-18da170e="" class="start-time"><div data-v-18da170e="" class="ready-start">即将开始</div><div data-v-18da170e="">' + versus.startTime + '</div></div>';
+			str += '			<div data-v-18da170e="" class="start-time"><div data-v-18da170e="" class="ready-start">即将开始</div><div data-v-18da170e="">' + getRemainingTime(remainingTime) + '</div></div>';
 		} else {
 			str += '			<div data-v-18da170e="" class="team-score"><div data-v-18da170e="">' + versus.leftTeamScore + '</div><div data-v-18da170e="" class="dash-symbol">-</div><div data-v-18da170e="">' + versus.rightTeamScore + '</div></div>';
 		}
 	} else if("after" == type) { //赛前(明天)
-		
+		str += '			<div data-v-18da170e="" class="start-time">' + versus.startTime.substring(10).substring(0, 6) + '</div>';
 	} else if("end" == type) { //已结束
 		
 	}
@@ -307,15 +324,15 @@ var getMatchVersusStr = function(versus, playType){
 		str += '		<div data-v-8d7d541a="" class="empty-badge">&nbsp;</div>';
 		str += '		<div data-v-8d7d541a="" class="title">' + playType.name + '</div>';
 		str += '	</div>';
-		str += '	<section data-v-18da170e="" class="card-footer">';
+		str += '	<section data-v-18da170e="" class="card-footer" data-playTypeId="' + playType.id + '">';
 		str += '		<div data-v-18da170e="" class="card-odds-btn">';
-		str += '			<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button btn-locked">';
+		str += '			<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button' + (isVersusLock(versus, playType) ? ' btn-locked' : '') + '">';
 		str += '				<div data-v-ba6efc5c="" class="button-dark-border">';
 		str += '					<div data-v-ba6efc5c="" class="button-content">';
 		str += '						<div data-v-ba6efc5c="" class="button-name">' + playType.leftGuessName + '</div>';
 		str += '						<div data-v-ba6efc5c="" class="button-odds-content">';
 		str += '							<div data-v-ba6efc5c="" class="odds-rising-icon"></div>';
-		str += '							<div data-v-ba6efc5c="" class="btn-odds"></div>';
+		str += '							<div data-v-ba6efc5c="" class="btn-odds"><span data-v-ba6efc5c="" class="leftOdds"></span></div>';
 		str += '							<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>';
 		str += '						</div>';
 		str += '					</div>';
@@ -334,17 +351,22 @@ var getMatchVersusStr = function(versus, playType){
 			str += '				<div data-v-18da170e="" class="status-icon live-icon"></div>';
 			str += '				<div data-v-18da170e="" class="match-status-text">' + versus.status + '</div>';
 			str += '			</div>';
+		} else {
+			str += '			<div data-v-18da170e="" class="match-is-live">';
+			str += '				<div data-v-18da170e="" class="status-icon early-icon"></div>';
+			str += '				<div data-v-18da170e="" class="match-status-text" style="color:green;">' + versus.status + '</div>';
+			str += '			</div>';
 		}
 		
 		str += '		</div>';
 		str += '		<div data-v-18da170e="" class="card-odds-btn">';
-		str += '			<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button">';
+		str += '			<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button' + (isVersusLock(versus, playType) ? ' btn-locked' : '') + '">';
 		str += '				<div data-v-ba6efc5c="" class="button-dark-border">';
 		str += '					<div data-v-ba6efc5c="" class="button-content">';
 		str += '						<div data-v-ba6efc5c="" class="button-name">' + playType.rightGuessName + '</div>';
 		str += '						<div data-v-ba6efc5c="" class="button-odds-content">';
 		str += '							<div data-v-ba6efc5c="" class="odds-rising-icon"></div>';
-		str += '							<div data-v-ba6efc5c="" class="btn-odds"><span data-v-ba6efc5c="">1.58</span></div>';
+		str += '							<div data-v-ba6efc5c="" class="btn-odds"><span data-v-ba6efc5c="" class="rightOdds"></span></div>';
 		str += '							<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>';
 		str += '						</div>';
 		str += '					</div>';
@@ -355,4 +377,72 @@ var getMatchVersusStr = function(versus, playType){
 	}
 	str += '</div>';
 	return str;
+};
+
+//计算剩余时间
+var getRemainingTime = function(remainingTime){
+	if(remainingTime <= 0) {
+		return "开盘中";
+	} else if(remainingTime > 0 && remainingTime < 60000) { //小于一分(60秒)
+		return parseInt(remainingTime / 1000) + "秒后";
+	} else if(remainingTime >= 60000 && remainingTime < 3600000) { //大于一分小于1小时(60分)
+		return parseInt(remainingTime / 1000 / 60) + "分钟后";
+	} else if(remainingTime >= 3600000 && remainingTime < 86400000) { //大于1小时小于一天(24小时)
+		return parseInt(remainingTime / 1000 / 60 / 60) + "小时后";
+	} else { //大于等于一天
+		return parseInt(remainingTime / 1000 / 60 / 60 / 24) + "天后";
+	}
+};
+
+//计算versus是否不能投注
+var isVersusLock = function(versus, playType) {
+	if(playType.pause) {
+		return true;
+	} else {
+		if("已结束" == versus.status || "未比赛" == versus.status) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+};
+
+//加载赔率
+var getBatchOddsAndPlayTypeStatus = function() {
+	var playTypeId = new Array();
+	$("section.card-footer").each(function(){
+		playTypeId.push($(this).attr("data-playTypeId"));
+	});
+	if(playTypeId.length > 0) {
+		loadData({
+			"url" : "getBatchOddsAndPlayTypeStatus",
+			"data" : {
+				"playTypeId[]" : playTypeId
+			},
+			"success" : function(data){
+				if(data.code == 100) {
+					var resultList = data.result;
+					$("section.card-footer").each(function(index){
+						var result = resultList[index];
+						var ts = $(this);
+						if(result.status) {
+							ts.find(".home-match-card-button").removeClass("btn-locked");
+							
+							var leftOdds = result.leftOdds;
+							ts.find(".leftOdds").html(leftOdds.toFixed(2));
+
+							var rightOdds = result.rightOdds;
+							ts.find(".rightOdds").html(rightOdds.toFixed(2));
+						} else {
+							ts.find(".home-match-card-button").addClass("btn-locked");
+							ts.find(".leftOdds").empty();
+							ts.find(".rightOdds").empty();
+						}
+					});
+				} else {
+					m_toast(data.msg);
+				}
+			}
+		});
+	}
 };

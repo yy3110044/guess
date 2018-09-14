@@ -50,9 +50,11 @@ public interface PlayTypeService {
     
     void updatePause(boolean pause, int playTypeId); //更改暂停状态
     
-    List<PlayType> getFirstPlayTypeByVersusList(List<MatchVersus> versusList); //返回每个对阵下的第一个playType
-    List<PlayType> getFirstPlayTypeByVersusIdList(List<Integer> versusIdList); //返回每个对阵下的第一个PlayType
+    List<PlayType> getFirstStartedPlayTypeByVersusList(List<MatchVersus> versusList); //返回每个对阵下的第一个开启的playType
+    List<PlayType> getFirstStartedPlayTypeByVersusIdList(List<Integer> versusIdList); //返回每个对阵下的第一个开启的PlayType
     
     void updateName(String name, int playTypeId); //更改名称
     void updateGuessName(String leftGuessName, String rightGuessName, int playTypeId); //更改双方竞猜名
+    
+    boolean getPlayTypeGuessStatus(int playTypeId); //返回玩法竞猜是否开启
 }

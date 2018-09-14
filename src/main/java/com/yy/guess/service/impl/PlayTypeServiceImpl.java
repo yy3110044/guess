@@ -284,9 +284,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	public double getOdds(BetDirection direction, int playTypeId) {
 		PlayType playType = startedPlayTypeMap.get(playTypeId);
 		if(playType == null) {
-			RuntimeException e = new RuntimeException("玩法未开启竞猜或不存在");
-			logger.error(e.toString());
-			throw e;
+			return -1; //返回一个负数，表示玩法关闭，赔率不存在
 		}
 		if(playType.isFixedOdds()) { //固定赔率
 			return getFixedOdds(direction, playType);
@@ -329,9 +327,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	public double[] getOdds(int playTypeId) {
 		PlayType playType = this.startedPlayTypeMap.get(playTypeId);
 		if(playType == null) {
-			RuntimeException e = new RuntimeException("玩法未开启竞猜或不存在");
-			logger.error(e.toString());
-			throw e;
+			return new double[]{-1, -1}; //返回一个负数，表示玩法关闭，赔率不存在
 		}
 		if(playType.isFixedOdds()) { //固定赔率
 			return this.getFixedOdds(playType);
@@ -440,7 +436,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	}
 	
 	@Override
-	public List<PlayType> getFirstPlayTypeByVersusList(List<MatchVersus> versusList) {
+	public List<PlayType> getFirstStartedPlayTypeByVersusList(List<MatchVersus> versusList) {
 		List<PlayType> list = new ArrayList<PlayType>();
 		for(MatchVersus versus : versusList) {
 			list.add(this.getFirstPlayTypeByVersusId(versus.getId()));
@@ -449,7 +445,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	}
 
 	@Override
-	public List<PlayType> getFirstPlayTypeByVersusIdList(List<Integer> versusIdList) {
+	public List<PlayType> getFirstStartedPlayTypeByVersusIdList(List<Integer> versusIdList) {
 		List<PlayType> list = new ArrayList<PlayType>();
 		for(Integer versusId : versusIdList) {
 			list.add(this.getFirstPlayTypeByVersusId(versusId));
@@ -459,6 +455,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	private PlayType getFirstPlayTypeByVersusId(int versusId) {
 		QueryCondition qc = new QueryCondition();
 		qc.addCondition("versusId", "=", versusId);
+		qc.addCondition("guessStart", "=", true);
 		qc.addSort("bo", SortType.ASC);
 		return mapper.find(qc);
 	}
@@ -479,6 +476,16 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 		if(pt != null) {
 			pt.setLeftGuessName(leftGuessName);
 			pt.setRightGuessName(rightGuessName);
+		}
+	}
+
+	@Override
+	public boolean getPlayTypeGuessStatus(int playTypeId) {
+		PlayType pt = this.startedPlayTypeMap.get(playTypeId);
+		if(pt != null) {
+			return pt.isPause() && pt.isGuessStart();
+		} else {
+			return false;
 		}
 	}
 }

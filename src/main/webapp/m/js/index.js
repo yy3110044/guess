@@ -146,7 +146,11 @@ var loadMatchVersus = function(pageSize, pageNo, hideLoading){
 				var remainingTimeList = data.result.remainingTimeList;
 				var str = '';
 				if("end" == type) {
-					
+					if(list.length > 0) {
+						for(var i=0; i<list.length; i++) {
+							str += getMatchVersusStr(list[i]);
+						}
+					}
 				} else {
 					if(list.length > 0) {
 						for(var i=0; i<list.length; i++) {
@@ -269,7 +273,7 @@ var numberInputShow = function(matchName, playTypeId, playTypeName, leftGuessNam
 	str += '								<div data-v-90afda32="" class="content">';
 	str += '									<div data-v-90afda32="" class="max-btn" onclick="maxBet()"><div data-v-90afda32="">最大投注</div></div>';
 	str += '									<div data-v-90afda32="" class="del-btn" onclick="numberInput(\'x\')"><div data-v-90afda32="" class="del-icon"></div></div>';
-	str += '									<div data-v-90afda32="" class="confirm-btn" onclick="numberInputOk()"><div data-v-90afda32="">确认</div></div>';
+	str += '									<div data-v-90afda32="" class="confirm-btn" onclick="numberInputOk()"><div data-v-90afda32="">确认下注</div></div>';
 	str += '								</div>';
 	str += '							</div>';
 	str += '						</div>';
@@ -578,98 +582,138 @@ var matchVersusClick = function(versusId){
 //对阵str
 var getMatchVersusStr = function(versus, playType, remainingTime){
 	var str = '';
-	str += '<div onclick="matchVersusClick(' + versus.id + ')" data-v-18da170e="" data-v-bf66ef20="" data-versusId="' + versus.id + '" class="home-match-card"' + (playType == null ? ' style="height:125px !important;"' : '') + '>';
-	str += '	<section data-v-18da170e="" class="card-header">';
-	str += '		<img data-v-18da170e="" src="' + versus.matchLogoUrl + '" width="20px">';
-	str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name + '</div>';
-	str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
-	str += '		<div data-v-18da170e="" class="play-count" style="display:none;">+4</div>';
-	str += '	</section>';
-	str += '	<section data-v-18da170e="" class="card-body">';
-	str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.leftTeamLogoUrl + '" class="team-logo"></div>';
-	str += '		<div data-v-18da170e="" class="card-body-center">';
-	str += '			<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlt6Y8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTEyLjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlt6YiIHg9IjExMiIgeT0iMTk2NCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjgwIj48L3JlY3Q+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=" class="center-left">';
-	
-	if("today" == type) { //今天
-		if("未开始" == versus.status) {
-			str += '			<div data-v-18da170e="" class="start-time">' + versus.startTime.substring(10).substring(0, 6) + '</div>';
-		} else {
-			str += '			<div data-v-18da170e="" class="team-score"><div data-v-18da170e="">' + versus.leftTeamScore + '</div><div data-v-18da170e="" class="dash-symbol">-</div><div data-v-18da170e="">' + versus.rightTeamScore + '</div></div>';
-		}
-	} else if("scroll" == type) { //滚动
-		if("未开始" == versus.status) {
-			str += '			<div data-v-18da170e="" class="start-time"><div data-v-18da170e="" class="ready-start">即将开始</div><div data-v-18da170e="">' + getRemainingTime(remainingTime) + '</div></div>';
-		} else {
-			str += '			<div data-v-18da170e="" class="team-score"><div data-v-18da170e="">' + versus.leftTeamScore + '</div><div data-v-18da170e="" class="dash-symbol">-</div><div data-v-18da170e="">' + versus.rightTeamScore + '</div></div>';
-		}
-	} else if("after" == type) { //赛前(明天)
-		str += '			<div data-v-18da170e="" class="start-time">' + versus.startTime.substring(10).substring(0, 6) + '</div>';
-	} else if("end" == type) { //已结束
-		
-	}
-
-	str += '			<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlj7M8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTc2LjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlj7MiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4OC4wMDAwMDAsIDIwMDQuMDAwMDAwKSBzY2FsZSgtMSwgMSkgdHJhbnNsYXRlKC0xODguMDAwMDAwLCAtMjAwNC4wMDAwMDApICIgeD0iMTc2IiB5PSIxOTY0IiB3aWR0aD0iMjQiIGhlaWdodD0iODAiPjwvcmVjdD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==" class="center-right">';
-	str += '		</div>';
-	str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.rightTeamLogoUrl + '" class="team-logo"></div>';
-	str += '	</section>';
-	
-	if(playType != null) {
-		str += '	<div data-v-8d7d541a="" data-v-18da170e="" class="odds-group-title">';
-		str += '		<div data-v-8d7d541a="" class="empty-badge">&nbsp;</div>';
-		str += '		<div data-v-8d7d541a="" class="title">' + playType.name + '</div>';
-		str += '	</div>';
-		str += '	<section data-v-18da170e="" class="card-footer playTypeId' + playType.id + '" data-playTypeId="' + playType.id + '" data-playTypeName="' + playType.name + '" data-leftGuessName="' + playType.leftGuessName + '" data-rightGuessName="' + playType.rightGuessName + '">';
-		str += '		<div data-v-18da170e="" class="card-odds-btn" onclick="betClick(' + playType.id + ', true, event)">';
-		str += '			<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button' + (isVersusLock(versus, playType) ? ' btn-locked' : '') + '">';
-		str += '				<div data-v-ba6efc5c="" class="button-dark-border">';
-		str += '					<div data-v-ba6efc5c="" class="button-content">';
-		str += '						<div data-v-ba6efc5c="" class="button-name">' + playType.leftGuessName + '</div>';
-		str += '						<div data-v-ba6efc5c="" class="button-odds-content">';
-		str += '							<div data-v-ba6efc5c="" class="odds-rising-icon"></div>';
-		str += '							<div data-v-ba6efc5c="" class="btn-odds"><span data-v-ba6efc5c="" class="leftOdds"></span></div>';
-		str += '							<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>';
-		str += '						</div>';
-		str += '					</div>';
-		str += '				</div>';
-		str += '			</div>';
-		str += '		</div>';
-		str += '		<div data-v-18da170e="" class="match-status">';
-		
-		if("未开始" == versus.status) {
-			str += '			<div data-v-18da170e="" class="match-is-early">';
-			str += '				<div data-v-18da170e="" class="status-icon early-icon"></div>';
-			str += '				<div data-v-18da170e="" class="match-status-text">' + versus.status + '</div>';
-			str += '			</div>';
-		} else if("进行中" == versus.status) {
-			str += '			<div data-v-18da170e="" class="match-is-live">';
-			str += '				<div data-v-18da170e="" class="status-icon live-icon"></div>';
-			str += '				<div data-v-18da170e="" class="match-status-text">' + versus.status + '</div>';
-			str += '			</div>';
-		} else {
-			str += '			<div data-v-18da170e="" class="match-is-live">';
-			str += '				<div data-v-18da170e="" class="status-icon early-icon"></div>';
-			str += '				<div data-v-18da170e="" class="match-status-text" style="color:green;">' + versus.status + '</div>';
-			str += '			</div>';
-		}
-		
-		str += '		</div>';
-		str += '		<div data-v-18da170e="" class="card-odds-btn" onclick="betClick(' + playType.id + ', false, event)">';
-		str += '			<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button' + (isVersusLock(versus, playType) ? ' btn-locked' : '') + '">';
-		str += '				<div data-v-ba6efc5c="" class="button-dark-border">';
-		str += '					<div data-v-ba6efc5c="" class="button-content">';
-		str += '						<div data-v-ba6efc5c="" class="button-name">' + playType.rightGuessName + '</div>';
-		str += '						<div data-v-ba6efc5c="" class="button-odds-content">';
-		str += '							<div data-v-ba6efc5c="" class="odds-rising-icon"></div>';
-		str += '							<div data-v-ba6efc5c="" class="btn-odds"><span data-v-ba6efc5c="" class="rightOdds"></span></div>';
-		str += '							<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>';
-		str += '						</div>';
-		str += '					</div>';
-		str += '				</div>';
-		str += '			</div>';
-		str += '		</div>';
+	if("end" == type) {
+		str += '<div data-v-18da170e="" data-v-bf66ef20="" class="home-match-card">';
+		str += '	<section data-v-18da170e="" class="card-header">';
+		str += '		<img data-v-18da170e="" src="' + versus.matchLogoUrl + '" width="20px">';
+		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name  + '</div>';
+		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
+		str += '		<div data-v-18da170e="" class="play-count" style="display:none;">+17</div>';
 		str += '	</section>';
+		str += '	<section data-v-18da170e="" class="card-body">';
+		str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.leftTeamLogoUrl + '" class="team-logo"></div>';
+		str += '		<div data-v-18da170e="" class="card-body-center">';
+		str += '			<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlt6Y8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTEyLjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlt6YiIHg9IjExMiIgeT0iMTk2NCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjgwIj48L3JlY3Q+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=" class="center-left">';
+		if("已结束" == versus.status) {
+			str += '			<div data-v-18da170e="" class="team-score"><div data-v-18da170e="">' + versus.leftTeamScore + '</div><div data-v-18da170e="" class="dash-symbol">-</div><div data-v-18da170e="">' + versus.rightTeamScore + '</div></div>';
+		} else if("未比赛" == versus.status) {
+			str += '			<div data-v-18da170e="" class="team-score"><div data-v-18da170e="">0</div><div data-v-18da170e="" class="dash-symbol">-</div><div data-v-18da170e="">0</div></div>';
+		}
+		str += '			<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlj7M8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTc2LjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlj7MiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4OC4wMDAwMDAsIDIwMDQuMDAwMDAwKSBzY2FsZSgtMSwgMSkgdHJhbnNsYXRlKC0xODguMDAwMDAwLCAtMjAwNC4wMDAwMDApICIgeD0iMTc2IiB5PSIxOTY0IiB3aWR0aD0iMjQiIGhlaWdodD0iODAiPjwvcmVjdD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==" class="center-right">';
+		str += '		</div>';
+		str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.rightTeamLogoUrl + '" class="team-logo"></div>';
+		str += '	</section>';
+		str += '	<div data-v-8d7d541a="" data-v-18da170e="" class="odds-group-title"><div data-v-8d7d541a="" class="empty-badge">&nbsp;</div><div data-v-8d7d541a="" class="title">获胜者</div></div>';
+		str += '	<section data-v-18da170e="" class="card-footer">';
+		str += '		<div data-v-18da170e="" class="card-odds-btn"><div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button btn-over"><div data-v-ba6efc5c="" class="button-dark-border"><div data-v-ba6efc5c="" class="button-content"><div data-v-ba6efc5c="" class="button-name">' + versus.leftTeamName + '</div></div></div></div></div>';
+		if("已结束" == versus.status) {
+			if(versus.result < 0) { //左方胜
+				str += '		<div data-v-18da170e="" class="match-status"><div data-v-18da170e="" class="match-flag"><div data-v-18da170e="" class="flag win-flag"></div><div data-v-18da170e="" class="flag lose-flag"></div></div></div>';
+			} else if(versus.result > 0) { //右方胜
+				str += '		<div data-v-18da170e="" class="match-status"><div data-v-18da170e="" class="match-flag"><div data-v-18da170e="" class="flag lose-flag"></div><div data-v-18da170e="" class="flag win-flag"></div></div></div>';
+			} else { //平
+				str += '		<div data-v-18da170e="" class="match-status" style="font-size:16px;">平</div>';
+			}
+		} else if("未比赛" == versus.status) {
+			str += '		<div data-v-18da170e="" class="match-status" style="font-size:16px;">比赛取消</div>';
+		}
+		str += '		<div data-v-18da170e="" class="card-odds-btn"><div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button btn-over"><div data-v-ba6efc5c="" class="button-dark-border"><div data-v-ba6efc5c="" class="button-content"><div data-v-ba6efc5c="" class="button-name">' + versus.rightTeamName + '</div></div></div></div></div>';
+		str += '	</section>';
+		str += '</div>';
+	} else {
+		str += '<div onclick="matchVersusClick(' + versus.id + ')" data-v-18da170e="" data-v-bf66ef20="" data-versusId="' + versus.id + '" class="home-match-card"' + (playType == null ? ' style="height:125px !important;"' : '') + '>';
+		str += '	<section data-v-18da170e="" class="card-header">';
+		str += '		<img data-v-18da170e="" src="' + versus.matchLogoUrl + '" width="20px">';
+		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name + '</div>';
+		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
+		str += '		<div data-v-18da170e="" class="play-count" style="display:none;">+4</div>';
+		str += '	</section>';
+		str += '	<section data-v-18da170e="" class="card-body">';
+		str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.leftTeamLogoUrl + '" class="team-logo"></div>';
+		str += '		<div data-v-18da170e="" class="card-body-center">';
+		str += '			<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlt6Y8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTEyLjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlt6YiIHg9IjExMiIgeT0iMTk2NCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjgwIj48L3JlY3Q+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=" class="center-left">';
+		
+		if("today" == type) { //今天
+			if("未开始" == versus.status) {
+				str += '			<div data-v-18da170e="" class="start-time">' + versus.startTime.substring(10).substring(0, 6) + '</div>';
+			} else {
+				str += '			<div data-v-18da170e="" class="team-score"><div data-v-18da170e="">' + versus.leftTeamScore + '</div><div data-v-18da170e="" class="dash-symbol">-</div><div data-v-18da170e="">' + versus.rightTeamScore + '</div></div>';
+			}
+		} else if("scroll" == type) { //滚动
+			if("未开始" == versus.status) {
+				str += '			<div data-v-18da170e="" class="start-time"><div data-v-18da170e="" class="ready-start">即将开始</div><div data-v-18da170e="">' + getRemainingTime(remainingTime) + '</div></div>';
+			} else {
+				str += '			<div data-v-18da170e="" class="team-score"><div data-v-18da170e="">' + versus.leftTeamScore + '</div><div data-v-18da170e="" class="dash-symbol">-</div><div data-v-18da170e="">' + versus.rightTeamScore + '</div></div>';
+			}
+		} else if("after" == type) { //赛前(明天)
+			str += '			<div data-v-18da170e="" class="start-time">' + versus.startTime.substring(10).substring(0, 6) + '</div>';
+		} else if("end" == type) { //已结束
+			
+		}
+	
+		str += '			<img data-v-18da170e="" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjRweCIgaGVpZ2h0PSI3OHB4IiB2aWV3Qm94PSIwIDAgMjQgNzgiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7ljaHniYfljLrliIblibLlj7M8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz4KICAgICAgICA8cmFkaWFsR3JhZGllbnQgY3g9IjEwMCUiIGN5PSI1MCUiIGZ4PSIxMDAlIiBmeT0iNTAlIiByPSI5OC44MDMyODc2JSIgZ3JhZGllbnRUcmFuc2Zvcm09InRyYW5zbGF0ZSgxLjAwMDAwMCwwLjUwMDAwMCksc2NhbGUoMS4wMDAwMDAsMC4zMDAwMDApLHJvdGF0ZSgtMTc5Ljk5OTk5OCksc2NhbGUoMS4wMDAwMDAsMS42MzI1MTgpLHRyYW5zbGF0ZSgtMS4wMDAwMDAsLTAuNTAwMDAwKSIgaWQ9InJhZGlhbEdyYWRpZW50LTEiPgogICAgICAgICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMEMxMjFGIiBvZmZzZXQ9IjAlIj48L3N0b3A+CiAgICAgICAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxQTI1MzgiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIj48L3N0b3A+CiAgICAgICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSLpm7fnq57mioAyLjAtY29weSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIwLjMiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTc2LjAwMDAwMCwgLTE5NjUuMDAwMDAwKSIgZmlsbD0idXJsKCNyYWRpYWxHcmFkaWVudC0xKSI+CiAgICAgICAgICAgIDxyZWN0IGlkPSLljaHniYfljLrliIblibLlj7MiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4OC4wMDAwMDAsIDIwMDQuMDAwMDAwKSBzY2FsZSgtMSwgMSkgdHJhbnNsYXRlKC0xODguMDAwMDAwLCAtMjAwNC4wMDAwMDApICIgeD0iMTc2IiB5PSIxOTY0IiB3aWR0aD0iMjQiIGhlaWdodD0iODAiPjwvcmVjdD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==" class="center-right">';
+		str += '		</div>';
+		str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.rightTeamLogoUrl + '" class="team-logo"></div>';
+		str += '	</section>';
+		
+		if(playType != null) {
+			str += '	<div data-v-8d7d541a="" data-v-18da170e="" class="odds-group-title">';
+			str += '		<div data-v-8d7d541a="" class="empty-badge">&nbsp;</div>';
+			str += '		<div data-v-8d7d541a="" class="title">' + playType.name + '</div>';
+			str += '	</div>';
+			str += '	<section data-v-18da170e="" class="card-footer playTypeId' + playType.id + '" data-playTypeId="' + playType.id + '" data-playTypeName="' + playType.name + '" data-leftGuessName="' + playType.leftGuessName + '" data-rightGuessName="' + playType.rightGuessName + '">';
+			str += '		<div data-v-18da170e="" class="card-odds-btn" onclick="betClick(' + playType.id + ', true, event)">';
+			str += '			<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button' + (isVersusLock(versus, playType) ? ' btn-locked' : '') + '">';
+			str += '				<div data-v-ba6efc5c="" class="button-dark-border">';
+			str += '					<div data-v-ba6efc5c="" class="button-content">';
+			str += '						<div data-v-ba6efc5c="" class="button-name">' + playType.leftGuessName + '</div>';
+			str += '						<div data-v-ba6efc5c="" class="button-odds-content">';
+			str += '							<div data-v-ba6efc5c="" class="odds-rising-icon"></div>';
+			str += '							<div data-v-ba6efc5c="" class="btn-odds"><span data-v-ba6efc5c="" class="leftOdds"></span></div>';
+			str += '							<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>';
+			str += '						</div>';
+			str += '					</div>';
+			str += '				</div>';
+			str += '			</div>';
+			str += '		</div>';
+			str += '		<div data-v-18da170e="" class="match-status">';
+			
+			if("未开始" == versus.status) {
+				str += '			<div data-v-18da170e="" class="match-is-early">';
+				str += '				<div data-v-18da170e="" class="status-icon early-icon"></div>';
+				str += '				<div data-v-18da170e="" class="match-status-text">' + versus.status + '</div>';
+				str += '			</div>';
+			} else if("进行中" == versus.status) {
+				str += '			<div data-v-18da170e="" class="match-is-live">';
+				str += '				<div data-v-18da170e="" class="status-icon live-icon"></div>';
+				str += '				<div data-v-18da170e="" class="match-status-text">' + versus.status + '</div>';
+				str += '			</div>';
+			} else {
+				str += '			<div data-v-18da170e="" class="match-is-live">';
+				str += '				<div data-v-18da170e="" class="status-icon early-icon"></div>';
+				str += '				<div data-v-18da170e="" class="match-status-text" style="color:green;">' + versus.status + '</div>';
+				str += '			</div>';
+			}
+			
+			str += '		</div>';
+			str += '		<div data-v-18da170e="" class="card-odds-btn" onclick="betClick(' + playType.id + ', false, event)">';
+			str += '			<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button' + (isVersusLock(versus, playType) ? ' btn-locked' : '') + '">';
+			str += '				<div data-v-ba6efc5c="" class="button-dark-border">';
+			str += '					<div data-v-ba6efc5c="" class="button-content">';
+			str += '						<div data-v-ba6efc5c="" class="button-name">' + playType.rightGuessName + '</div>';
+			str += '						<div data-v-ba6efc5c="" class="button-odds-content">';
+			str += '							<div data-v-ba6efc5c="" class="odds-rising-icon"></div>';
+			str += '							<div data-v-ba6efc5c="" class="btn-odds"><span data-v-ba6efc5c="" class="rightOdds"></span></div>';
+			str += '							<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>';
+			str += '						</div>';
+			str += '					</div>';
+			str += '				</div>';
+			str += '			</div>';
+			str += '		</div>';
+			str += '	</section>';
+		}
+		str += '</div>';
 	}
-	str += '</div>';
 	return str;
 };
 
@@ -708,7 +752,10 @@ var isVersusLock = function(versus, playType) {
 var getBatchOddsAndPlayTypeStatus = function() {
 	var playTypeId = new Array();
 	$("section.card-footer").each(function(){
-		playTypeId.push($(this).attr("data-playTypeId"));
+		var dataPlayTypeId = $.trim($(this).attr("data-playTypeId"));
+		if(!empty(dataPlayTypeId)) {
+			playTypeId.push(dataPlayTypeId);
+		}
 	});
 	if(playTypeId.length > 0) {
 		loadData({
@@ -836,6 +883,7 @@ var betClick = function(playTypeId, direction, event){
 			});
 		}
 	}
+	loadUserBalance();//加载用户余额
 	event.stopPropagation();//阻止事件传递
 };
 
@@ -852,8 +900,9 @@ var bet = function(playTypeId, betDirection, betAmount){
 			"success" : function(data) {
 				if(data.code == 100) {
 					var matchVersus = data.result.matchVersus;
+					var playType = data.result.playType;
 					var bet = data.result.bet;
-					betSuccess(matchVersus, bet);
+					betSuccess(matchVersus, playType, bet);
 				} else if(data.code == 200) {
 					m_confirm("您还未登录，请先登录", function(){
 						window.location.href = "m/login.jsp";
@@ -869,7 +918,7 @@ var bet = function(playTypeId, betDirection, betAmount){
 };
 
 //下注成功框
-var betSuccess = function(matchVersus, bet){
+var betSuccess = function(matchVersus, playType, bet){
 	var str = '';
 	str += '<div data-v-60a57f0c="" class="vux-confirm order-confirm" id="betSuccessDiv">';
 	str += '	<div class="vux-x-dialog">';
@@ -878,23 +927,33 @@ var betSuccess = function(matchVersus, bet){
 	str += '			<div class="weui-dialog__bd">';
 	str += '				<div class="content">';
 	str += '					<section class="header color-green"><div class="success-icon"></div><div>订单提交成功！</div></section>';
-	str += '					<div id="vux-scroller-oezyh" style="max-height: 60vh; height: 186px; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative; overflow: hidden;">';
+	str += '					<div id="vux-scroller-oezyh" style="max-height: 60vh; height:199px; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative; overflow: hidden;">';
 	str += '						<div class="xs-container" style="transform-origin: 0px 0px 0px; transform: translateX(0px) translateY(0px) translateZ(0px) scale(1, 1); transition: none 0s ease 0s;">';
-	str += '							<div style="height: 186px; transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);">';
+	str += '							<div style="height:199px; transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);">';
 	str += '								<div class="order-item">';
 	str += '								<div class="odds-item">';
 	str += '										<div class="match-info">';
-	str += '											<div class="odds-title"><div class="games-icon" style="background-image:url(\'//yuanjududu.com//file/cb9287b9cbdc7414adeb287df1feeebb.svg\');"></div>SNG<div class="match-stage">全场 赛前</div></div>';
-	str += '											<div class="odds-match">TOP - VS - SNG 16:30</div>';
-	str += '											<div>赔率: 2.16</div>';
+	str += '											<div class="odds-title"><div class="games-icon" style="background-image:url(\'' + matchVersus.sportLogoUrl + '\');"></div>' + matchVersus.sportName + '&nbsp;' + matchVersus.matchName + '&nbsp;' + matchVersus.name + '<div class="match-stage">' + playType.name + '</div></div>';
+	str += '											<div class="odds-match">' + playType.leftGuessName + '&nbsp;-&nbsp;VS&nbsp;-&nbsp;' + playType.rightGuessName + '&nbsp;' + bet.createTime.substring(11, 16) + '</div>';
+	var betGuessName = '';
+	var odds = 0;
+	if("LEFT" == bet.betDirection) {
+		betGuessName = playType.leftGuessName;
+		odds = bet.leftOdds;
+	} else if("RIGHT" == bet.betDirection) {
+		betGuessName = playType.rightGuessName;
+		odds = bet.rightOdds;
+	}
+	str += '											<div style="margin-bottom:4px;">下注方：' + betGuessName + '</div>';
+	str += '											<div>赔率：' + odds.toFixed(2) + '</div>';
 	str += '										</div>';
 	str += '									</div>';
-	str += '									<div class="order-info order-title"><div>单场</div><div class="order-success">提交成功</div></div>';
+	str += '									<div class="order-info order-title"><div>' + (playType.bo > 0 ? ('第' + playType.bo + '局') : '全局') + '</div><div class="order-success">提交成功</div></div>';
 	str += '									<div class="order-info">';
-	str += '										<div class="stake">投注金额：<span class="color-white">10</span></div>';
-	str += '										<div>盈利：<span class="color-white">21.6</span></div>';
+	str += '										<div class="stake">投注金额：<span class="color-white">' + bet.betAmount.toFixed(2) + '</span></div>';
+	str += '										<div>预计盈利：<span class="color-white">' + ((bet.betAmount * odds).toFixed(2)) + '</span></div>';
 	str += '									</div>';
-	str += '									<div class="order-note">您的订单需要系统确认，请在“投注记录”留意订单状态</div>';
+	str += '									<div class="order-note">您可以在“投注记录”中留意订单状态</div>';
 	str += '								</div>';
 	str += '							</div>';
 	str += '						</div>';
@@ -904,13 +963,18 @@ var betSuccess = function(matchVersus, bet){
 	str += '			</div>';
 	str += '			<div class="weui-dialog__ft">';
 	str += '				<a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">投注记录</a>';
-	str += '				<a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">继续投注</a>';
+	str += '				<a href="javascript:;" onclick="betSuccessClose()" class="weui-dialog__btn weui-dialog__btn_primary">继续投注</a>';
 	str += '			</div>';
 	str += '		</div>';
 	str += '	</div>';
 	str += '</div>';
 	$("#betSuccessDiv").remove();
 	$("body").append(str);
+};
+//下注成功框关闭
+var betSuccessClose = function(){
+	$("#betSuccessDiv").remove();
+	numberInputClose();
 };
 
 //加载用户余额

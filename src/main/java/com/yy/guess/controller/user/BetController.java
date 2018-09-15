@@ -80,7 +80,7 @@ public class BetController {
 		Bet bet = bs.bet(playTypeId, userId, user.getUserName(), betDirection, betAmount);
 
 		if(bet != null) {
-			return new ResponseObject(100, "下注成功", new JsonResultMap().set("bet", bet).set("matchVersus", mvs.findById(pt.getVersusId())));
+			return new ResponseObject(100, "下注成功", new JsonResultMap().set("bet", bet).set("matchVersus", mvs.findById(pt.getVersusId())).set("playType", pt));
 		} else {
 			return new ResponseObject(106, "下注失败");
 		}

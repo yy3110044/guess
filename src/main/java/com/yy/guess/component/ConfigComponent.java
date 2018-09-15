@@ -95,9 +95,9 @@ public class ConfigComponent {
 		return configMap.get("customerServiceUrl");
 	}
 	
-	//返回客户端加载对阵的间隔
-	public int getLoadMatchVersusInterval() {
-		String str = configMap.get("loadMatchVersusInterval");
+	//返回客户端加载数据间隔，单位秒
+	public int getClientLoadDataInterval() {
+		String str = configMap.get("clientLoadDataInterval");
 		return Integer.parseInt(str);
 	}
 }

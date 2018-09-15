@@ -55,7 +55,11 @@ public class BetController {
 			return new ResponseObject(103, "玩法不存在");
 		}
 		
-		if(!pt.isGuessStart() || pt.isPause()) {
+		if(pt.isPause()) {
+			return new ResponseObject(104, "下注已暂停");
+		}
+		
+		if(!pt.isGuessStart()) {
 			return new ResponseObject(104, "玩法未开启竞猜");
 		}
 		

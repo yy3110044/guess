@@ -9,6 +9,7 @@ var empty = function(str) {
  * obj.error：失败回调函数
  * obj.redirectCode：跳转代码，默认为200
  * obj.redirectUrl：跳转url
+ * obj.hideLoading：是否影藏loading图标
  * obj.complete：完成后执行(在success后调用)
  */
 var loadData = function(obj){
@@ -19,10 +20,14 @@ var loadData = function(obj){
 		"contentType" : "application/x-www-form-urlencoded",
 		"dataType" : "json",
 		"beforeSend" : function(){
-			m_loading();
+			if(!obj.hideLoading) {
+				m_loading();
+			}
 		},
 		"complete" : function(){
-			m_loading_close();
+			if(!obj.hideLoading) {
+				m_loading_close();
+			}
 		},
 		"url" : obj.url,
 		"data" : obj.data,
@@ -38,7 +43,7 @@ var loadData = function(obj){
 				obj.success(data, textStatus); //请求成功后调用
 			}
 			if(obj.complete != null) {
-				obj.complete();
+				obj.complete(data);
 			}
 		},
 		"error" : function(XMLHttpRequest, textStatus, errorThrown){

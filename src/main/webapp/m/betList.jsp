@@ -3,56 +3,16 @@
 <head>
 <title>下注列表 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <%@include file="/m/head-common.jsp"%>
-<script src="m/js/betList.js"></script>
 <script src="m/js/mescroll.min.js"></script>
+<script src="m/js/betList.js"></script>
 <link href="m/js/mescroll.min.css" rel="stylesheet">
+<style type="text/css">
+#vux-scroller-60yre::-webkit-scrollbar{display:none;width:0;height:0;}
+</style>
 <script>
-var mescroll = null;
-var pageSize = 20;
 $(document).ready(function(){
-	$("#vux-scroller-60yre").height($(window).height() - 132);//设置高度
-
-	loadAllSport();//加载项目
-
-	mescroll = new MeScroll("vux-scroller-60yre", {
-		"down" : {
-			"use" : true,
-			"auto" : true, //是否在初始化完毕之后自动执行下拉回调callback; 默认true
-			"callback" : function(){
-				loadMatchVersus(pageSize, 1);
-			}
-		},
-		"up" : {
-			"use" : true,
-			"auto" : false, //是否在初始化时以上拉加载的方式自动加载第一页数据; 默认false
-			"isBounce" : false, //此处禁止ios回弹
-			"htmlNodata" : '<div data-v-bf66ef20="" class="empty-list">暂时没有更多比赛了</div>',
-			"onScroll" : function(){
-				intervalSecond = <%=com.yy.guess.util.Util.getConfigCom(application).getLoadMatchVersusInterval()%>;
-			},
-			"callback" : function(page) {
-				loadMatchVersus(pageSize, page.num + 1);
-			}
-		}
-	});
-	
-	/*
-	numberInputShow(function(amount){
-		alert(amount);
-	});
-	*/
-	//setInterval("loadMatchVersusInterval()", 1000);
+	initData(<%=com.yy.guess.util.Util.getConfigCom(application).getClientLoadDataInterval()%>); //初始化
 });
-
-var intervalSecond = <%=com.yy.guess.util.Util.getConfigCom(application).getLoadMatchVersusInterval()%>;
-var loadMatchVersusInterval = function() {
-	if(intervalSecond <= 0) {
-		mescroll.triggerDownScroll();
-		intervalSecond = <%=com.yy.guess.util.Util.getConfigCom(application).getLoadMatchVersusInterval()%>;
-	} else {
-		intervalSecond --;
-	}
-};
 </script>
 </head>
 <body>
@@ -116,22 +76,7 @@ var loadMatchVersusInterval = function() {
 
 
 					<div data-v-bf66ef20="" class="match-card-list">
-						<section data-v-bf66ef20="" class="content-hearer">
-							<div data-v-bf66ef20="" class="home-notice">
-								<div data-v-bf66ef20="" class="notice-icon"></div>
-								<div data-v-bf66ef20="" class="vux-marquee" style="height:16px;">
-									<ul class="vux-marquee-box">
-										<li data-v-bf66ef20="" class="notice-item"><div data-v-bf66ef20="">【请注意盘口中“第N次击杀”和“N杀”是不同玩法。】</div></li>
-										<li data-v-bf66ef20="" class="notice-item"><div data-v-bf66ef20="">【投注时若遇到系统繁忙/网站很卡</div></li>
-										<li data-v-bf66ef20="" class="notice-item"><div data-v-bf66ef20="">请先查注单是否已下注成功在进行二次投注.</div></li>
-										<li data-v-bf66ef20="" class="notice-item"><div data-v-bf66ef20="">若发生重复投注一概不取消。】</div></li>
-										<li data-v-bf66ef20="" class="notice-item"><div data-v-bf66ef20="">【原生app已发布，ios请联系客服重新下载安装。】</div></li>
-										<li data-v-bf66ef20="" class="notice-item"><div data-v-bf66ef20="">【请注意盘口中“第N次击杀”和“N杀”是不同玩法。】</div></li>
-									</ul>
-								</div>
-							</div>
-						</section>
-
+						<section data-v-bf66ef20="" class="content-hearer"></section>
 						<div data-v-bf66ef20="" id="vux-scroller-60yre" class="mescroll" style="touch-action:auto;user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);position:relative;overflow:scroll;">
 							<div class="xs-container">
 								<div data-v-bf66ef20="">
@@ -144,6 +89,8 @@ var loadMatchVersusInterval = function() {
 				</div>
 			</div>
 		</div>
+		
+		
 
 		<!--
 		<div data-v-60a57f0c="" class="vux-confirm order-confirm">
@@ -205,12 +152,10 @@ var loadMatchVersusInterval = function() {
 			</div>
 		</div>
 		-->
-		
 	</div>
 
-
-	
-	<div data-v-bf66ef20="" class="home-page" style="display:none;">
+	<!--
+	<div data-v-bf66ef20="" class="home-page" id="datePicker">
 		<div data-v-bf66ef20="" class="vux-popup-dialog base-popup vux-popup-bottom vux-popup-dialog vux-popup-dialog-bwpzr" style="height:auto;max-height:70vh;">
 			<div class="popup-header">
 				<div></div>
@@ -218,7 +163,7 @@ var loadMatchVersusInterval = function() {
 				<div class="click-close-btn hide-btn"></div>
 			</div>
 			<div data-v-bf66ef20="">
-				<div data-v-bf66ef20="" class="popup-content" id="vux-scroller-vjk78" style="max-height: calc(70vh - 154px); height: 200px; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative; overflow: hidden;">
+				<div data-v-bf66ef20="" class="popup-content" id="vux-scroller-vjk78" style="max-height: calc(70vh - 154px); height: 200px; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative; overflow:scroll;">
 					<div class="xs-container" style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) translateZ(0px);">
 						<div data-v-bf66ef20="" class="date-list" style="height: 200px; transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);">
 							<div data-v-bf66ef20="" class="date-item selected-date-item">2018年09月06日 周四<span data-v-bf66ef20="" class="selected-date-icon"> ✓ </span></div>
@@ -226,15 +171,38 @@ var loadMatchVersusInterval = function() {
 							<div data-v-bf66ef20="" class="date-item">2018年09月08日 周四</div>
 							<div data-v-bf66ef20="" class="date-item">2018年09月09日 周四</div>
 							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月07日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月08日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月09日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
+							<div data-v-bf66ef20="" class="date-item">2018年09月10日 周四</div>
 						</div>
 					</div>
 					<div class=" xs-fixed-container"></div>
 				</div>
-				<div data-v-bf66ef20="" class="close-date-picker"></div>
+				<div data-v-bf66ef20="" class="close-date-picker" onclick="closeDatePicker()"></div>
 			</div>
 		</div>
 	</div>
-	
-	
+	-->
 </body>
 </html>

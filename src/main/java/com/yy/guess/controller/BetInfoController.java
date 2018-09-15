@@ -67,10 +67,12 @@ public class BetInfoController {
 		if(playTypeId != null && playTypeId.length > 0) {
 			JsonResultMap[] maps = new JsonResultMap[playTypeId.length];
 			for(int i=0; i<playTypeId.length; i++) {
-				double[] bonusPool = pts.getBonusPool(Integer.parseInt(playTypeId[i]));
+				int playTypeIdInt = Integer.parseInt(playTypeId[i]);
+				double[] bonusPool = pts.getBonusPool(playTypeIdInt);
 				maps[i] = new JsonResultMap();
 				maps[i].put("leftBonusPool", bonusPool[0]);
 				maps[i].put("rightBonusPool", bonusPool[1]);
+				maps[i].put("playTypeId", playTypeIdInt);
 			}
 			return new ResponseObject(100, "返回成功", maps);
 		} else {
@@ -104,10 +106,12 @@ public class BetInfoController {
 		if(playTypeId != null && playTypeId.length > 0) {
 			JsonResultMap[] maps = new JsonResultMap[playTypeId.length];
 			for(int i=0; i<playTypeId.length; i++) {
-				double[] odds = pts.getOdds(Integer.parseInt(playTypeId[i]));
+				int playTypeInt = Integer.parseInt(playTypeId[i]);
+				double[] odds = pts.getOdds(playTypeInt);
 				maps[i] = new JsonResultMap();
 				maps[i].put("leftOdds", odds[0]);
 				maps[i].put("rightOdds", odds[1]);
+				maps[i].put("playTypeId", playTypeInt);
 			}
 			return new ResponseObject(100, "返回成功", maps);
 		} else {
@@ -132,11 +136,18 @@ public class BetInfoController {
 				double[] odds = pts.getOdds(playTypeIdInt);
 				maps[i].put("leftOdds", odds[0]);
 				maps[i].put("rightOdds", odds[1]);
+				maps[i].put("playTypeId", playTypeIdInt);
 			}
 			return new ResponseObject(100, "返回成功", maps);
 		} else {
 			return new ResponseObject(101, "参数为空");
 		}
+	}
+	@RequestMapping("/getOddsAndPlayTypeStatus")
+	public ResponseObject getOddsAndPlayTypeStatus(@RequestParam int playTypeId) {
+		double[] odds = pts.getOdds(playTypeId);
+		boolean status = pts.getPlayTypeGuessStatus(playTypeId);
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("leftOdds", odds[0]).set("rightOdds", odds[1]).set("status", status));
 	}
 	
 	/**

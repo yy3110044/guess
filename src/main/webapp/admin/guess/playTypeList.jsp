@@ -210,11 +210,12 @@ var del = function(playTypeId){
 
 //修改固定赔率
 var fixedOddsChange = function(playTypeId, e){
+	var fixedOdds = $.trim($(e).val());
 	if(confirm("确定修改？")) {
 		loadData({
 			url : "administration/updateFixedOdds",
 			data : {
-				"fixedOdds" : $.trim($(e).val()),
+				"fixedOdds" : fixedOdds,
 				"playTypeId" : playTypeId
 			},
 			success : function(data) {
@@ -224,14 +225,20 @@ var fixedOddsChange = function(playTypeId, e){
 				}
 			}
 		});
+	} else {
+		if("true" == fixedOdds) {
+			$(e).val("false");
+		} else {
+			$(e).val("true");
+		}
 	}
 };
 
 //修改预计胜率
 var updateWinRate = function(leftWinRate, rightWinRate, playTypeId, e){
 	var str = '<tr class="contentTr updatePlayTypeTr"><td colspan="99">';
-	str += '&nbsp;&nbsp;左方赔率:<input id="updateLeftWinRate" type="number" step="0.01" value="' + leftWinRate + '" style="width:60px;">';
-	str += '&nbsp;&nbsp;右方赔率:<input id="updateRightWinRate" type="number" step="0.01" value="' + rightWinRate + '" style="width:60px;">';
+	str += '&nbsp;&nbsp;左方赔率:<input onclick="winRateInput(this)" onblur="winRateInput(this)" onfocus="winRateInput(this)" onkeyup="winRateInput(this)" id="updateLeftWinRate" type="number" step="1" min="0" value="' + parseInt(leftWinRate * 100) + '" style="width:40px;">%';
+	str += '&nbsp;&nbsp;右方赔率:<input onclick="winRateInput(this)" onblur="winRateInput(this)" onfocus="winRateInput(this)" onkeyup="winRateInput(this)" id="updateRightWinRate" type="number" step="1" min="0" value="' + parseInt(rightWinRate * 100) + '" style="width:40px;">%';
 	str += '&nbsp;&nbsp;<input type="button" value="确定" onclick="updateWinRate2(' + playTypeId + ')">';
 	str += '&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().remove()">';
 	str += '</td></tr>'
@@ -245,8 +252,8 @@ var updateWinRate2 = function(playTypeId) {
 		loadData({
 			url : "administration/updateWinRate",
 			data : {
-				"leftWinRate" : leftWinRate,
-				"rightWinRate" : rightWinRate,
+				"leftWinRate" : parseFloat(leftWinRate) / 100,
+				"rightWinRate" : parseFloat(rightWinRate) / 100,
 				"playTypeId" : playTypeId
 			},
 			success : function(data) {
@@ -258,15 +265,32 @@ var updateWinRate2 = function(playTypeId) {
 		});
 	}
 };
+var winRateInput = function(e){
+	var ts = $(e);
+	
+	var val = $.trim(ts.val());
+	var valInt = parseInt(val, 10);
+	if(valInt > 100) valInt = 100;
+	if(valInt < 0) valInt = 0;
+	ts.val(valInt);
+	
+	var id = ts.attr("id");
+	if("updateLeftWinRate" == id) {
+		$("#updateRightWinRate").val(100 - valInt);
+	} else if("updateRightWinRate" == id) {
+		$("#updateLeftWinRate").val(100 - valInt);
+	}
+};
 
 //暂停切换
 var pauseChange = function(playTypeId, e) {
+	var pause = $.trim($(e).val());
 	if(confirm("确定更改？")) {
 		loadData({
 			url : "administration/setPause",
 			data : {
 				"playTypeId" : playTypeId,
-				"pause" : $.trim($(e).val())
+				"pause" : pause
 			},
 			success : function(data) {
 				showMsg(data.msg);
@@ -275,6 +299,12 @@ var pauseChange = function(playTypeId, e) {
 				}
 			}
 		});
+	} else {
+		if("true" == pause) {
+			$(e).val("false");
+		} else {
+			$(e).val("true");
+		}
 	}
 };
 

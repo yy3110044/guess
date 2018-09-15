@@ -90,7 +90,7 @@ INSERT INTO guess_config VALUES(null, 'returnRate', '1', '返还率，此参数�
 INSERT INTO guess_config VALUES(null, 'betAmountMin', '0.01', '下注金额下限，单位：元');
 INSERT INTO guess_config VALUES(null, 'betAmountMax', '10000', '下注金额上限，单位：元');
 INSERT INTO guess_config VALUES(null, 'customerServiceUrl', 'https://www.baidu.com/', '客服链接');
-INSERT INTO guess_config VALUES(null, 'loadMatchVersusInterval', '60', '客户端加载对阵的间隔，单位：秒');
+INSERT INTO guess_config VALUES(null, 'clientLoadDataInterval', '60', '客户端加载数据间隔，单位：秒');
 
 /*体育运动表*/
 DROP TABLE IF EXISTS `guess_sport`;

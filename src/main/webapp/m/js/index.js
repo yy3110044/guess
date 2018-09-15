@@ -218,7 +218,7 @@ var loadAllSport = function(){
  * ok_callback按ok的回调函数
  */
 var numberInput_ok_callback = null;
-var numberInputShow = function(matchName, playTypeId, playTypeName, leftGuessName, rightGuessName, betDirection, odds, ok_callback) {
+var numberInputShow = function(leftTeamName, rightTeamName, matchName, playTypeId, playTypeName, leftGuessName, rightGuessName, betDirection, odds, ok_callback) {
 	numberInput_ok_callback = ok_callback;
 	var str = '';
 	str += '<div data-v-60a57f0c="" id="numberInputDiv" class="vux-popup-dialog bet-slip-pop vux-popup-bottom vux-popup-show vux-popup-dialog-73jz6" style="height:auto;bottom:0;">';
@@ -245,7 +245,7 @@ var numberInputShow = function(matchName, playTypeId, playTypeName, leftGuessNam
 	str += '								<section data-v-60a57f0c="" class="odds-item-match">';
 	str += '									<div data-v-60a57f0c="" class="odds-name">' + (betDirection ? leftGuessName : rightGuessName) + '</div>';
 	str += '									<div data-v-60a57f0c="">' + playTypeName + '</div>';
-	str += '									<div data-v-60a57f0c="">' + leftGuessName + ' - VS - ' + rightGuessName + '</div>';
+	str += '									<div data-v-60a57f0c="">' + leftTeamName + '&nbsp;VS&nbsp;' + rightTeamName + '</div>';
 	str += '								</section>';
 	str += '								<section data-v-60a57f0c="" class="odds-item-money">';
 	str += '									<div data-v-60a57f0c="" class="item-money">';
@@ -621,7 +621,7 @@ var getMatchVersusStr = function(versus, playType, remainingTime){
 		str += '	</section>';
 		str += '</div>';
 	} else {
-		str += '<div onclick="matchVersusClick(' + versus.id + ')" data-v-18da170e="" data-v-bf66ef20="" data-versusId="' + versus.id + '" class="home-match-card"' + (playType == null ? ' style="height:125px !important;"' : '') + '>';
+		str += '<div onclick="matchVersusClick(' + versus.id + ')" data-v-18da170e="" data-v-bf66ef20="" data-versusId="' + versus.id + '" class="home-match-card"' + (playType == null ? ' style="height:125px !important;"' : '') + ' data-leftTeamName="' + versus.leftTeamName + '" data-rightTeamName="' + versus.rightTeamName + '">';
 		str += '	<section data-v-18da170e="" class="card-header">';
 		str += '		<img data-v-18da170e="" src="' + versus.matchLogoUrl + '" width="20px">';
 		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name + '</div>';
@@ -659,7 +659,7 @@ var getMatchVersusStr = function(versus, playType, remainingTime){
 		if(playType != null) {
 			str += '	<div data-v-8d7d541a="" data-v-18da170e="" class="odds-group-title">';
 			str += '		<div data-v-8d7d541a="" class="empty-badge">&nbsp;</div>';
-			str += '		<div data-v-8d7d541a="" class="title">' + playType.name + '</div>';
+			str += '		<div data-v-8d7d541a="" class="title">' + versus.leftTeamName + '&nbsp;VS&nbsp;' + versus.rightTeamName + '&nbsp;' + playType.name + '</div>';
 			str += '	</div>';
 			str += '	<section data-v-18da170e="" class="card-footer playTypeId' + playType.id + '" data-playTypeId="' + playType.id + '" data-playTypeName="' + playType.name + '" data-leftGuessName="' + playType.leftGuessName + '" data-rightGuessName="' + playType.rightGuessName + '">';
 			str += '		<div data-v-18da170e="" class="card-odds-btn" onclick="betClick(' + playType.id + ', true, event)">';
@@ -862,6 +862,8 @@ var oddsFlash = function(i, e){
 //下注点击事件direction：true为左，false为右
 var betClick = function(playTypeId, direction, event){
 	var e = $("section.playTypeId" + playTypeId);
+	var leftTeamName = $.trim(e.parent().attr("data-leftTeamName"));
+	var rightTeamName = $.trim(e.parent().attr("data-rightTeamName"));
 	var leftE = $("section.playTypeId" + playTypeId + " .leftOdds");
 	var rightE = $("section.playTypeId" + playTypeId + " .rightOdds");
 	var leftBtn = leftE.parent().parent().parent().parent().parent();
@@ -870,7 +872,7 @@ var betClick = function(playTypeId, direction, event){
 		if(!leftBtn.hasClass("btn-locked")) { //未被锁定
 			$("div.home-match-card-button").removeClass("btn-selected");
 			leftBtn.addClass("btn-selected");
-			numberInputShow(e.parent().find(".tournament-name").html(), playTypeId, e.attr("data-playTypeName"), e.attr("data-leftGuessName"), e.attr("data-rightGuessName"), direction, oldLeftOddsArray[playTypeId], function(amount){
+			numberInputShow(leftTeamName, rightTeamName, e.parent().find(".tournament-name").html(), playTypeId, e.attr("data-playTypeName"), e.attr("data-leftGuessName"), e.attr("data-rightGuessName"), direction, oldLeftOddsArray[playTypeId], function(amount){
 				bet(playTypeId, "LEFT", amount);
 			});
 		}
@@ -878,7 +880,7 @@ var betClick = function(playTypeId, direction, event){
 		if(!rightBtn.hasClass("btn-locked")) { //未被锁定
 			$("div.home-match-card-button").removeClass("btn-selected");
 			rightBtn.addClass("btn-selected");
-			numberInputShow(e.parent().find(".tournament-name").html(), playTypeId, e.attr("data-playTypeName"), e.attr("data-leftGuessName"), e.attr("data-rightGuessName"), direction, oldRightOddsArray[playTypeId], function(amount){
+			numberInputShow(leftTeamName, rightTeamName, e.parent().find(".tournament-name").html(), playTypeId, e.attr("data-playTypeName"), e.attr("data-leftGuessName"), e.attr("data-rightGuessName"), direction, oldRightOddsArray[playTypeId], function(amount){
 				bet(playTypeId, "RIGHT", amount);
 			});
 		}

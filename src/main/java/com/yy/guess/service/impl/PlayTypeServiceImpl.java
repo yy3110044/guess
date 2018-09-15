@@ -56,6 +56,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
         	mvm.plusPlayTypeCount(-1, pt.getVersusId());//更新versus中的玩法数
         }
         startedPlayTypeMap.remove(id);
+        cleanPlayTypeCache(id);
     }
 
     @Override
@@ -115,6 +116,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 		mapper.deleteByVersusId(versusId);
 		for(Integer id : playTypeIdList) {
 			startedPlayTypeMap.remove(id);
+			this.cleanPlayTypeCache(id);
 		}
 	}
 
@@ -124,6 +126,7 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 		mapper.deleteByVersusIdAndBo(versusId, bo);
 		for(Integer id : playTypeIdList) {
 			startedPlayTypeMap.remove(id);
+			this.cleanPlayTypeCache(id);
 		}
 	}
 

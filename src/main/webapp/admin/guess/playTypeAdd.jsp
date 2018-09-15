@@ -247,7 +247,6 @@ var addPlayType = function(){
 	var matchVersusId = $.trim($("#matchVersusId").val());
 	var templateClass = $.trim($("#templateClass").val());
 	var applyScope = $.trim($("#applyScope").val());
-	var playTypeName = $.trim($("#playTypeName").val());
 	var leftWinRate = $.trim($("#leftWinRate").val());
 	var rightWinRate = $.trim($("#rightWinRate").val());
 	var fixedOdds = $.trim($("#fixedOdds").val());
@@ -261,10 +260,6 @@ var addPlayType = function(){
 	}
 	if(empty(applyScope)) {
 		showMsg("请选择应用范围");
-		return;
-	}
-	if(empty(playTypeName)) {
-		showMsg("请输入一个名称");
 		return;
 	}
 	
@@ -311,7 +306,6 @@ var addPlayType = function(){
 				"versusId" : matchVersusId,
 				"bo" : applyScope,
 				"templateClass" : templateClass,
-				"name" : playTypeName,
 				"leftWinRate" : parseFloat(leftWinRate) / 100,
 				"rightWinRate" : parseFloat(rightWinRate) / 100,
 				"fixedOdds" : fixedOdds,
@@ -320,7 +314,7 @@ var addPlayType = function(){
 			success : function(data){
 				showMsg(data.msg);
 				if(data.code == 100) {
-					$("#playTypeName").val("");
+					
 				}
 			}
 		});
@@ -369,13 +363,9 @@ var addPlayType = function(){
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">预计胜率：</td>
 			<td><span id="leftWinRateSpan"></span>&nbsp;<input type="number" id="leftWinRate" value="50" min="0" style="width:40px;">%&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;<span id="rightWinRateSpan"></span>&nbsp;<input type="number" id="rightWinRate" value="50" min="0" style="width:40px;">%&nbsp;<span style="color:red;">会用这个计算初始赔率</span></td>
 		</tr>
-		<tr>
+		<tr id="paramAfterTr">
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">赔率类型：</td>
 			<td><select id="fixedOdds"><option value="false">变动</option><option value="true">固定</option></select></td>
-		</tr>
-		<tr id="paramAfterTr">
-			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">输入名称：</td>
-			<td><input type="text" id="playTypeName" placeholder="输入一个显示名称"></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1"></td>

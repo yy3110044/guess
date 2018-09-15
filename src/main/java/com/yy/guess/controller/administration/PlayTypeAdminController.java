@@ -41,7 +41,6 @@ public class PlayTypeAdminController {
 	@RequestMapping("/addPlayType")
 	public ResponseObject addPlayType(@RequestParam int versusId,
                                       @RequestParam int bo,
-                                      @RequestParam String name,
                                       @RequestParam String templateClass,
                                       @RequestParam double leftWinRate,
                                       @RequestParam double rightWinRate,
@@ -81,7 +80,7 @@ public class PlayTypeAdminController {
 			if(template.getSupport() <= 0) {
 				PlayType versusPy = new PlayType();//总盘口玩法
 				versusPy.setVersusId(versus.getId());
-				versusPy.setName(name);
+				versusPy.setName(template.getPlayTypeName(versus, null, paramMap));
 				versusPy.setBo(0);
 				versusPy.setParamStr(paramStr);
 				versusPy.setLeftWinRate(leftWinRate);
@@ -93,8 +92,8 @@ public class PlayTypeAdminController {
 					versusPy.setGuessStart(false);
 				}
 				versusPy.setTemplateClass(template.getClass().getName());
-				versusPy.setLeftGuessName(template.getLeftGuessName(versus, boList, paramMap));
-				versusPy.setRightGuessName(template.getRightGuessName(versus, boList, paramMap));
+				versusPy.setLeftGuessName(template.getLeftGuessName(versus, null, paramMap));
+				versusPy.setRightGuessName(template.getRightGuessName(versus, null, paramMap));
 				ptList.add(versusPy);
 			}
 			if(template.getSupport() < 0 || template.getSupport() > 0) {
@@ -102,7 +101,7 @@ public class PlayTypeAdminController {
 					MatchVersusBo versusBo = boList.get(i);
 					PlayType boPy = new PlayType();
 					boPy.setVersusId(versus.getId());
-					boPy.setName(name);
+					boPy.setName(template.getPlayTypeName(versus, versusBo, paramMap));
 					boPy.setBo(versusBo.getBo());
 					boPy.setParamStr(paramStr);
 					boPy.setLeftWinRate(leftWinRate);
@@ -114,18 +113,19 @@ public class PlayTypeAdminController {
 						boPy.setGuessStart(false);
 					}
 					boPy.setTemplateClass(template.getClass().getName());
-					boPy.setLeftGuessName(template.getLeftGuessName(versus, boList, paramMap));
-					boPy.setRightGuessName(template.getRightGuessName(versus, boList, paramMap));
+					boPy.setLeftGuessName(template.getLeftGuessName(versus, versusBo, paramMap));
+					boPy.setRightGuessName(template.getRightGuessName(versus, versusBo, paramMap));
 					ptList.add(boPy);
 				}
 			}
-		} else if(bo > 0) { //只应用到bo
+		} else if(bo > 0) { //只应用到某个bo
 			if(template.getSupport() == 0) {
 				return new ResponseObject(105, "玩法模版不支持");
 			}
+			MatchVersusBo versusBo = boList.get(bo - 1);
 			PlayType boPy = new PlayType();
 			boPy.setVersusId(versus.getId());
-			boPy.setName(name);
+			boPy.setName(template.getPlayTypeName(versus, versusBo, paramMap));
 			boPy.setBo(bo);
 			boPy.setParamStr(paramStr);
 			boPy.setLeftWinRate(leftWinRate);
@@ -137,8 +137,8 @@ public class PlayTypeAdminController {
 				boPy.setGuessStart(false);
 			}
 			boPy.setTemplateClass(template.getClass().getName());
-			boPy.setLeftGuessName(template.getLeftGuessName(versus, boList, paramMap));
-			boPy.setRightGuessName(template.getRightGuessName(versus, boList, paramMap));
+			boPy.setLeftGuessName(template.getLeftGuessName(versus, versusBo, paramMap));
+			boPy.setRightGuessName(template.getRightGuessName(versus, versusBo, paramMap));
 			ptList.add(boPy);
 		} else { //只应用到总盘口
 			if(template.getSupport() > 0) {
@@ -146,7 +146,7 @@ public class PlayTypeAdminController {
 			}
 			PlayType versusPy = new PlayType();//总盘口玩法
 			versusPy.setVersusId(versus.getId());
-			versusPy.setName(name);
+			versusPy.setName(template.getPlayTypeName(versus, null, paramMap));
 			versusPy.setBo(0);
 			versusPy.setParamStr(paramStr);
 			versusPy.setLeftWinRate(leftWinRate);
@@ -158,8 +158,8 @@ public class PlayTypeAdminController {
 				versusPy.setGuessStart(false);
 			}
 			versusPy.setTemplateClass(template.getClass().getName());
-			versusPy.setLeftGuessName(template.getLeftGuessName(versus, boList, paramMap));
-			versusPy.setRightGuessName(template.getRightGuessName(versus, boList, paramMap));
+			versusPy.setLeftGuessName(template.getLeftGuessName(versus, null, paramMap));
+			versusPy.setRightGuessName(template.getRightGuessName(versus, null, paramMap));
 			ptList.add(versusPy);
 		}
 		

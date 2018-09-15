@@ -25,6 +25,7 @@ var login = function(){
 		success : function(data){
 			if(data.code == 100) {
 				m_toast(data.msg, true);
+				window.location.href = "${basePath}m/index.jsp";
 			} else {
 				m_toast(data.msg);
 			}

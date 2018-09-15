@@ -175,7 +175,7 @@ var toastSetTimeoutId = null;
 var m_toast = function(msg, showSuccessImg, showTransparent, timeout){
 	if(showSuccessImg == null) showSuccessImg = false;
 	if(showTransparent == null) showTransparent = false;
-	if(timeout == null) timeout = 3000;
+	if(timeout == null) timeout = 2000;
 	var str = '';
 	str += '<div class="vux-toast" id="m_toast_div">';
 	if(showTransparent) {

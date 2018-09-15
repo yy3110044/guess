@@ -824,7 +824,7 @@ var betClick = function(playTypeId, direction, event){
 			$("div.home-match-card-button").removeClass("btn-selected");
 			leftBtn.addClass("btn-selected");
 			numberInputShow(e.parent().find(".tournament-name").html(), playTypeId, e.attr("data-playTypeName"), e.attr("data-leftGuessName"), e.attr("data-rightGuessName"), direction, oldLeftOddsArray[playTypeId], function(amount){
-				bet(amount);
+				bet(playTypeId, "LEFT", amount);
 			});
 		}
 	} else { //右方
@@ -832,7 +832,7 @@ var betClick = function(playTypeId, direction, event){
 			$("div.home-match-card-button").removeClass("btn-selected");
 			rightBtn.addClass("btn-selected");
 			numberInputShow(e.parent().find(".tournament-name").html(), playTypeId, e.attr("data-playTypeName"), e.attr("data-leftGuessName"), e.attr("data-rightGuessName"), direction, oldRightOddsArray[playTypeId], function(amount){
-				bet(amount);
+				bet(playTypeId, "RIGHT", amount);
 			});
 		}
 	}
@@ -840,8 +840,77 @@ var betClick = function(playTypeId, direction, event){
 };
 
 //下注方法
-var bet = function(amount){
-	alert("bet：" + amount);
+var bet = function(playTypeId, betDirection, betAmount){
+	if(betAmount > 0) {
+		loadData({
+			"url" : "user/bet",
+			"data" : {
+				"playTypeId" : playTypeId,
+				"betDirection" : betDirection,
+				"betAmount" : betAmount
+			},
+			"success" : function(data) {
+				if(data.code == 100) {
+					var matchVersus = data.result.matchVersus;
+					var bet = data.result.bet;
+					betSuccess(matchVersus, bet);
+				} else if(data.code == 200) {
+					m_confirm("您还未登录，请先登录", function(){
+						window.location.href = "m/login.jsp";
+					});
+				} else {
+					m_toast(data.msg);
+				}
+			}
+		});
+	} else {
+		m_toast("请输入下注金额");
+	}
+};
+
+//下注成功框
+var betSuccess = function(matchVersus, bet){
+	var str = '';
+	str += '<div data-v-60a57f0c="" class="vux-confirm order-confirm" id="betSuccessDiv">';
+	str += '	<div class="vux-x-dialog">';
+	str += '		<div class="weui-mask" style=""></div>';
+	str += '		<div class="weui-dialog" style="">';
+	str += '			<div class="weui-dialog__bd">';
+	str += '				<div class="content">';
+	str += '					<section class="header color-green"><div class="success-icon"></div><div>订单提交成功！</div></section>';
+	str += '					<div id="vux-scroller-oezyh" style="max-height: 60vh; height: 186px; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); position: relative; overflow: hidden;">';
+	str += '						<div class="xs-container" style="transform-origin: 0px 0px 0px; transform: translateX(0px) translateY(0px) translateZ(0px) scale(1, 1); transition: none 0s ease 0s;">';
+	str += '							<div style="height: 186px; transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);">';
+	str += '								<div class="order-item">';
+	str += '								<div class="odds-item">';
+	str += '										<div class="match-info">';
+	str += '											<div class="odds-title"><div class="games-icon" style="background-image:url(\'//yuanjududu.com//file/cb9287b9cbdc7414adeb287df1feeebb.svg\');"></div>SNG<div class="match-stage">全场 赛前</div></div>';
+	str += '											<div class="odds-match">TOP - VS - SNG 16:30</div>';
+	str += '											<div>赔率: 2.16</div>';
+	str += '										</div>';
+	str += '									</div>';
+	str += '									<div class="order-info order-title"><div>单场</div><div class="order-success">提交成功</div></div>';
+	str += '									<div class="order-info">';
+	str += '										<div class="stake">投注金额：<span class="color-white">10</span></div>';
+	str += '										<div>盈利：<span class="color-white">21.6</span></div>';
+	str += '									</div>';
+	str += '									<div class="order-note">您的订单需要系统确认，请在“投注记录”留意订单状态</div>';
+	str += '								</div>';
+	str += '							</div>';
+	str += '						</div>';
+	str += '						<div class=" xs-fixed-container"></div>';
+	str += '					</div>';
+	str += '				</div>';
+	str += '			</div>';
+	str += '			<div class="weui-dialog__ft">';
+	str += '				<a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">投注记录</a>';
+	str += '				<a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">继续投注</a>';
+	str += '			</div>';
+	str += '		</div>';
+	str += '	</div>';
+	str += '</div>';
+	$("#betSuccessDiv").remove();
+	$("body").append(str);
 };
 
 //加载用户余额

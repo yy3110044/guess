@@ -17,7 +17,7 @@ public interface BetService {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
     
-    boolean bet(int playTypeId, int userId, String userName, BetDirection betDirection, double betAmount);//下注
+    Bet bet(int playTypeId, int userId, String userName, BetDirection betDirection, double betAmount);//下注
     
     void settlementOrRefund(Bet bet); //结算
     void settlement(Bet bet, MatchVersus versus, List<MatchVersusBo> boList); //结算

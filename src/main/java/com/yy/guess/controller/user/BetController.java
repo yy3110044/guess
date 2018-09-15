@@ -7,12 +7,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.component.ConfigComponent;
+import com.yy.guess.po.Bet;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.User;
 import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.service.BetService;
+import com.yy.guess.service.MatchVersusService;
 import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.service.UserService;
 
@@ -33,6 +37,9 @@ public class BetController {
 	
 	@Autowired
 	private PlayTypeService pts;
+	
+	@Autowired
+	private MatchVersusService mvs;
 	
 	@Autowired
 	private ConfigComponent cfgCom;
@@ -70,10 +77,10 @@ public class BetController {
 			return new ResponseObject(105, "用户余额不足");
 		}
 
-		boolean result = bs.bet(playTypeId, userId, user.getUserName(), betDirection, betAmount);
+		Bet bet = bs.bet(playTypeId, userId, user.getUserName(), betDirection, betAmount);
 
-		if(result) {
-			return new ResponseObject(100, "下注成功");
+		if(bet != null) {
+			return new ResponseObject(100, "下注成功", new JsonResultMap().set("bet", bet).set("matchVersus", mvs.findById(pt.getVersusId())));
 		} else {
 			return new ResponseObject(106, "下注失败");
 		}

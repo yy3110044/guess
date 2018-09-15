@@ -102,16 +102,16 @@ public class BetServiceImpl implements BetService {
 
     //下注
     @Override
-    public boolean bet(int playTypeId, int userId, String userName, BetDirection betDirection, double betAmount) {
+    public Bet bet(int playTypeId, int userId, String userName, BetDirection betDirection, double betAmount) {
     	if(betAmount <= 0) {
     		logger.warn("下注额必须大于零，betAmount=" + betAmount);
-    		return false;
+    		return null;
     	}
 
     	PlayType playType = this.pts.getStartPlayTypeByMap(playTypeId);
     	if(playType == null) {
     		logger.warn("playType为null");
-    		return false;
+    		return null;
     	}
     	
     	synchronized(playType) {
@@ -147,7 +147,7 @@ public class BetServiceImpl implements BetService {
 			flow.setAmount(0 - betAmount);
 			flow.setType(TradeType.下注);
 			tfm.add(flow);
-			return true;
+			return bet;
     	}
     }
 

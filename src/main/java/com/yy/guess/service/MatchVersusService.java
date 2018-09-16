@@ -12,7 +12,6 @@ import com.yy.fast4j.QueryCondition;
 public interface MatchVersusService {
     void add(MatchVersus obj);
     void delete(int id);
-    void update(MatchVersus obj);
     MatchVersus find(QueryCondition qc);
     MatchVersus findById(int id);
     List<MatchVersus> query(QueryCondition qc);

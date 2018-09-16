@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import com.yy.guess.po.PlayType;
+import com.yy.guess.po.enums.MatchStatus;
 import com.yy.fast4j.QueryCondition;
 
 @Mapper
@@ -78,4 +79,8 @@ public interface PlayTypeMapper {
     //更改双方竞猜名
     @Update("update guess_play_type set leftGuessName = #{leftGuessName}, rightGuessName = #{rightGuessName} where id = #{playTypeId}")
     void updateGuessName(String leftGuessName, String rightGuessName, int playTypeId);
+    
+    //更改playType的状态以及结果
+    @Update("update guess_play_type set status = #{status}, result = #{result} where id = #{playTypeId}")
+    void updateStatusAndResultByPlayTypeId(MatchStatus status, int result, int playTypeId);
 }

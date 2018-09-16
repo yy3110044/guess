@@ -369,7 +369,11 @@ var addPlayType = function(){
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1"></td>
-			<td colspan="3"><input type="button" value="添加" onclick="addPlayType()" class="btn btn-info" style="width:80px;"></td>
+			<td colspan="3">
+				<input type="button" value="添加" onclick="addPlayType()" class="btn btn-info" style="width:80px;">
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<input type="button" value="查看" onclick="window.open('${basePath}admin/guess/playTypeList.jsp?versusId=' + matchVersusId)" class="btn btn-info" style="width:80px;">
+			</td>
 		</tr>
 	</table>
 	</div> 

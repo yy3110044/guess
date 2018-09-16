@@ -9,6 +9,8 @@ var empty = function(str) {
  * obj.error：失败回调函数
  * obj.redirectCode：跳转代码，默认为200
  * obj.redirectUrl：跳转url
+ * obj.hideLoading：是否影藏loading图标
+ * obj.complete：完成后执行(在success后调用)
  */
 var loadData = function(obj) {
 	$.ajax({
@@ -18,10 +20,14 @@ var loadData = function(obj) {
 		"contentType" : "application/x-www-form-urlencoded",
 		"dataType" : "json",
 		"beforeSend" : function(){ //请求之前调用
-			addLoadLevel();
+			if(!obj.hideLoading) {
+				addLoadLevel();
+			}
 		},
 		"complete" : function(){ //请求完成后调用，无论成功还是失败
-			removeLoadLevel();
+			if(!obj.hideLoading) {
+				removeLoadLevel();
+			}
 		},
 		"url" : obj.url,
 		"data" : obj.data,
@@ -37,6 +43,9 @@ var loadData = function(obj) {
 			}
 			if(obj.success != null) {
 				obj.success(data, textStatus); //请求成功后调用
+			}
+			if(obj.complete != null) {
+				obj.complete(data);
 			}
 		},
 		"error" : function(XMLHttpRequest, textStatus, errorThrown){

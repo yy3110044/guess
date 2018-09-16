@@ -12,11 +12,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yy.guess.component.ConfigComponent;
+import com.yy.guess.mapper.MatchVersusBoMapper;
 import com.yy.guess.mapper.MatchVersusMapper;
 import com.yy.guess.mapper.PlayTypeMapper;
+import com.yy.guess.playTemplate.GuessPlayTemplate;
+import com.yy.guess.playTemplate.GuessPlayTemplateFactory;
 import com.yy.guess.po.MatchVersus;
+import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.enums.BetDirection;
+import com.yy.guess.po.enums.MatchStatus;
 import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.util.CachePre;
 import com.yy.fast4j.QueryCondition;
@@ -39,6 +44,9 @@ public class PlayTypeServiceImpl implements PlayTypeService {
     
     @Autowired
     private MatchVersusMapper mvm;
+    
+    @Autowired
+    private MatchVersusBoMapper mvbm;
 
     @Override
     public void add(PlayType obj) {
@@ -490,5 +498,50 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public void updateStatusAndResultByPlayTypeId(MatchStatus status, int playTypeId) {
+		if(status == MatchStatus.已结束) { //只有状态为结束时，才能修改result
+			PlayType pt = mapper.findById(playTypeId);
+			MatchVersus versus = mvm.findById(pt.getVersusId());
+			List<MatchVersusBo> boList = mvbm.query(new QueryCondition().addCondition("versusId", "=", pt.getVersusId()).addSort("bo", SortType.ASC));
+			GuessPlayTemplate temp = GuessPlayTemplateFactory.getGuessPlayTemplate(pt.getTemplateClass());
+			int result = temp.getResult(versus, boList, pt);
+			mapper.updateStatusAndResultByPlayTypeId(status, result, playTypeId);
+			pt = this.startedPlayTypeMap.get(playTypeId);
+			if(pt != null) {
+				pt.setStatus(status);
+				pt.setResult(result);
+			}
+		} else {
+			mapper.updateStatusAndResultByPlayTypeId(status, 0, playTypeId);
+			PlayType pt = this.startedPlayTypeMap.get(playTypeId);
+			if(pt != null) {
+				pt.setStatus(status);
+				pt.setResult(0);
+			}
+		}
+	}
+
+	@Override
+	public void updateStatusAndResultByVersusId(MatchStatus status, int versusId) {
+		List<Integer> idList = mapper.getPlayTypeIdListByVersusId(versusId);
+		for(Integer id : idList) {
+			this.updateStatusAndResultByPlayTypeId(status, id);
+		}
+	}
+
+	@Override
+	public void updateStatusAndResultByVersusIdAndBo(MatchStatus status, int versusId, int bo) {
+		List<Integer> idList = mapper.getPlayTypeIdListByVersusIdAndBo(versusId, bo);
+		for(Integer id : idList) {
+			this.updateStatusAndResultByPlayTypeId(status, id);
+		}
+	}
+
+	@Override
+	public List<PlayType> getAllCachePlayType() {
+		return new ArrayList<PlayType>(this.startedPlayTypeMap.values());
 	}
 }

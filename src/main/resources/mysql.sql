@@ -185,10 +185,13 @@ CREATE TABLE `guess_play_type` (
   `versusId` int(11) COMMENT '对阵id',
   `name` varchar(64) COMMENT '玩法名',
   `bo` tinyint COMMENT '对应比赛场次，从1开始，0代表总对阵',
+  `versusBoId` int(11) COMMENT '关联versusBo表的id，如果是总对阵则为0',
+  `status` enum('未开始', '进行中', '已结束', '未比赛') COMMENT '对应Matchversus、MatchversusBo的status',
+  `result` tinyint COMMENT '结果',
   `paramStr` varchar(128) COMMENT '此玩法需要用到的参数，json格式字符串',
   `templateClass` varchar(128) COMMENT '模版类class',
   `pause` bit(1) COMMENT '是否暂停竞猜',
-  `guessStart` bit(1) COMMENT '是否开启竞猜',
+  `guessStart` bit(1) COMMENT '是否开启竞猜，竞猜是否结束，true为未结束，false为结束',
   `leftGuessName` varchar(128) COMMENT '左方竞猜名',
   `rightGuessName` varchar(128) COMMENT '右方竞猜名',
   `leftWinRate` decimal(15, 6) COMMENT '左方预计胜率(根据这个算出初始赔率)',
@@ -198,7 +201,8 @@ CREATE TABLE `guess_play_type` (
   `fixedOdds` bit(1) COMMENT '是否固定赔率',
   `createTime` datetime COMMENT '创建时间',
   PRIMARY KEY (`id`),
-  KEY `versusId` (`versusId`)
+  KEY `versusId` (`versusId`),
+  KEY `versusBoId` (`versusBoId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*下注表*/

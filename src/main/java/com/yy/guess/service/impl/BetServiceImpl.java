@@ -9,17 +9,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yy.guess.component.ConfigComponent;
 import com.yy.guess.mapper.BetMapper;
-import com.yy.guess.mapper.MatchVersusBoMapper;
-import com.yy.guess.mapper.MatchVersusMapper;
-import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.mapper.RateRecordMapper;
 import com.yy.guess.mapper.TradeFlowMapper;
 import com.yy.guess.mapper.UserMapper;
-import com.yy.guess.playTemplate.GuessPlayTemplate;
-import com.yy.guess.playTemplate.GuessPlayTemplateFactory;
 import com.yy.guess.po.Bet;
-import com.yy.guess.po.MatchVersus;
-import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.RateRecord;
 import com.yy.guess.po.TradeFlow;
@@ -30,7 +23,6 @@ import com.yy.guess.po.enums.TradeType;
 import com.yy.guess.service.BetService;
 import com.yy.guess.service.PlayTypeService;
 import com.yy.fast4j.QueryCondition;
-import com.yy.fast4j.QueryCondition.SortType;
 
 @Repository("betService")
 @Transactional
@@ -45,15 +37,6 @@ public class BetServiceImpl implements BetService {
     
     @Autowired
     private UserMapper um;
-    
-    @Autowired
-    private PlayTypeMapper ptm;
-    
-    @Autowired
-    private MatchVersusMapper mvm;
-    
-    @Autowired
-    private MatchVersusBoMapper mvbm;
     
     @Autowired
     private ConfigComponent cfgCom;
@@ -151,6 +134,7 @@ public class BetServiceImpl implements BetService {
     	}
     }
 
+    /*
     @Override
 	public void settlementOrRefund(Bet bet) {
 		MatchVersus versus = mvm.findById(bet.getVersusId());
@@ -181,13 +165,26 @@ public class BetServiceImpl implements BetService {
 			}
 		}
 	}
-
-	@Override
-	public void settlement(Bet bet, MatchVersus versus, List<MatchVersusBo> boList) {
-		PlayType pt = ptm.findById(bet.getPlayTypeId());
-		GuessPlayTemplate template = GuessPlayTemplateFactory.getGuessPlayTemplate(pt.getTemplateClass());
-
-		int result = template.getResult(versus, boList, pt);
+	*/
+    
+    @Override
+	public void settlementOrRefund(Bet bet) {
+    	PlayType pt = pts.findById(bet.getPlayTypeId());
+    	switch(pt.getStatus()) {
+    	case 已结束:
+    		this.settlement(bet, pt);
+    		break;
+    	case 未比赛:
+    		this.refund(bet, null);
+    		break;
+    	default:
+    		break;
+    	}
+    }
+    
+    @Override
+    public void settlement(Bet bet, PlayType playType) {
+    	int result = playType.getResult();
 		if(result < 0) { //左方胜
 			if(bet.getBetDirection() == BetDirection.LEFT) {
 				this.settlement(bet.getId(), bet.getUserId(), bet.getLeftOdds() * bet.getBetAmount(), cfgCom.getPlatformRate());
@@ -202,7 +199,7 @@ public class BetServiceImpl implements BetService {
 			//为平时不处理
 		}
 		mapper.updateStatus(BetStatus.未猜中, bet.getId());
-	}
+    }
 	private void settlement(int betId, int userId, double amount, double platformRate) {
 		User user = um.findById(userId); //取出未更改前用户
 

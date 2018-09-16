@@ -90,7 +90,7 @@ var systemNoticeChange = function(){
 		clearInterval(systemNoticeChangeId);
 	}
 	currentNotice = 0;
-	systemNoticeChangeId = setInterval("systemNoticeChange2()", 1000);
+	systemNoticeChangeId = setInterval("systemNoticeChange2()", 10000);
 };
 var systemNoticeChange2 = function(){
 	var length = $(".content-hearer .vux-marquee-box li").length;
@@ -595,7 +595,7 @@ var tabBarChange = function(index, ts) {
 
 //matchVersus点击事件
 var matchVersusClick = function(versusId){
-	window.location.href = "m/login.jsp";
+	window.location.href = "m/betDetail.jsp?versusId=" + versusId;
 };
 
 //对阵str
@@ -607,7 +607,7 @@ var getMatchVersusStr = function(versus, playType, remainingTime){
 		str += '		<img data-v-18da170e="" src="' + versus.matchLogoUrl + '" width="20px">';
 		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name  + '</div>';
 		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
-		str += '		<div data-v-18da170e="" class="play-count" style="display:none;">+17</div>';
+		str += '		<div data-v-18da170e="" class="play-count">' + (versus.playTypeCount > 1 ? ('+' + versus.playTypeCount) : '') + '</div>';
 		str += '	</section>';
 		str += '	<section data-v-18da170e="" class="card-body">';
 		str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.leftTeamLogoUrl + '" class="team-logo"></div>';
@@ -645,7 +645,7 @@ var getMatchVersusStr = function(versus, playType, remainingTime){
 		str += '		<img data-v-18da170e="" src="' + versus.matchLogoUrl + '" width="20px">';
 		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name + '</div>';
 		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
-		str += '		<div data-v-18da170e="" class="play-count" style="display:none;">+4</div>';
+		str += '		<div data-v-18da170e="" class="play-count">' + (versus.playTypeCount > 1 ? ('+' + versus.playTypeCount) : '') + '</div>';
 		str += '	</section>';
 		str += '	<section data-v-18da170e="" class="card-body">';
 		str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.leftTeamLogoUrl + '" class="team-logo"></div>';

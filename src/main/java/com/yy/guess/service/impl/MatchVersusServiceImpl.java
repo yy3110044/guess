@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yy.guess.mapper.MatchVersusBoMapper;
 import com.yy.guess.mapper.MatchVersusMapper;
-import com.yy.guess.mapper.PlayTypeMapper;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.enums.MatchStatus;
 import com.yy.guess.service.MatchVersusService;
+import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.util.QueryResult;
 import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
@@ -26,7 +26,7 @@ public class MatchVersusServiceImpl implements MatchVersusService {
     private MatchVersusBoMapper mvbm;
     
     @Autowired
-    private PlayTypeMapper ptm;
+    private PlayTypeService pts;
 
     @Override
     public void add(MatchVersus obj) {
@@ -36,11 +36,6 @@ public class MatchVersusServiceImpl implements MatchVersusService {
     @Override
     public void delete(int id) {
         mapper.delete(id);
-    }
-
-    @Override
-    public void update(MatchVersus obj) {
-        mapper.update(obj);
     }
 
     @Override
@@ -77,7 +72,7 @@ public class MatchVersusServiceImpl implements MatchVersusService {
 	public void deleteVersus(int id) {
 		mapper.delete(id);
 		mvbm.deleteByVersusId(id);
-		ptm.deleteByVersusId(id);
+		pts.deleteByVersusId(id);
 	}
 
 	@Override
@@ -87,18 +82,25 @@ public class MatchVersusServiceImpl implements MatchVersusService {
 		return list;
 	}
 	
-	//更新versus，删除playtpe，并重新生成versusbo
 	@Override
 	public void update(MatchVersus obj, List<MatchVersusBo> boList) {
 		mapper.update(obj);
-		mvbm.deleteByVersusId(obj.getId());
-		mvbm.addList(boList);
-		ptm.deleteByVersusId(obj.getId());
+		if(boList != null && boList.size() > 0) {
+			mvbm.deleteByVersusId(obj.getId());
+			mvbm.addList(boList);
+			pts.deleteByVersusId(obj.getId());
+		} else {
+			if(obj.getStatus() == MatchStatus.已结束 || obj.getStatus() == MatchStatus.未比赛) { //关闭下注接口
+				pts.stopGuessByVersusId(obj.getId());//主盘口结将关闭此对阵下的所有玩法
+			}
+			pts.updateStatusAndResultByVersusIdAndBo(obj.getStatus(), obj.getId(), 0);
+		}
 	}
 
 	@Override
 	public void updateStatus(MatchStatus status, int versusId) {
 		mapper.updateStatus(status, versusId);
+		pts.updateStatusAndResultByVersusIdAndBo(status, versusId, 0);
 	}
 
 	@Override

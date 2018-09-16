@@ -29,7 +29,6 @@ import com.yy.guess.po.enums.MatchStatus;
 import com.yy.guess.service.MatchService;
 import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
-import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.service.SportService;
 import com.yy.guess.service.TeamService;
 
@@ -57,10 +56,7 @@ public class GuessAdminController {
 	
 	@Autowired
 	private MatchVersusBoService mvbs;
-	
-	@Autowired
-	private PlayTypeService pts;
-	
+
 	/**
 	 * 添加运动项目
 	 * @param name
@@ -455,7 +451,8 @@ public class GuessAdminController {
                                             @RequestParam MatchStatus status,
                                             @RequestParam int result,
                                             @RequestParam int leftTeamScore,
-                                            @RequestParam int rightTeamScore) {
+                                            @RequestParam int rightTeamScore,
+                                            @RequestParam boolean autoUpdateStartTime) {
 		MatchVersus versus = mvs.findById(id);
 		if(versus == null) {
 			return new ResponseObject(101, "对阵不存在");
@@ -478,13 +475,16 @@ public class GuessAdminController {
 		versus.setStatus(status);
 		versus.setLeftTeamScore(leftTeamScore);
 		versus.setRightTeamScore(rightTeamScore);
+		if(MatchStatus.进行中 == status && autoUpdateStartTime) {
+			versus.setStartTime(new Date());
+		}
 		if(MatchStatus.已结束 == status) {
 			versus.setResult(result);
 		}
 		if(MatchStatus.已结束 == status || MatchStatus.未比赛 == status) {//关闭投注接口
-			pts.stopGuessByVersusId(versus.getId());//主盘口结将关闭此对阵下的所有玩法
 			versus.setEndTime(new Date()); //设置结束时间
 		}
+
 		if(boCount != versus.getBoCount()) { //更改了boCount
 			versus.setBoCount(boCount);
 			List<MatchVersusBo> boList = new ArrayList<MatchVersusBo>();
@@ -497,7 +497,7 @@ public class GuessAdminController {
 			}
 			mvs.update(versus, boList);
 		} else { //没有更改boCount
-			mvs.update(versus);
+			mvs.update(versus, null);
 		}
 		return new ResponseObject(100, "修改成功");
 	}
@@ -533,9 +533,6 @@ public class GuessAdminController {
 		versusBo.setStatus(status);
 		if(MatchStatus.已结束 == status) {
 			versusBo.setResult(result);
-		}
-		if(MatchStatus.已结束 == status || MatchStatus.未比赛 == status) {//关闭投注接口
-			pts.stopGuessByVersusIdAndBo(versusBo.getVersusId(), versusBo.getBo());
 		}
 		mvbs.update(versusBo);
 		return new ResponseObject(100, "修改成功");

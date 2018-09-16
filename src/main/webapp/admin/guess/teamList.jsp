@@ -42,7 +42,7 @@ var query = function(pageSize, pageNo) {
 					{field : "sportName"},
 					{field : "name"},
 					{fn : function(obj){
-						return '<a href="' + obj.logoUrl + '" target="_blank"><img src="' + obj.logoUrl + '" style="width:60px;height:60px;"></a>';
+						return '<a href="' + obj.logoUrl + '" target="_blank"><img src="' + obj.logoUrl + '" style="width:40px;height:40px;"></a>';
 					}},
 					{field : "description"},
 					{field : "createTime"},

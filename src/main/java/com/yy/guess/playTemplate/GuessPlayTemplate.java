@@ -106,7 +106,7 @@ public interface GuessPlayTemplate {
 		//设置默认值
 		this.setDefaultValue(map);
 		
-		return Fast4jUtils.ObjecttoJson(map);
+		return Fast4jUtils.objectToJson(map);
 	}
 
 	//返回参数map，如果没有参数返回null

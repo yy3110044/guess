@@ -81,6 +81,7 @@ public class PlayTypeAdminController {
 				PlayType versusPy = new PlayType();//总盘口玩法
 				versusPy.setVersusId(versus.getId());
 				versusPy.setName(template.getPlayTypeName(versus, null, paramMap));
+				versusPy.setStatus(versus.getStatus());
 				versusPy.setBo(0);
 				versusPy.setParamStr(paramStr);
 				versusPy.setLeftWinRate(leftWinRate);
@@ -102,6 +103,8 @@ public class PlayTypeAdminController {
 					PlayType boPy = new PlayType();
 					boPy.setVersusId(versus.getId());
 					boPy.setName(template.getPlayTypeName(versus, versusBo, paramMap));
+					boPy.setStatus(versusBo.getStatus());
+					boPy.setVersusBoId(versusBo.getId());
 					boPy.setBo(versusBo.getBo());
 					boPy.setParamStr(paramStr);
 					boPy.setLeftWinRate(leftWinRate);
@@ -126,6 +129,8 @@ public class PlayTypeAdminController {
 			PlayType boPy = new PlayType();
 			boPy.setVersusId(versus.getId());
 			boPy.setName(template.getPlayTypeName(versus, versusBo, paramMap));
+			boPy.setStatus(versusBo.getStatus());
+			boPy.setVersusBoId(versusBo.getId());
 			boPy.setBo(bo);
 			boPy.setParamStr(paramStr);
 			boPy.setLeftWinRate(leftWinRate);
@@ -147,6 +152,7 @@ public class PlayTypeAdminController {
 			PlayType versusPy = new PlayType();//总盘口玩法
 			versusPy.setVersusId(versus.getId());
 			versusPy.setName(template.getPlayTypeName(versus, null, paramMap));
+			versusPy.setStatus(versus.getStatus());
 			versusPy.setBo(0);
 			versusPy.setParamStr(paramStr);
 			versusPy.setLeftWinRate(leftWinRate);

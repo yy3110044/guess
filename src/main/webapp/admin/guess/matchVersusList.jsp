@@ -191,7 +191,7 @@ var detail = function(versusId, e) {
 				str += '<div style="margin-top:4px;">比赛局数：<input type="number" class="boCount" value="' + versus.boCount + '" data-oldBoCount="' + versus.boCount + '" min="1" readonly="readonly"></div>';
 				str += '<div style="margin-top:4px;">实际局数：<input type="number" class="realBoCount" value="' + versus.realBoCount + '" min="0"></div>';
 				str += '<div style="margin-top:4px;">比分：' + versus.leftTeamName + '<input type="number" class="leftTeamScore" value="' + versus.leftTeamScore + '" min="0" style="width:45px;">&nbsp;:&nbsp;<input type="number" class="rightTeamScore" value="' + versus.rightTeamScore + '" min="0" style="width:45px;text-align:right;">' + versus.rightTeamName + '</div>';
-				str += '<div style="margin-top:4px;">比赛状态：<select class="status" data-value="' + versus.status + '" onchange="detailStatusChange(this)"><%=com.yy.fast4j.Fast4jUtils.getSelectOptionHtmlStr(com.yy.guess.po.enums.MatchStatus.class)%></select></div>';
+				str += '<div style="margin-top:4px;">比赛状态：<select class="status" data-value="' + versus.status + '" onchange="detailStatusChange(this)"><%=com.yy.fast4j.Fast4jUtils.getSelectOptionHtmlStr(com.yy.guess.po.enums.MatchStatus.class)%></select><span style="display:none;">&nbsp;&nbsp;<input id="autoUpdateStartTime" type="checkbox" style="vertical-align:middle;margin-top:0px;"><label style="vertical-align:middle;display:inline-block;margin-bottom:0px;" for="autoUpdateStartTime">是否自动同时更新开始时间</label></span></div>';
 				str += '<div style="margin-top:4px;' + (versus.status != '已结束' ? 'display:none;' : '') + '">比赛结果：<select class="result"><option value="-1"' + (versus.result < 0 ? ' selected="selected"' : '') + '>' + versus.leftTeamName + '胜</option><option value="0"' + (versus.result == 0 ? ' selected="selected"' : '') + '>平</option><option value="1"' + (versus.result > 0 ? ' selected="selected"' : '') + '>' + versus.rightTeamName + '胜</option></select></div>';
 				str += '<div style="margin-top:4px;"><input type="button" value="修改" onclick="modifyVersus(' + versus.id + ')"></div>';
 				str += '</div>';
@@ -248,6 +248,7 @@ var modifyVersus = function(versusIdNumber) {
 	if(!confirm('确定修改？')) {
 		return;
 	}
+	
 	var versusId = "versus" + versusIdNumber;
 	
 	var startTime = $.trim($("#" + versusId).find(".startTime").val());
@@ -283,7 +284,8 @@ var modifyVersus = function(versusIdNumber) {
 			"status" : status,
 			"result" : result,
 			"leftTeamScore" : leftTeamScore,
-			"rightTeamScore" : rightTeamScore
+			"rightTeamScore" : rightTeamScore,
+			"autoUpdateStartTime" : $("#autoUpdateStartTime").is(":checked")
 		},
 		success : function(data){
 			showMsg(data.msg);
@@ -347,6 +349,12 @@ var detailStatusChange = function(e) {
 		$(e).parent().next().slideDown();
 	} else {
 		$(e).parent().next().slideUp();
+	}
+	if("进行中" == status) {
+		$("#autoUpdateStartTime").parent().show();
+	} else {
+		$("#autoUpdateStartTime").parent().hide();
+		$("#autoUpdateStartTime").prop("checked", false);
 	}
 };
 

@@ -250,4 +250,8 @@ public class BetInfoController {
 		}
 		return sportIdList;
 	}
+	
+	public ResponseObject getMatchVersusAnd() {
+		//return null;
+	}
 }

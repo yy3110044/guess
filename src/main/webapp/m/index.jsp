@@ -10,9 +10,7 @@
 #vux-scroller-60yre::-webkit-scrollbar{display:none;width:0;height:0;}
 </style>
 <script>
-$(document).ready(function(){
-	initData(<%=com.yy.guess.util.Util.getConfigCom(application).getClientLoadDataInterval()%>); //初始化
-});
+$(document).ready(function(){initData(<%=com.yy.guess.util.Util.getConfigCom(application).getClientLoadDataInterval()%>);/*初始化*/});
 </script>
 </head>
 <body>

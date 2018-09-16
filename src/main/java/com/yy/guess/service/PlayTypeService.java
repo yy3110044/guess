@@ -4,6 +4,7 @@ import java.util.List;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.enums.BetDirection;
+import com.yy.guess.po.enums.MatchStatus;
 import com.yy.fast4j.QueryCondition;
 
 public interface PlayTypeService {
@@ -57,4 +58,11 @@ public interface PlayTypeService {
     void updateGuessName(String leftGuessName, String rightGuessName, int playTypeId); //更改双方竞猜名
     
     boolean getPlayTypeGuessStatus(int playTypeId); //返回是否能正常投注
+    
+    //更改playType的状态以及结果
+    void updateStatusAndResultByPlayTypeId(MatchStatus status, int playTypeId);
+    void updateStatusAndResultByVersusId(MatchStatus status, int versusId);
+    void updateStatusAndResultByVersusIdAndBo(MatchStatus status, int versusId, int bo);
+    
+    List<PlayType> getAllCachePlayType(); //返回所有缓存的playType;
 }

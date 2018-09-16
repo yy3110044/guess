@@ -6,7 +6,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yy.guess.mapper.MatchVersusBoMapper;
 import com.yy.guess.po.MatchVersusBo;
+import com.yy.guess.po.enums.MatchStatus;
 import com.yy.guess.service.MatchVersusBoService;
+import com.yy.guess.service.PlayTypeService;
 import com.yy.fast4j.QueryCondition;
 
 @Repository("matchVersusBoService")
@@ -14,6 +16,9 @@ import com.yy.fast4j.QueryCondition;
 public class MatchVersusBoServiceImpl implements MatchVersusBoService {
     @Autowired
     private MatchVersusBoMapper mapper;
+    
+    @Autowired
+    private PlayTypeService pts;
 
     @Override
     public void add(MatchVersusBo obj) {
@@ -28,6 +33,10 @@ public class MatchVersusBoServiceImpl implements MatchVersusBoService {
     @Override
     public void update(MatchVersusBo obj) {
         mapper.update(obj);
+        if(obj.getStatus() == MatchStatus.已结束 || obj.getStatus() == MatchStatus.未比赛) {//关闭投注接口
+        	pts.stopGuessByVersusIdAndBo(obj.getVersusId(), obj.getBo());
+        }
+        pts.updateStatusAndResultByVersusIdAndBo(MatchStatus.已结束, obj.getVersusId(), obj.getBo());
     }
 
     @Override

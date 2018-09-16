@@ -20,7 +20,7 @@ public class CheckAdminUserLoginInterceptor implements HandlerInterceptor {
 		if(adminUserId == null) {
 			response.setHeader("Access-Control-Allow-Origin", "*");
 			response.setContentType("application/json;charset=UTF-8");
-			response.getWriter().write(Fast4jUtils.ObjecttoJson(new ResponseObject(200, "您还未登陆，请先登陆")));
+			response.getWriter().write(Fast4jUtils.objectToJson(new ResponseObject(200, "您还未登陆，请先登陆")));
 			return false;
 		} else {
 			request.setAttribute("adminUserId", adminUserId);

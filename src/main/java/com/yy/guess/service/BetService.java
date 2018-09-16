@@ -4,6 +4,7 @@ import java.util.List;
 import com.yy.guess.po.Bet;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.enums.BetDirection;
+import com.yy.guess.po.enums.BetStatus;
 import com.yy.fast4j.QueryCondition;
 
 public interface BetService {
@@ -18,7 +19,8 @@ public interface BetService {
     
     Bet bet(int playTypeId, int userId, String userName, BetDirection betDirection, double betAmount);//下注
     
-    void settlementOrRefund(Bet bet); //结算
-    void settlement(Bet bet, PlayType playType); //结算
-    void refund(Bet bet, String description); //退款
+    void settlementOrRefund(int betId); //结算
+    void settlement(int betId, PlayType playType); //结算
+    void refund(int betId, String description); //退款
+    List<Integer> getBetIdList(BetStatus status);
 }

@@ -58,7 +58,7 @@ var query = function(pageSize, pageNo){
 					}},
 					{"fn" : function(obj){
 						if(obj.status == "已下注") {
-							return '<span style="color:black;">' + obj.status + '</span>';
+							return '<span style="color:black;" class="status' + obj.id + '">' + obj.status + '</span>';
 						} else if(obj.status == "未猜中") {
 							return '<span style="color:red;">' + obj.status + '</span>';
 						} else if(obj.status == '已结算') {
@@ -76,13 +76,49 @@ var query = function(pageSize, pageNo){
 							return "";
 						}
 					}},
-					{"field" : "createTime"}
+					{"field" : "createTime"},
+					{"fn" : function(obj){
+						if(obj.status == "已下注") {
+							return '<a href="javascript:;" onclick="betRefund(' + obj.id + ', this)">退款</a>';
+						} else {
+							return '';
+						}
+					}}
 				]);
 			} else {
 				showMsg(data.msg);
 			}
 		},
 		redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
+	});
+};
+
+var betRefund = function(betId, e) {
+	var str = '';
+	str += '<tr class="contentTr detailTr"><td colspan="99" style="padding:4px;">';
+	str += '<input type="text" id="description" placeholder="输入备注">';
+	str += '&nbsp;&nbsp;<input type="button" onclick="betRefund2(' + betId + ', this)" value="确定">';
+	str += '&nbsp;&nbsp;<input type="button" onclick="$(this).parent().parent().remove()" value="关闭">';
+	str += '</td></tr>';
+	$("tr.detailTr").remove();
+	$(e).parent().parent().after(str);
+};
+var betRefund2 = function(betId, e){
+	var description = $.trim($("#description").val());
+	loadData({
+		url : "administration/betRefund",
+		"data" : {
+			"betId" : betId,
+			"description" : description
+		},
+		success : function(data){
+			showMsg(data.msg);
+			if(data.code == 100) {
+				$(".status" + betId).attr("style", "color:blue");
+				$(".status" + betId).html("已退回");
+				$(e).parent().parent().remove();
+			}
+		}
 	});
 };
 </script>
@@ -125,6 +161,7 @@ var query = function(pageSize, pageNo){
 			<td><strong>状态</strong></td>
 			<td><strong>实际发放金额</strong></td>
 			<td><strong>时间</strong></td>
+			<td><strong>操作</strong></td>
 		</tr>
 	</table>
 	<table class="margin-bottom-20 table no-border">

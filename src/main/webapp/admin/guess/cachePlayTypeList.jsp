@@ -21,6 +21,8 @@ var query = function(){
 		},
 		success : function(data){
 			if(data.code == 100) {
+				$("#totalCount").html("总数：" + data.result.totalCount);
+				$("#databaseStartedCount").html("数据库总数：" + data.result.databaseStartedCount);
 				var str = getContentStr({
 					"list" : data.result.list,
 					"fields" : [
@@ -107,6 +109,8 @@ $(document).ready(function(){
 				versusId：<input type="number" id="versusId">
 				&nbsp;&nbsp;playTypeId：<input type="number" id="playTypeId">
 				&nbsp;&nbsp;<input type="button" value="查询" onclick="query()">
+				&nbsp;&nbsp;<span id="totalCount"></span>
+				&nbsp;&nbsp;<span id="databaseStartedCount"></span>
 			</td>
 		</tr>
 		<tr align="center">

@@ -105,6 +105,19 @@ var query = function(){
 							}
 						}},
 						{fn : function(obj){
+							if("已结束" == obj.status) {
+								if(obj.result > 0) {
+									return obj.rightGuessName;
+								} else if(obj.result < 0) {
+									return obj.leftGuessName;
+								} else {
+									return "平";
+								}
+							} else {
+								return "";
+							}
+						}},
+						{fn : function(obj){
 							if(obj.guessStart) {
 								return '<span data-playTypeId="' + obj.id + '" class="bonusPool"></span>';
 							} else {
@@ -402,6 +415,7 @@ $(document).ready(function(){
 			<td><strong>暂停下注</strong></td>
 			<td><strong>预计胜率</strong></td>
 			<td><strong>赔率</strong></td>
+			<td><strong>结果</strong></td>
 			<td><strong>奖金池</strong></td>
 			<td><strong>操作</strong></td>
 		</tr>

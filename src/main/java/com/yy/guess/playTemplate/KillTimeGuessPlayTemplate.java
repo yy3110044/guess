@@ -70,6 +70,9 @@ public class KillTimeGuessPlayTemplate implements GuessPlayTemplate {
 		int intervalTime = Integer.parseInt(map.get("intervalTime"));
 		if("首杀".equals(killNumber)) {
 			int killTime = boList.get(playType.getBo() - 1).getFirstKillTime();
+			if(killTime <= 0) { //击杀时间为小于等于零时表示平局
+				return 0;
+			}
 			if(killTime < intervalTime) {
 				return -1;
 			} else {
@@ -77,6 +80,9 @@ public class KillTimeGuessPlayTemplate implements GuessPlayTemplate {
 			}
 		} else if("十杀".equals(killNumber)) {
 			int killTime = boList.get(playType.getBo() - 1).getTenthKillTime();
+			if(killTime <= 0) { //击杀时间为小于等于零时表示平局
+				return 0;
+			}
 			if(killTime < intervalTime) {
 				return -1;
 			} else {

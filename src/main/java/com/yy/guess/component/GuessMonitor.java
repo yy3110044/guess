@@ -11,8 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import com.yy.fast4j.QueryCondition;
-import com.yy.guess.po.Bet;
 import com.yy.guess.po.enums.BetStatus;
 import com.yy.guess.service.BetService;
 
@@ -49,9 +47,9 @@ public class GuessMonitor implements Runnable {
 	@Override
 	public void run() {
 		try {
-			List<Bet> betList = bs.query(new QueryCondition().addCondition("status", "=", BetStatus.已下注));
-			for(Bet bet : betList) {
-				bs.settlementOrRefund(bet);
+			List<Integer> betIdList = bs.getBetIdList(BetStatus.已下注);
+			for(Integer id : betIdList) {
+				bs.settlementOrRefund(id);
 			}
 		} catch (Exception e) {
 			logger.error(e.toString());

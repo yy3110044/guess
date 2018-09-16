@@ -516,8 +516,8 @@ public class GuessAdminController {
 		if(versusBo == null) {
 			return new ResponseObject(101, "对阵不存在");
 		}
-		if(firstKillTime < 0 || tenthKillTime < 0 || matchTime < 0) {
-			return new ResponseObject(102, "时间不能为负");
+		if(matchTime < 0) {
+			return new ResponseObject(102, "比赛时间不能为负");
 		}
 		if(leftTeamKillCount < 0 || rightTeamKillCount < 0) {
 			return new ResponseObject(103, "击杀(比分)数不能为负");

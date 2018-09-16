@@ -52,4 +52,11 @@ public class BetAdminController {
 		Page page = qc.getPage(bs.getCount(qc));
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
 	}
+	
+	//退款
+	@RequestMapping("/betRefund")
+	public ResponseObject betRefund(@RequestParam int betId, String description) {
+		bs.refund(betId, description);
+		return new ResponseObject(100, "操作成功");
+	}
 }

@@ -2,6 +2,7 @@ package com.yy.guess.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import com.yy.guess.po.Bet;
 import com.yy.guess.po.enums.BetStatus;
@@ -23,4 +24,7 @@ public interface BetMapper {
 
     @Update("update guess_bet set status = #{status}, realPayBonus = #{realPayBonus} where id = #{betId}")
     void updateStatusAndRealPayBonus(BetStatus status, double realPayBonus, int betId);
+    
+    @Select("select id from guess_bet where status = #{status}")
+    List<Integer> getBetIdList(BetStatus status);
 }

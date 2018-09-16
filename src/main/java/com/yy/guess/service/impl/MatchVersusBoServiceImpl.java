@@ -36,7 +36,7 @@ public class MatchVersusBoServiceImpl implements MatchVersusBoService {
         if(obj.getStatus() == MatchStatus.已结束 || obj.getStatus() == MatchStatus.未比赛) {//关闭投注接口
         	pts.stopGuessByVersusIdAndBo(obj.getVersusId(), obj.getBo());
         }
-        pts.updateStatusAndResultByVersusIdAndBo(MatchStatus.已结束, obj.getVersusId(), obj.getBo());
+        pts.updateStatusAndResultByVersusIdAndBo(obj.getStatus(), obj.getVersusId(), obj.getBo());
     }
 
     @Override

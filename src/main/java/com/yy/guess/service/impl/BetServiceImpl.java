@@ -134,48 +134,16 @@ public class BetServiceImpl implements BetService {
     	}
     }
 
-    /*
     @Override
-	public void settlementOrRefund(Bet bet) {
-		MatchVersus versus = mvm.findById(bet.getVersusId());
-		List<MatchVersusBo> boList = mvbm.query(new QueryCondition().addCondition("versusId", "=", bet.getVersusId()).addSort("bo", SortType.ASC));
-		
-		if(bet.getBo() == 0) { //主对阵
-			switch(versus.getStatus()) {
-			case 已结束:
-				this.settlement(bet, versus, boList);
-				break;
-			case 未比赛:
-				this.refund(bet, null); //未比赛，退款
-				break;
-			default:
-				break;
-			}
-		} else if(bet.getBo() > 0) { //bo
-			MatchVersusBo mvb = boList.get(bet.getBo() - 1);
-			switch(mvb.getStatus()) {
-			case 已结束:
-				this.settlement(bet, versus, boList);
-				break;
-			case 未比赛:
-				this.refund(bet, null); //未比赛，退款
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	*/
-    
-    @Override
-	public void settlementOrRefund(Bet bet) {
+	public void settlementOrRefund(int betId) {
+    	Bet bet = mapper.findById(betId);
     	PlayType pt = pts.findById(bet.getPlayTypeId());
     	switch(pt.getStatus()) {
     	case 已结束:
-    		this.settlement(bet, pt);
+    		this.settlement(betId, pt);
     		break;
     	case 未比赛:
-    		this.refund(bet, null);
+    		this.refund(betId, null);
     		break;
     	default:
     		break;
@@ -183,7 +151,11 @@ public class BetServiceImpl implements BetService {
     }
     
     @Override
-    public void settlement(Bet bet, PlayType playType) {
+    public void settlement(int betId, PlayType playType) {
+    	Bet bet = mapper.findById(betId);
+    	if(bet.getStatus() != BetStatus.已下注) {
+    		return;
+    	}
     	int result = playType.getResult();
 		if(result < 0) { //左方胜
 			if(bet.getBetDirection() == BetDirection.LEFT) {
@@ -197,6 +169,7 @@ public class BetServiceImpl implements BetService {
 			}
 		} else {
 			//为平时不处理
+			return;
 		}
 		mapper.updateStatus(BetStatus.未猜中, bet.getId());
     }
@@ -262,7 +235,11 @@ public class BetServiceImpl implements BetService {
 
 	//退款
 	@Override
-	public void refund(Bet bet, String description) {
+	public void refund(int betId, String description) {
+		Bet bet = mapper.findById(betId);
+    	if(bet.getStatus() != BetStatus.已下注) {
+    		return;
+    	}
 		//原余额
 		double preBalance = um.getBalance(bet.getUserId());
 		
@@ -281,5 +258,10 @@ public class BetServiceImpl implements BetService {
 		flow.setType(TradeType.退款);
 		flow.setDescription(description);
 		tfm.add(flow);
+	}
+
+	@Override
+	public List<Integer> getBetIdList(BetStatus status) {
+		return mapper.getBetIdList(status);
 	}
 }

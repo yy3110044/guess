@@ -1008,7 +1008,7 @@ var loadUserBalance = function(callback){
 				updateBalance(data.result);
 				isLogin = true;
 			} else {
-				userBalance = 0;
+				updateBalance(0);
 				isLogin = false;
 			}
 			if(callback != null) {

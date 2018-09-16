@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.yy.fast4j.Fast4jUtils;
 import com.yy.fast4j.JsonResultMap;
+import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.PlayType;
@@ -74,6 +75,7 @@ public class CacheViewController {
 		JsonResultMap resultMap = new JsonResultMap();
 		resultMap.put("list", maps);
 		resultMap.put("totalCount", allPlayTypeList.size());
+		resultMap.put("databaseStartedCount", pts.getCount(new QueryCondition().addCondition("guessStart", "=", true)));
 		return new ResponseObject(100, "返回成功", resultMap);
 	}
 	

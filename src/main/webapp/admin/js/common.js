@@ -95,7 +95,7 @@ var addUploadEvent = function(obj) {
 var addImageUploadEvent = function(obj) {
 	var inputEle = $("#" + obj.inputId);
 	inputEle.after('<span id="progressallSpan" style="color:green;"></span><div><img id="' + obj.imgId + '"' + (obj.defaultImgUrl == null ? '' : (' src="' + obj.defaultImgUrl + '"')) + '></div>');
-	obj.fileTypes = ["image/gif", "image/jpeg", "image/jpg", "image/png"];
+	obj.fileTypes = ["image/gif", "image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
 	obj.progressall = function(e, data){
 		var rate = parseInt(data.loaded / data.total * 100, 10);
 	    $("#progressallSpan").html(rate + "%");

@@ -93,16 +93,14 @@ var systemNoticeChange = function(){
 	systemNoticeChangeId = setInterval("systemNoticeChange2()", 1000);
 };
 var systemNoticeChange2 = function(){
-	if(mescroll != null) {
-		var length = $(".content-hearer .vux-marquee-box li").length;
-		if(length > 1) {
-			var step = $(".content-hearer .vux-marquee-box li").height();
-			currentNotice ++;
-			if(currentNotice >= length) {
-				currentNotice = 0;
-			}
-			$(".content-hearer .vux-marquee-box").attr("style", "transform: translate3d(0px, " + (0 - (currentNotice * step)) + "px, 0px); transition: transform 300ms ease 0s;");
+	var length = $(".content-hearer .vux-marquee-box li").length;
+	if(length > 1) {
+		var step = $(".content-hearer .vux-marquee-box li").height();
+		currentNotice ++;
+		if(currentNotice >= length) {
+			currentNotice = 0;
 		}
+		$(".content-hearer .vux-marquee-box").attr("style", "transform: translate3d(0px, " + (0 - (currentNotice * step)) + "px, 0px); transition: transform 300ms ease 0s;");
 	}
 };
 

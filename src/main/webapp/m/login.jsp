@@ -32,6 +32,18 @@ var login = function(){
 		}
 	});
 };
+$(document).ready(function(){
+	loadData({
+		"url" : "isLoginBySession",
+		"success" : function(data) {
+			if(data.code == 100) {
+				if(data.result) {
+					window.location.href = "${basePath}m/index.jsp";
+				}
+			}
+		}
+	});
+});
 </script>
 </head>
 <body>

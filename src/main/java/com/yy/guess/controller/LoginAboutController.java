@@ -85,6 +85,16 @@ public class LoginAboutController {
 		loginManager.webLogout(session);
 		return new ResponseObject(100, "退出登陆成功");
 	}
+	
+	@RequestMapping("/isLoginByToken")
+	public ResponseObject isLoginByToken(@RequestParam String token) {
+		return new ResponseObject(100, "查询成功", loginManager.isLogin(token));
+	}
+	
+	@RequestMapping("/isLoginBySession")
+	public ResponseObject isLoginBySession(HttpSession session) {
+		return new ResponseObject(100, "查询成功", loginManager.isLogin(session));
+	}
 
 	//用户名允许的字符
 	private static final char[] userNameChar = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();

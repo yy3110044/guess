@@ -35,8 +35,8 @@ var initData = function(seconds){
 
 	loadAllSport();//加载项目
 	loadUserBalance(); //加载用户余额
-	loadMatchVersus(pageSize, 1, false); //加载对阵
 	loadSystemNotice(); //加载系统公告
+	loadMatchVersus(pageSize, 1, false); //加载对阵
 	setInterval("loadMatchVersusInterval()", 1000); //间隔加载对阵
 	setInterval("loadOtherData()", seconds * 1000); //间隔加载其它数据
 	
@@ -77,12 +77,32 @@ var loadMatchVersusInterval = function() {
 	}
 };
 
-//间隔加载赔率、公告、用户余额的方法
+//间隔加载其它数据(赔率)的方法
 var loadOtherData = function(){
-	loadUserBalance();
 	getBatchOddsAndPlayTypeStatus();
-	if(type == "today" || type == "scroll") {
-		loadSystemNotice();
+};
+
+//公告定时切换方法
+var systemNoticeChangeId = null;
+var currentNotice = 0;
+var systemNoticeChange = function(){
+	if(systemNoticeChangeId != null) {
+		clearInterval(systemNoticeChangeId);
+	}
+	currentNotice = 0;
+	systemNoticeChangeId = setInterval("systemNoticeChange2()", 1000);
+};
+var systemNoticeChange2 = function(){
+	if(mescroll != null) {
+		var length = $(".content-hearer .vux-marquee-box li").length;
+		if(length > 1) {
+			var step = $(".content-hearer .vux-marquee-box li").height();
+			currentNotice ++;
+			if(currentNotice >= length) {
+				currentNotice = 0;
+			}
+			$(".content-hearer .vux-marquee-box").attr("style", "transform: translate3d(0px, " + (0 - (currentNotice * step)) + "px, 0px); transition: transform 300ms ease 0s;");
+		}
 	}
 };
 
@@ -517,7 +537,7 @@ var loadSystemNotice = function(){
 				str += '<div data-v-bf66ef20="" class="home-notice">';
 				str += '	<div data-v-bf66ef20="" class="notice-icon"></div>';
 				str += '	<div data-v-bf66ef20="" class="vux-marquee" style="height:16px;">';
-				str += '		<ul class="vux-marquee-box">';
+				str += '		<ul class="vux-marquee-box" style="transform: translate3d(0px, 0px, 0px); transition: transform 300ms ease 0s;">';
 				
 				if(list.length > 0) {
 					for(var i=0; i<list.length; i++) {
@@ -533,6 +553,7 @@ var loadSystemNotice = function(){
 				str += '</div>';
 				
 				$("section.content-hearer").html(str);
+				systemNoticeChange();//定时切换
 			} else {
 				m_toast(data.msg);
 			}

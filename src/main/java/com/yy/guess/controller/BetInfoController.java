@@ -1,5 +1,6 @@
 package com.yy.guess.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,10 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yy.fast4j.Fast4jUtils;
 import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.Page;
+import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.ResponseObject;
+import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.guess.po.MatchVersus;
+import com.yy.guess.po.MatchVersusBo;
+import com.yy.guess.po.PlayType;
 import com.yy.guess.po.Sport;
 import com.yy.guess.po.enums.BetDirection;
+import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
 import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.service.SportService;
@@ -34,6 +40,9 @@ import com.yy.guess.util.QueryResult;
 public class BetInfoController {
 	@Autowired
 	private MatchVersusService mvs;
+	
+	@Autowired
+	private MatchVersusBoService mvbs;
 	
 	@Autowired
 	private SportService ss;
@@ -251,7 +260,31 @@ public class BetInfoController {
 		return sportIdList;
 	}
 	
-	public ResponseObject getMatchVersusAnd() {
-		//return null;
+	//返回对阵以及玩法，并把玩法以bo进行分类
+	public ResponseObject getMatchVersusAndPlayType(@RequestParam int versusId) {
+		MatchVersus versus = mvs.findById(versusId);
+		
+	}
+	
+	//返回对阵
+	@RequestMapping("/getMatchVersusAndVersusBo")
+	public ResponseObject getMatchVersusAndVersusBo(@RequestParam int versusId) {
+		MatchVersus versus = mvs.findById(versusId);
+		List<MatchVersusBo> boList = mvbs.query(new QueryCondition().addCondition("versusId", "=", versusId).addSort("bo", SortType.ASC));
+		SimpleDateFormat sdf = new SimpleDateFormat("M月d日 E");
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("versus", versus).set("boList", boList).set("startTimeFormatStr", versus == null ? null : sdf.format(versus.getStartTime())));
+	}
+	
+	//返回玩法列表
+	@RequestMapping("/getPlayTypeList")
+	public ResponseObject getPlayTypeList(@RequestParam int versusId, Integer bo) {
+		QueryCondition qc = new QueryCondition();
+		qc.addCondition("versusId", "=", versusId);
+		if(bo != null) {
+			qc.addCondition("bo", "=", bo);
+		}
+		qc.addSort("bo", SortType.ASC);
+		List<PlayType> ptList = pts.query(qc);
+		return new ResponseObject(100, "返回成功", ptList);
 	}
 }

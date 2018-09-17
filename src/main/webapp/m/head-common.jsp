@@ -17,6 +17,6 @@
 <link rel="shortcut icon" type="image/png" href="m/images/logo/favicon-32x32.png">
 <link rel="apple-touch-icon" href="m/images/logo/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="192x192" href="m/images/logo/apple-touch-icon.png">
-<link href="m/css/app.217131dcf317878791f0e48aa4bc0c4e.css" rel="stylesheet">
+<link href="m/css/app.css" rel="stylesheet">
 <script src="js/jquery.js"></script>
 <script src="m/js/common.js"></script>

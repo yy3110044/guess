@@ -114,7 +114,7 @@ var query = function(){
 									return "平";
 								}
 							} else {
-								return "";
+								return '<span style="color:red;">' + obj.status + '</span>';
 							}
 						}},
 						{fn : function(obj){

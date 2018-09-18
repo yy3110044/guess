@@ -602,9 +602,9 @@ var matchVersusClick = function(versusId){
 var getMatchVersusStr = function(versus, playType, remainingTime){
 	var str = '';
 	if("end" == type) {
-		str += '<div data-v-18da170e="" data-v-bf66ef20="" class="home-match-card">';
+		str += '<div onclick="matchVersusClick(' + versus.id + ')" data-v-18da170e="" data-v-bf66ef20="" class="home-match-card">';
 		str += '	<section data-v-18da170e="" class="card-header">';
-		str += '		<img data-v-18da170e="" src="' + versus.matchLogoUrl + '" width="20px">';
+		str += '		<img data-v-18da170e="" src="' + (empty(versus.matchLogoUrl) ? versus.sportLogoUrl : versus.matchLogoUrl) + '" width="20px">';
 		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name  + '</div>';
 		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
 		str += '		<div data-v-18da170e="" class="play-count">' + (versus.playTypeCount > 1 ? ('+' + versus.playTypeCount) : '') + '</div>';
@@ -642,7 +642,7 @@ var getMatchVersusStr = function(versus, playType, remainingTime){
 	} else {
 		str += '<div onclick="matchVersusClick(' + versus.id + ')" data-v-18da170e="" data-v-bf66ef20="" data-versusId="' + versus.id + '" class="home-match-card"' + (playType == null ? ' style="height:125px !important;"' : '') + ' data-leftTeamName="' + versus.leftTeamName + '" data-rightTeamName="' + versus.rightTeamName + '">';
 		str += '	<section data-v-18da170e="" class="card-header">';
-		str += '		<img data-v-18da170e="" src="' + versus.matchLogoUrl + '" width="20px">';
+		str += '		<img data-v-18da170e="" src="' + (empty(versus.matchLogoUrl) ? versus.sportLogoUrl : versus.matchLogoUrl) + '" width="20px">';
 		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name + '</div>';
 		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
 		str += '		<div data-v-18da170e="" class="play-count">' + (versus.playTypeCount > 1 ? ('+' + versus.playTypeCount) : '') + '</div>';

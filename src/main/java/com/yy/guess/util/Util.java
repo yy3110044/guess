@@ -2,6 +2,10 @@ package com.yy.guess.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,6 +54,11 @@ public class Util {
 	
 	public static ConfigComponent getConfigCom(ServletContext sc) {
 		return Fast4jUtils.getBean(ConfigComponent.class, sc);
+	}
+	
+	public static String generateOrderNumber() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
+		return sdf.format(new Date()) + UUID.randomUUID().toString().substring(24).toUpperCase();
 	}
 	
 	public static boolean isMobile(HttpServletRequest req) {

@@ -32,6 +32,7 @@ var query = function(pageSize, pageNo){
 			if(data.code == 100) {
 				fillResult(data, [
 					{"field" : "id"},
+					{"field" : "orderNumber"},
 					{"field" : "versusId"},
 					{"field" : "bo"},
 					{"field" : "playTypeId"},
@@ -150,6 +151,7 @@ var betRefund2 = function(betId, e){
 		</tr>
 		<tr align="center">
 			<td><strong>ID</strong></td>
+			<td><strong>订单号</strong></td>
 			<td><strong>对阵ID</strong></td>
 			<td><strong>对局</strong></td>
 			<td><strong>玩法ID</strong></td>

@@ -310,7 +310,7 @@ var betSuccess = function(matchVersus, playType, bet){
 	str += '										<div class="stake">投注金额：<span class="color-white">' + bet.betAmount.toFixed(2) + '</span></div>';
 	str += '										<div>预计盈利：<span class="color-white">' + ((bet.betAmount * odds).toFixed(2)) + '</span></div>';
 	str += '									</div>';
-	str += '									<div class="order-note">您可以在“投注记录”中留意订单状态</div>';
+	str += '									<div class="order-note">您可以在“个人中心&nbsp;-&nbsp;投注记录”中留意订单状态</div>';
 	str += '								</div>';
 	str += '							</div>';
 	str += '						</div>';
@@ -319,7 +319,7 @@ var betSuccess = function(matchVersus, playType, bet){
 	str += '				</div>';
 	str += '			</div>';
 	str += '			<div class="weui-dialog__ft">';
-	str += '				<a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">投注记录</a>';
+	str += '				<a href="m/usercenter/betRecord.jsp" class="weui-dialog__btn weui-dialog__btn_default">投注记录</a>';
 	str += '				<a href="javascript:;" onclick="betSuccessClose()" class="weui-dialog__btn weui-dialog__btn_primary">继续投注</a>';
 	str += '			</div>';
 	str += '		</div>';

@@ -3,6 +3,7 @@ package com.yy.guess.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
@@ -543,5 +544,21 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 	@Override
 	public List<PlayType> getAllCachePlayType() {
 		return new ArrayList<PlayType>(this.startedPlayTypeMap.values());
+	}
+
+	@Override
+	public List<PlayType> queryInId(Set<Integer> playTypeIdSet) {
+		if(playTypeIdSet == null) {
+			return null;
+		}
+		if(playTypeIdSet.size() < 1) {
+			return new ArrayList<PlayType>();
+		}
+		if(playTypeIdSet.size() > 20) {
+			RuntimeException e = new RuntimeException("playTypeIdList的长度不能超过20");
+			logger.error(e.toString());
+			throw e;
+		}
+		return mapper.queryInId(playTypeIdSet);
 	}
 }

@@ -1,7 +1,12 @@
 package com.yy.guess.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +24,7 @@ import com.yy.fast4j.QueryCondition;
 @Repository("matchVersusService")
 @Transactional
 public class MatchVersusServiceImpl implements MatchVersusService {
+	private static final Logger logger = LogManager.getLogger(MatchVersusServiceImpl.class);
     @Autowired
     private MatchVersusMapper mapper;
     
@@ -118,5 +124,21 @@ public class MatchVersusServiceImpl implements MatchVersusService {
 			page.setRowCount(mapper.queryInSportIdCount(sportIdList, status, startTime, endTime));
 		}
 		return new QueryResult<MatchVersus>(list, page);
+	}
+
+	@Override
+	public List<MatchVersus> queryInId(Set<Integer> versusIdSet) {
+		if(versusIdSet == null) {
+			return null;
+		}
+		if(versusIdSet.size() < 1) {
+			return new ArrayList<MatchVersus>();
+		}
+		if(versusIdSet.size() > 20) {
+			RuntimeException e = new RuntimeException("versusIdList的长度不能超过20");
+			logger.error(e.toString());
+			throw e;
+		}
+		return mapper.queryInId(versusIdSet);
 	}
 }

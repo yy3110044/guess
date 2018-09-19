@@ -2,6 +2,7 @@ package com.yy.guess.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
 import com.yy.guess.po.enums.MatchStatus;
@@ -28,4 +29,5 @@ public interface MatchVersusService {
 
     void updateStatus(MatchStatus status, int versusId);
     void updateAutoSwitchStatus(boolean autoSwitchStatus, int versusId);
+    List<MatchVersus> queryInId(Set<Integer> versusIdSet);
 }

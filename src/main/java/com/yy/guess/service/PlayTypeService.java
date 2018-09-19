@@ -1,6 +1,7 @@
 package com.yy.guess.service;
 
 import java.util.List;
+import java.util.Set;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.enums.BetDirection;
@@ -65,4 +66,6 @@ public interface PlayTypeService {
     void updateStatusAndResultByVersusIdAndBo(MatchStatus status, int versusId, int bo);
     
     List<PlayType> getAllCachePlayType(); //返回所有缓存的playType;
+    
+    List<PlayType> queryInId(Set<Integer> playTypeIdSet);
 }

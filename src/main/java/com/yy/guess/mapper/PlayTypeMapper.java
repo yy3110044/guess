@@ -1,6 +1,7 @@
 package com.yy.guess.mapper;
 
 import java.util.List;
+import java.util.Set;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -83,4 +84,6 @@ public interface PlayTypeMapper {
     //更改playType的状态以及结果
     @Update("update guess_play_type set status = #{status}, result = #{result} where id = #{playTypeId}")
     void updateStatusAndResultByPlayTypeId(MatchStatus status, int result, int playTypeId);
+    
+    List<PlayType> queryInId(@Param("playTypeIdSet") Set<Integer> playTypeIdSet);
 }

@@ -209,6 +209,7 @@ CREATE TABLE `guess_play_type` (
 DROP TABLE IF EXISTS `guess_bet`;
 CREATE TABLE `guess_bet` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `orderNumber` char(64) NOT NULL COMMENT '订单号',
   `versusId` int(11) COMMENT '对阵id',
   `bo` tinyint COMMENT '对应比赛场次，从1开始，0代表总对阵',
   `playTypeId` int(11) COMMENT '玩法id',
@@ -225,6 +226,7 @@ CREATE TABLE `guess_bet` (
   KEY `playTypeId` (`playTypeId`),
   KEY `userId` (`userId`),
   KEY `status` (`status`),
+  UNIQUE KEY `orderNumber` (`orderNumber`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

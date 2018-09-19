@@ -1,7 +1,8 @@
 package com.yy.guess.controller.user;
 
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
@@ -110,7 +110,20 @@ public class BetController {
 		qc.addSort("id", SortType.DESC);
 		qc.setPage(new Page(pageSize, pageNo, showCount));
 		List<Bet> list = bs.query(qc);
+		
+		Set<Integer> versusIdSet = new HashSet<Integer>();
+		Set<Integer> playTypeIdSet = new HashSet<Integer>();
+		for(Bet bet : list) {
+			versusIdSet.add(bet.getVersusId());
+			playTypeIdSet.add(bet.getPlayTypeId());
+		}
+		
 		Page page = qc.getPage(bs.getCount(qc));
-		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
+		JsonResultMap result = new JsonResultMap();
+		result.put("list", list);
+		result.put("page", page);
+		result.put("versusList", mvs.queryInId(versusIdSet));
+		result.put("playTypeList", pts.queryInId(playTypeIdSet));
+		return new ResponseObject(100, "返回成功", result);
 	}
 }

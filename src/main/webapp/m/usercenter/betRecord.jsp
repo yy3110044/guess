@@ -36,7 +36,46 @@
 					
 					<div data-v-1545e424="" id="vux-scroller-6vidl" class="mescroll" style="touch-action:auto;user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);position:relative;overflow:scroll;">
 						<div class="xs-container" style="transform-origin: 0px 0px 0px; transform: translateY(0px) translateZ(0px);">
-							<div data-v-1545e424="" id="record-card-container" style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);"></div>
+							<div data-v-1545e424="" id="record-card-container" style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);padding-bottom:4px;">
+							
+							
+							
+							<!--  
+								<div data-v-1545e424="" class="record-card">
+									<div data-v-1545e424="" class="order-detail">
+										<div data-v-1545e424="" class="detail-header">
+											<div data-v-1545e424="" class="header-title-left">
+												<img data-v-1545e424="" src="" class="game-icon">
+												<span data-v-1545e424="" class="title">Athletico Esport 获胜者</span>
+											</div>
+											<div data-v-1545e424=""><span data-v-1545e424="">全场</span> <span data-v-1545e424="">赛前</span></div>
+										</div>
+										<div data-v-1545e424="" class="header-hr"></div>
+										<div data-v-1545e424="" class="result-flag win-flag"></div>
+										<div data-v-1545e424="" class="order-content">
+											<div data-v-1545e424="" class="content-list">
+												<div data-v-1545e424="" class="list-text">Athletico Esport - VS - SaveBuyBackPlz</div>
+												<div data-v-1545e424="" class="list-text">开始时间:2018-09-03 19:20:00</div>
+												<div data-v-1545e424="" class="list-text">赔率: 1.27</div>
+											</div>
+										</div>
+									</div>
+									<section data-v-1545e424="" class="order-info">
+										<div data-v-1545e424="" class="parlay-title"><span data-v-1545e424="">单场</span><span data-v-1545e424="" class="odds-status order-close">已结算 </span></div>
+										<div data-v-1545e424="" class="info-content">
+											<div data-v-1545e424="" class="bet-amount">投注金额: <span data-v-1545e424="" class="stake">10.00</span></div>
+											<div data-v-1545e424="" class="profit">盈利 <span data-v-1545e424="" class="bonus-win"> 12.70</span></div>
+										</div>
+										<div data-v-1545e424="" style="height:18px;"></div>
+										<div data-v-1545e424="" class="info-content"><div data-v-1545e424="">订单号: 4f0108a7a698d63283</div><div data-v-1545e424="">2018-09-03 18:58:05</div></div>
+									</section>
+								</div>
+							-->
+							
+							
+							
+							
+							</div>
 						</div>
 						<div class=" xs-fixed-container"></div>
 					</div>

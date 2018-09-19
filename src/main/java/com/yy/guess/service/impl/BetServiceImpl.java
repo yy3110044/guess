@@ -22,6 +22,7 @@ import com.yy.guess.po.enums.BetStatus;
 import com.yy.guess.po.enums.TradeType;
 import com.yy.guess.service.BetService;
 import com.yy.guess.service.PlayTypeService;
+import com.yy.guess.util.Util;
 import com.yy.fast4j.QueryCondition;
 
 @Repository("betService")
@@ -101,6 +102,7 @@ public class BetServiceImpl implements BetService {
 	    	//保存存bet到数据库
 	    	double[] odds = pts.getOdds(playTypeId);
 	    	Bet bet = new Bet();
+	    	bet.setOrderNumber(Util.generateOrderNumber());
 	    	bet.setVersusId(playType.getVersusId());
 	    	bet.setBo(playType.getBo());
 	    	bet.setPlayTypeId(playType.getId());

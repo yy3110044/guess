@@ -6,6 +6,7 @@ import com.yy.guess.po.enums.BetStatus;
 
 public class Bet {
 	private int id;
+	private String orderNumber;
 	private int versusId;
 	private int bo;
 	private int playTypeId;
@@ -23,6 +24,12 @@ public class Bet {
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 	public int getVersusId() {
 		return versusId;

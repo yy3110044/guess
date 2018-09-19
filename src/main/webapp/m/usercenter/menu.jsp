@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%><!DOCTYPE html>
 <html>
 <head>
-<title>用户中心 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
+<title>个人中心 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <%@include file="/m/head-common.jsp"%>
 <script src="m/js/usercenter.js"></script>
 </head>
@@ -10,7 +10,7 @@
 		<nav data-v-1db5fc32="" class="app-header">
 			<ul data-v-1db5fc32="">
 				<li data-v-1db5fc32="" onclick="window.location.href='m/index.jsp'" class="base-icon history-back"></li>
-				<li data-v-1db5fc32="">个人资料</li>
+				<li data-v-1db5fc32="">个人中心</li>
 				<li data-v-1db5fc32=""><a data-v-1db5fc32="" href="javascript:;" class="base-icon account-setting"></a></li>
 			</ul>
 		</nav>

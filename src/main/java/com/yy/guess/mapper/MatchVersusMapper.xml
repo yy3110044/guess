@@ -129,4 +129,8 @@
 		</if>
 		playTypeCount > 0
     </select>
+    <select id="queryInId" resultType="com.yy.guess.po.MatchVersus">
+		select id, name, matchId, matchName, matchLogoUrl, sportId, sportName, sportLogoUrl, leftTeamId, leftTeamName, rightTeamId, rightTeamName, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, playTypeCount, startTime, endTime, status, autoSwitchStatus, boCount, realBoCount, result, createTime from guess_match_versus
+    	where id in (<foreach collection="versusIdSet" item="obj" separator=",">#{obj}</foreach>)
+    </select>
 </mapper>

@@ -93,4 +93,9 @@
 			(#{obj.id}, #{obj.versusId}, #{obj.name}, #{obj.bo}, #{obj.versusBoId}, #{obj.status}, #{obj.result}, #{obj.paramStr}, #{obj.templateClass}, #{obj.pause}, #{obj.guessStart}, #{obj.leftGuessName}, #{obj.rightGuessName}, #{obj.leftWinRate}, #{obj.rightWinRate}, #{obj.leftBonusPool}, #{obj.rightBonusPool}, #{obj.fixedOdds}, #{obj.createTime})
 		</foreach>
     </insert>
+    
+    <select id="queryInId" resultType="com.yy.guess.po.PlayType">
+		select id, versusId, name, bo, versusBoId, status, result, paramStr, templateClass, pause, guessStart, leftGuessName, rightGuessName, leftWinRate, rightWinRate, leftBonusPool, rightBonusPool, fixedOdds, createTime from guess_play_type
+        where id in (<foreach collection="playTypeIdSet" item="obj" separator=",">#{obj}</foreach>)
+    </select>
 </mapper>

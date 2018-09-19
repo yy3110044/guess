@@ -2,6 +2,7 @@ package com.yy.guess.mapper;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -45,4 +46,6 @@ public interface MatchVersusMapper {
     						@Param("status") int status,
     						@Param("startTime") Date startTime,
     						@Param("endTime") Date endTime);
+    
+    List<MatchVersus> queryInId(@Param("versusIdSet") Set<Integer> versusIdSet);
 }

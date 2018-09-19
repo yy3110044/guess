@@ -68,4 +68,6 @@ public interface PlayTypeService {
     List<PlayType> getAllCachePlayType(); //返回所有缓存的playType;
     
     List<PlayType> queryInId(Set<Integer> playTypeIdSet);
+    
+    void updateChangeOddsMinAndMax(double changeOddsMin, double changeOddsMax, int playTypeId);//更改变动赔率上下限
 }

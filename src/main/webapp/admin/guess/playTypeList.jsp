@@ -105,6 +105,22 @@ var query = function(){
 							}
 						}},
 						{fn : function(obj){
+							var str = '';
+							if(obj.changeOddsMin > 0) {
+								str += obj.changeOddsMin.toFixed(2);
+							} else {
+								str += '<span>不限制</span>';
+							}
+							str += '&nbsp;~&nbsp;';
+							if(obj.changeOddsMax > 0) {
+								str += obj.changeOddsMax.toFixed(2);
+							} else {
+								str += '<span>不限制</span>';
+							}
+							str += '&nbsp;<a href="javascript:;" onclick="modifyChangeOdds(' + obj.id + ', ' + obj.changeOddsMin + ', ' + obj.changeOddsMax + ', this)">修改</a>';
+							return str;
+						}},
+						{fn : function(obj){
 							if("已结束" == obj.status) {
 								if(obj.result > 0) {
 									return obj.rightGuessName;
@@ -140,6 +156,48 @@ var query = function(){
 	});
 };
 
+//修改changeOddsMin Max
+var modifyChangeOdds = function(playTypeId, changeOddsMin, changeOddsMax, e){
+	var str = '<tr class="contentTr updatePlayTypeTr"><td colspan="99">';
+	str += '<input type="number" id="changeOddsMin" step="0.01" style="width:70px;" value="' + changeOddsMin + '">';
+	str += '&nbsp;~&nbsp;';
+	str += '<input type="number" id="changeOddsMax" step="0.01" style="width:70px;" value="' + changeOddsMax + '">';
+	str += '<input type="button" value="修改" onclick="modifyChangeOdds2(' + playTypeId + ')">';
+	str += '&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().remove()">';
+	str += '&nbsp;&nbsp;<span style="color:red;">输入零代表不限制</span>';
+	str += '</td></tr>'
+	$("tr.updatePlayTypeTr").remove();
+	$(e).parent().parent().after(str);
+	$("#changeOddsMin,#changeOddsMax").keyup(changeOddsInput);
+	$("#changeOddsMin,#changeOddsMax").blur(changeOddsInput);
+	$("#changeOddsMin,#changeOddsMax").focus(changeOddsInput);
+	$("#changeOddsMin,#changeOddsMax").click(changeOddsInput);
+};
+var modifyChangeOdds2 = function(playTypeId) {
+	var changeOddsMin = $.trim($("#changeOddsMin").val());
+	var changeOddsMax = $.trim($("#changeOddsMax").val());
+	var changeOddsMinFloat = parseFloat(changeOddsMin);
+	var changeOddsMaxFloat = parseFloat(changeOddsMax);
+	if(changeOddsMinFloat > changeOddsMaxFloat) {
+		showMsg("左边不能大于右边");
+		return;
+	}
+	loadData({
+		url : "administration/updateChangeOddsMinAndMax",
+		data : {
+			"changeOddsMin" : changeOddsMin,
+			"changeOddsMax" : changeOddsMax,
+			"playTypeId" : playTypeId
+		},
+		success : function(data){
+			showMsg(data.msg);
+			if(data.code == 100) {
+				query();
+			}
+		}
+	});
+};
+
 //修改名称
 var modifyName = function(playTypeId, name, e) {
 	var str = '<tr class="contentTr updatePlayTypeTr"><td colspan="99">';
@@ -170,6 +228,29 @@ var modifyName2 = function(playTypeId) {
 		}
 	});
 }
+
+var changeOddsInput = function(){
+	var ts = $(this);
+	var val = $.trim(ts.val());
+	if(empty(val)) return;
+	var valFloat = parseFloat(val);
+	
+	var id = ts.attr("id");
+	if("changeOddsMin" == id) {
+		if(valFloat > 2) {
+			valFloat = 2;
+		}
+		
+		var another = 1 / (1 - (1 / valFloat));
+		$("#changeOddsMax").val(another.toFixed(2));
+	} else if("changeOddsMax" == id) {
+		if(valFloat > 101) {
+			valFloat = 101;
+		}
+		var another = 1 / (1 - (1 / valFloat));
+		$("#changeOddsMin").val(another.toFixed(2));
+	}
+};
 
 //修改双方竞猜名
 var modifyGuessName = function(playTypeId, leftGuessName, rightGuessName, e) {
@@ -415,6 +496,7 @@ $(document).ready(function(){
 			<td><strong>暂停下注</strong></td>
 			<td><strong>预计胜率</strong></td>
 			<td><strong>赔率</strong></td>
+			<td><strong>变动赔率限制</strong></td>
 			<td><strong>结果</strong></td>
 			<td><strong>奖金池</strong></td>
 			<td><strong>操作</strong></td>

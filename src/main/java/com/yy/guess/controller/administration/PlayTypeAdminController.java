@@ -44,6 +44,8 @@ public class PlayTypeAdminController {
                                       @RequestParam String templateClass,
                                       @RequestParam double leftWinRate,
                                       @RequestParam double rightWinRate,
+                                      @RequestParam double changeOddsMin,
+                                      @RequestParam double changeOddsMax,
                                       @RequestParam boolean fixedOdds,
                                       HttpServletRequest req) {
 		String[] params = req.getParameterValues("params[]");
@@ -86,6 +88,8 @@ public class PlayTypeAdminController {
 				versusPy.setParamStr(paramStr);
 				versusPy.setLeftWinRate(leftWinRate);
 				versusPy.setRightWinRate(rightWinRate);
+				versusPy.setChangeOddsMin(changeOddsMin);
+				versusPy.setChangeOddsMax(changeOddsMax);
 				versusPy.setFixedOdds(fixedOdds);
 				if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
 					versusPy.setGuessStart(true);
@@ -109,6 +113,8 @@ public class PlayTypeAdminController {
 					boPy.setParamStr(paramStr);
 					boPy.setLeftWinRate(leftWinRate);
 					boPy.setRightWinRate(rightWinRate);
+					boPy.setChangeOddsMin(changeOddsMin);
+					boPy.setChangeOddsMax(changeOddsMax);
 					boPy.setFixedOdds(fixedOdds);
 					if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
 						boPy.setGuessStart(true);
@@ -135,6 +141,8 @@ public class PlayTypeAdminController {
 			boPy.setParamStr(paramStr);
 			boPy.setLeftWinRate(leftWinRate);
 			boPy.setRightWinRate(rightWinRate);
+			boPy.setChangeOddsMin(changeOddsMin);
+			boPy.setChangeOddsMax(changeOddsMax);
 			boPy.setFixedOdds(fixedOdds);
 			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
 				boPy.setGuessStart(true);
@@ -157,6 +165,8 @@ public class PlayTypeAdminController {
 			versusPy.setParamStr(paramStr);
 			versusPy.setLeftWinRate(leftWinRate);
 			versusPy.setRightWinRate(rightWinRate);
+			versusPy.setChangeOddsMin(changeOddsMin);
+			versusPy.setChangeOddsMax(changeOddsMax);
 			versusPy.setFixedOdds(fixedOdds);
 			if(versus.getStatus() == MatchStatus.未开始 || versus.getStatus() == MatchStatus.进行中) {
 				versusPy.setGuessStart(true);
@@ -254,6 +264,13 @@ public class PlayTypeAdminController {
 	@RequestMapping("/updateGuessName")
 	public ResponseObject updateGuessName(@RequestParam String leftGuessName, @RequestParam String rightGuessName, @RequestParam int playTypeId) {
 		pts.updateGuessName(leftGuessName, rightGuessName, playTypeId);
+		return new ResponseObject(100, "操作成功");
+	}
+	
+	//更新changeOdds
+	@RequestMapping("/updateChangeOddsMinAndMax")
+	public ResponseObject updateChangeOddsMinAndMax(@RequestParam double changeOddsMin, @RequestParam double changeOddsMax, @RequestParam int playTypeId) {
+		pts.updateChangeOddsMinAndMax(changeOddsMin, changeOddsMax, playTypeId);
 		return new ResponseObject(100, "操作成功");
 	}
 }

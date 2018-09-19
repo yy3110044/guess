@@ -3,7 +3,6 @@ package com.yy.guess.mapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
-
 import com.yy.guess.po.UserNotice;
 import com.yy.fast4j.QueryCondition;
 

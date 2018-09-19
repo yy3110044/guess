@@ -19,7 +19,8 @@ $(document).ready(function(){
 var sendNotice = function(userId, e) {
 	var str = '';
 	str += '<tr class="contentTr detailTr"><td colspan="99" style="padding:4px;">';
-	str += '<input type="text" id="noticeContent" placeholder="输入通知内容" style="width:700px;">';
+	str += '<input type="text" id="noticeTitle" placeholder="输入通知标题"><br>';
+	str += '<textarea id="noticeContent" placeholder="输入通知内容" style="width:300px;height:150px;margin-top:5px;margin-bottom:5px;"></textarea><br>';
 	str += '&nbsp;&nbsp;<input type="button" onclick="sendNotice2(' + userId + ')" value="发送">';
 	str += '&nbsp;&nbsp;<input type="button" onclick="$(this).parent().parent().remove()" value="关闭">';
 	str += '</td></tr>';
@@ -27,6 +28,7 @@ var sendNotice = function(userId, e) {
 	$(e).parent().parent().after(str);
 };
 var sendNotice2 = function(userId){
+	var title = $.trim($("#noticeTitle").val());
 	var content = $.trim($("#noticeContent").val());
 	if(empty(content)) {
 		showMsg("请输入通知内容");
@@ -36,11 +38,13 @@ var sendNotice2 = function(userId){
 		url : "administration/userNoticeAdd",
 		data : {
 			"userId" : userId,
+			"title" : title,
 			"content" : content
 		},
 		success : function(data){
 			showMsg(data.msg);
 			if(data.code == 100) {
+				$("#noticeTitle").val("");
 				$("#noticeContent").val("");
 			}
 		}

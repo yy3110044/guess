@@ -26,6 +26,28 @@ var winRateInput = function(){
 		$("#leftWinRate").val(100 - valInt);
 	}
 };
+var changeOddsInput = function(){
+	var ts = $(this);
+	var val = $.trim(ts.val());
+	if(empty(val)) return;
+	var valFloat = parseFloat(val);
+	
+	var id = ts.attr("id");
+	if("changeOddsMin" == id) {
+		if(valFloat > 2) {
+			valFloat = 2;
+		}
+		
+		var another = 1 / (1 - (1 / valFloat));
+		$("#changeOddsMax").val(another.toFixed(2));
+	} else if("changeOddsMax" == id) {
+		if(valFloat > 101) {
+			valFloat = 101;
+		}
+		var another = 1 / (1 - (1 / valFloat));
+		$("#changeOddsMin").val(another.toFixed(2));
+	}
+};
 $(document).ready(function(){
 	if(empty(matchVersusId)) {
 		loadData({
@@ -76,6 +98,23 @@ $(document).ready(function(){
 	$("#leftWinRate,#rightWinRate").blur(winRateInput);
 	$("#leftWinRate,#rightWinRate").focus(winRateInput);
 	$("#leftWinRate,#rightWinRate").click(winRateInput);
+	
+	
+	$("#changeOddsSwitch").click(function(){
+		if($("#changeOddsSwitch").is(":checked")) {
+			$("#changeOddsMin,#changeOddsMax").val("0");
+			$("#changeOddsMin,#changeOddsMax").unbind();
+			$("#changeOddsMin,#changeOddsMax").attr("readonly", "readonly");
+		} else {
+			$("#changeOddsMin").val("1.01");
+			$("#changeOddsMax").val("101.00");
+			$("#changeOddsMin,#changeOddsMax").removeAttr("readonly");
+			$("#changeOddsMin,#changeOddsMax").keyup(changeOddsInput);
+			$("#changeOddsMin,#changeOddsMax").blur(changeOddsInput);
+			$("#changeOddsMin,#changeOddsMax").focus(changeOddsInput);
+			$("#changeOddsMin,#changeOddsMax").click(changeOddsInput);
+		}
+	});
 });
 
 //项目类型变换
@@ -249,6 +288,8 @@ var addPlayType = function(){
 	var applyScope = $.trim($("#applyScope").val());
 	var leftWinRate = $.trim($("#leftWinRate").val());
 	var rightWinRate = $.trim($("#rightWinRate").val());
+	var changeOddsMin = $.trim($("#changeOddsMin").val());
+	var changeOddsMax = $.trim($("#changeOddsMax").val());
 	var fixedOdds = $.trim($("#fixedOdds").val());
 	if(empty(matchVersusId) || "0" == matchVersusId) {
 		showMsg("请选择对阵");
@@ -260,6 +301,13 @@ var addPlayType = function(){
 	}
 	if(empty(applyScope)) {
 		showMsg("请选择应用范围");
+		return;
+	}
+	
+	var changeOddsMinFloat = parseFloat(changeOddsMin);
+	var changeOddsMaxFloat = parseFloat(changeOddsMax);
+	if(changeOddsMin > changeOddsMax) {
+		showMsg("赔率范围错误")
 		return;
 	}
 	
@@ -308,6 +356,8 @@ var addPlayType = function(){
 				"templateClass" : templateClass,
 				"leftWinRate" : parseFloat(leftWinRate) / 100,
 				"rightWinRate" : parseFloat(rightWinRate) / 100,
+				"changeOddsMin" : changeOddsMin,
+				"changeOddsMax" : changeOddsMax,
 				"fixedOdds" : fixedOdds,
 				"params[]" : params
 			},
@@ -361,7 +411,17 @@ var addPlayType = function(){
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">预计胜率：</td>
-			<td><span id="leftWinRateSpan"></span>&nbsp;<input type="number" id="leftWinRate" value="50" min="0" style="width:40px;">%&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;<span id="rightWinRateSpan"></span>&nbsp;<input type="number" id="rightWinRate" value="50" min="0" style="width:40px;">%&nbsp;<span style="color:red;">会用这个计算初始赔率</span></td>
+			<td><span id="leftWinRateSpan"></span>&nbsp;<input type="number" id="leftWinRate" value="50" min="0" style="width:40px;">%&nbsp;<span style="font-weight:bold;font-size:18px;color:red;">:</span>&nbsp;<span id="rightWinRateSpan"></span>&nbsp;<input type="number" id="rightWinRate" value="50" min="0" style="width:40px;">%&nbsp;<span style="color:red;">会用这个计算初始赔率以及固定赔率</span></td>
+		</tr>
+		<tr>
+			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">变动赔率上下限：</td>
+			<td>
+				<input type="number" id="changeOddsMin" value="0" min="0" step="0.01" style="width:70px;" readonly="readonly">
+				<span style="font-weight:bold;font-size:18px;color:red;">~</span>
+				<input type="number" id="changeOddsMax" value="0" min="0" step="0.01" style="width:70px;" readonly="readonly">
+				<span><input type="checkbox" id="changeOddsSwitch" checked="checked"><label for="changeOddsSwitch" style="display:inline-block;line-height:normal;">不限制</label></span>
+				<span style="color:red;">当赔率为变动时的上下限</span>
+			</td>
 		</tr>
 		<tr id="paramAfterTr">
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">赔率类型：</td>

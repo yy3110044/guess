@@ -86,4 +86,8 @@ public interface PlayTypeMapper {
     void updateStatusAndResultByPlayTypeId(MatchStatus status, int result, int playTypeId);
     
     List<PlayType> queryInId(@Param("playTypeIdSet") Set<Integer> playTypeIdSet);
+    
+    //更改变动赔率上下限
+    @Update("update guess_play_type set changeOddsMin = #{changeOddsMin}, changeOddsMax = #{changeOddsMax} where id = #{playTypeId}")
+    void updateChangeOddsMinAndMax(double changeOddsMin, double changeOddsMax, int playTypeId);
 }

@@ -39,6 +39,7 @@ var query = function(pageSize, pageNo){
 					{field : "id"},
 					{field : "userId"},
 					{field : "userName"},
+					{field : "title"},
 					{field : "content"},
 					{fn : function(obj){
 						return obj.hadRead ? '<span style="color:red;">已读</span>' : '<span style="color:green;">未读</span>';
@@ -86,6 +87,7 @@ $(document).ready(function(){
 			<td><strong>id</strong></td>
 			<td><strong>用户id</strong></td>
 			<td><strong>用户名</strong></td>
+			<td><strong>标题</strong></td>
 			<td><strong>内容</strong></td>
 			<td><strong>已读</strong></td>
 			<td><strong>读取时间</strong></td>

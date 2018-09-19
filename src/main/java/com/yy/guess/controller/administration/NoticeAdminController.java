@@ -57,7 +57,7 @@ public class NoticeAdminController {
 	}
 	
 	@RequestMapping("/userNoticeAdd")
-	public ResponseObject userNoticeAdd(@RequestParam int userId, @RequestParam String content) {
+	public ResponseObject userNoticeAdd(@RequestParam int userId, @RequestParam String title, @RequestParam String content) {
 		User user = us.findById(userId);
 		if(user == null) {
 			return new ResponseObject(101, "用户不存在");
@@ -65,6 +65,7 @@ public class NoticeAdminController {
 		UserNotice notice = new UserNotice();
 		notice.setUserId(user.getId());
 		notice.setUserName(user.getUserName());
+		notice.setTitle(StringEscapeUtils.escapeHtml4(title));
 		notice.setContent(StringEscapeUtils.escapeHtml4(content));
 		uns.add(notice);
 		return new ResponseObject(100, "添加成功");

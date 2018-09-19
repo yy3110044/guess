@@ -22,6 +22,8 @@ public class PlayType {
 	private double leftBonusPool;
 	private double rightBonusPool;
 	private boolean fixedOdds;
+	private double changeOddsMin;
+	private double changeOddsMax;
 	private Date createTime = new Date();
 	public int getId() {
 		return id;
@@ -131,6 +133,18 @@ public class PlayType {
 	public void setFixedOdds(boolean fixedOdds) {
 		this.fixedOdds = fixedOdds;
 	}
+	public double getChangeOddsMin() {
+		return changeOddsMin;
+	}
+	public void setChangeOddsMin(double changeOddsMin) {
+		this.changeOddsMin = changeOddsMin;
+	}
+	public double getChangeOddsMax() {
+		return changeOddsMax;
+	}
+	public void setChangeOddsMax(double changeOddsMax) {
+		this.changeOddsMax = changeOddsMax;
+	}
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -142,11 +156,15 @@ public class PlayType {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + bo;
+		long temp;
+		temp = Double.doubleToLongBits(changeOddsMax);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(changeOddsMin);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((createTime == null) ? 0 : createTime.hashCode());
 		result = prime * result + (fixedOdds ? 1231 : 1237);
 		result = prime * result + (guessStart ? 1231 : 1237);
 		result = prime * result + id;
-		long temp;
 		temp = Double.doubleToLongBits(leftBonusPool);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((leftGuessName == null) ? 0 : leftGuessName.hashCode());
@@ -177,6 +195,10 @@ public class PlayType {
 			return false;
 		PlayType other = (PlayType) obj;
 		if (bo != other.bo)
+			return false;
+		if (Double.doubleToLongBits(changeOddsMax) != Double.doubleToLongBits(other.changeOddsMax))
+			return false;
+		if (Double.doubleToLongBits(changeOddsMin) != Double.doubleToLongBits(other.changeOddsMin))
 			return false;
 		if (createTime == null) {
 			if (other.createTime != null)

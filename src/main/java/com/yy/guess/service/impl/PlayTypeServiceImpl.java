@@ -307,9 +307,31 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 			} else {
 				switch(direction) {
 				case LEFT:
-					return this.cfgCom.getReturnRate() / (bonusPool[0] / (bonusPool[0] + bonusPool[1]));
+					double leftOdds = this.cfgCom.getReturnRate() / (bonusPool[0] / (bonusPool[0] + bonusPool[1]));
+					if(playType.getChangeOddsMin() > 0) {
+						if(leftOdds < playType.getChangeOddsMin()) {
+							leftOdds = playType.getChangeOddsMin();
+						}
+					}
+					if(playType.getChangeOddsMax() > 0) {
+						if(leftOdds > playType.getChangeOddsMax()) {
+							leftOdds = playType.getChangeOddsMax();
+						}
+					}
+					return leftOdds;
 				case RIGHT:
-					return this.cfgCom.getReturnRate() / (bonusPool[1] / (bonusPool[0] + bonusPool[1]));
+					double rightOdds = this.cfgCom.getReturnRate() / (bonusPool[1] / (bonusPool[0] + bonusPool[1]));
+					if(playType.getChangeOddsMin() > 0) {
+						if(rightOdds < playType.getChangeOddsMin()) {
+							rightOdds = playType.getChangeOddsMin();
+						}
+					}
+					if(playType.getChangeOddsMax() > 0) {
+						if(rightOdds > playType.getChangeOddsMax()) {
+							rightOdds = playType.getChangeOddsMax();
+						}
+					}
+					return rightOdds;
 				default:
 					RuntimeException e = new RuntimeException("未知的下注方：" + direction);
 					logger.error(e.toString());
@@ -350,7 +372,17 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 			} else {
 				double totalBonusPool = bonusPool[0] + bonusPool[1];
 				double returnRate = cfgCom.getReturnRate();
-				return new double[] {returnRate / (bonusPool[0] / totalBonusPool), returnRate / (bonusPool[1] / totalBonusPool)};
+				double leftOdds = returnRate / (bonusPool[0] / totalBonusPool);
+				double rightOdds = returnRate / (bonusPool[1] / totalBonusPool);
+				if(playType.getChangeOddsMin() > 0) {
+					if(leftOdds < playType.getChangeOddsMin()) leftOdds = playType.getChangeOddsMin();
+					if(rightOdds < playType.getChangeOddsMin()) rightOdds = playType.getChangeOddsMin();
+				}
+				if(playType.getChangeOddsMax() > 0) {
+					if(leftOdds > playType.getChangeOddsMax()) leftOdds = playType.getChangeOddsMax();
+					if(rightOdds > playType.getChangeOddsMax()) rightOdds = playType.getChangeOddsMax();
+				}
+				return new double[] {leftOdds, rightOdds};
 			}
 		}
 	}
@@ -560,5 +592,15 @@ public class PlayTypeServiceImpl implements PlayTypeService {
 			throw e;
 		}
 		return mapper.queryInId(playTypeIdSet);
+	}
+
+	@Override
+	public void updateChangeOddsMinAndMax(double changeOddsMin, double changeOddsMax, int playTypeId) {
+		mapper.updateChangeOddsMinAndMax(changeOddsMin, changeOddsMax, playTypeId);
+		PlayType pt = this.startedPlayTypeMap.get(playTypeId);
+		if(pt != null) {
+			pt.setChangeOddsMin(changeOddsMin);
+			pt.setChangeOddsMax(changeOddsMax);
+		}
 	}
 }

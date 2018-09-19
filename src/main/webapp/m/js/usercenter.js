@@ -58,7 +58,7 @@ $(document).ready(function(){
 						str += '				<img data-v-1545e424="" src="//yuanjududu.com//file/98c6eb475bf90d035c0d6b7f31fd59d0.svg" class="game-icon">';
 						str += '				<span data-v-1545e424="" class="title">Red Reserve 获胜者</span>';
 						str += '			</div>';
-						str += '			<div data-v-1545e424=""><span data-v-1545e424="">全场</span> <span data-v-1545e424="">滚盘</span></div>';
+						str += '			<div data-v-1545e424=""><span data-v-1545e424="">' + (obj.bo > 0 ? '第' + obj.bo + '局' : '全场') + '</span> <span data-v-1545e424=""></span></div>';
 						str += '		</div>';
 						str += '		<div data-v-1545e424="" class="header-hr"></div>';
 						str += '		<div data-v-1545e424="" class="result-flag"></div>';

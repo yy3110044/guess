@@ -81,9 +81,9 @@ public class NoticeController {
 		return new ResponseObject(100, "返回成功", notice);
 	}
 	
-	//返回某用户的未读通知数量
-	@RequestMapping("/user/getUnReadUserNoticeCount")
-	public ResponseObject getUnReadUserNoticeCount(HttpServletRequest req) {
+	//返回某用户的未读通知数量，未登陆返回零
+	@RequestMapping("/user/getUnreadUserNoticeCount")
+	public ResponseObject getUnreadUserNoticeCount(HttpServletRequest req) {
 		Integer userId = (Integer)req.getAttribute("userId");
 		QueryCondition qc = new QueryCondition();
 		qc.addCondition("userId", "=", userId);

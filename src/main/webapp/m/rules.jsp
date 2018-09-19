@@ -5,7 +5,7 @@
 <%@include file="/m/head-common.jsp"%>
 </head>
 <body>
-	<div id="app" class="">
+	<div id="app">
 		<nav data-v-1db5fc32="" class="app-header">
 			<ul data-v-1db5fc32="">
 				<li data-v-1db5fc32="" onclick="window.history.back()" class="base-icon history-back"></li>

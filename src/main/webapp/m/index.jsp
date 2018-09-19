@@ -10,24 +10,18 @@
 #vux-scroller-60yre::-webkit-scrollbar{display:none;width:0;height:0;}
 </style>
 <script>
-$(document).ready(function(){initData(<%=com.yy.guess.util.Util.getConfigCom(application).getClientLoadDataInterval()%>);/*初始化*/});
+$(document).ready(function(){initData("${param.type}", <%=com.yy.guess.util.Util.getConfigCom(application).getClientLoadDataInterval()%>);/*初始化*/});
 </script>
 </head>
 <body>
-	<div id="app" class="">
+	<div id="app">
 		<nav data-v-1db5fc32="" class="app-header">
 			<ul data-v-1db5fc32="">
-				<li data-v-1db5fc32="">
-					<div data-v-1db5fc32="" class="notice-badge"></div>
-					<a data-v-1db5fc32="" href="" class="base-icon personal-info"></a>
-				</li>
+				<li data-v-1db5fc32="" class="notice-count"><a data-v-1db5fc32="" href="m/usercenter/menu.jsp" class="base-icon personal-info"></a></li>
 				<li data-v-1db5fc32="" class="home-logo"></li>
-				<li data-v-1db5fc32="">
-					<a data-v-e7bb725a="" data-v-1db5fc32="" href="<%=com.yy.guess.util.Util.getConfigCom(application).getCustomerServiceUrl()%>" rel="noopener noreferrer" class="customer-service base-icon service-link"></a>
-				</li>
+				<li data-v-1db5fc32=""><a data-v-e7bb725a="" data-v-1db5fc32="" href="<%=com.yy.guess.util.Util.getConfigCom(application).getCustomerServiceUrl()%>" rel="noopener noreferrer" class="customer-service base-icon service-link"></a></li>
 			</ul>
 		</nav>
-		
 		<div class="weui-tab">
 			<div id="vux_view_box_body" class="weui-tab__panel vux-fix-safari-overflow-scrolling">
 				<div data-v-bf66ef20="" class="home-page router-view">
@@ -62,10 +56,7 @@ $(document).ready(function(){initData(<%=com.yy.guess.util.Util.getConfigCom(app
 							<div data-v-cd1e9d3c="" class="vux-checker-box checker-content">
 								<div data-v-cd1e9d3c="" onclick="sportSelect(0, this)" id="selected-allSport" class="default-checker-item selected-checker-item">
 									<div data-v-cd1e9d3c="" style="height: 2px;">&nbsp;</div>
-									<div data-v-cd1e9d3c="" class="games-info">
-										<div data-v-cd1e9d3c="" class="games-icon all-games-icon"></div>
-										<div data-v-cd1e9d3c="">全部</div>
-									</div>
+									<div data-v-cd1e9d3c="" class="games-info"><div data-v-cd1e9d3c="" class="games-icon all-games-icon"></div><div data-v-cd1e9d3c="">全部</div></div>
 									<div data-v-cd1e9d3c="" class="selected-checker-light"></div>
 								</div>
 							</div>
@@ -75,9 +66,7 @@ $(document).ready(function(){initData(<%=com.yy.guess.util.Util.getConfigCom(app
 					<div data-v-bf66ef20="" class="match-card-list">
 						<section data-v-bf66ef20="" class="content-hearer"></section>
 						<div data-v-bf66ef20="" id="vux-scroller-60yre" class="mescroll" style="touch-action:auto;user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);position:relative;overflow:scroll;">
-							<div class="xs-container">
-								<div data-v-bf66ef20=""><div data-v-bf66ef20="" id="betListContainer"></div></div>
-							</div>
+							<div class="xs-container"><div data-v-bf66ef20=""><div data-v-bf66ef20="" id="betListContainer"></div></div></div>
 						</div>
 					</div>
 				</div>

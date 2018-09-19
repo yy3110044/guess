@@ -84,8 +84,8 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-	<div id="app" class="">
-		<nav data-v-1db5fc32="" class="app-header"><ul data-v-1db5fc32=""><li data-v-1db5fc32="" onclick="window.history.back()" class="base-icon history-back"></li><li data-v-1db5fc32="">注册</li><li data-v-1db5fc32="" class="base-icon"></li></ul></nav>
+	<div id="app">
+		<nav data-v-1db5fc32="" class="app-header"><ul data-v-1db5fc32=""><li data-v-1db5fc32="" onclick="window.location.href='m/login.jsp'" class="base-icon history-back"></li><li data-v-1db5fc32="">注册</li><li data-v-1db5fc32="" class="base-icon"></li></ul></nav>
 		<div class="weui-tab">
 			<div id="vux_view_box_body" class="weui-tab__panel vux-fix-safari-overflow-scrolling">
 				<div data-v-2274dd34="" class="register-page router-view">

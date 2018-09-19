@@ -18,7 +18,7 @@ var mescroll = null;//scroll对象
 /***********MatchVersus查询参数***********/
 
 //初始化数据方法
-var initData = function(seconds){
+var initData = function(versusType, seconds){
 	if(seconds != null) {
 		originalIntervalSecond = seconds;
 		intervalSecond = seconds;
@@ -35,8 +35,20 @@ var initData = function(seconds){
 
 	loadAllSport();//加载项目
 	loadUserBalance(); //加载用户余额
-	loadSystemNotice(); //加载系统公告
-	loadMatchVersus(pageSize, 1, false); //加载对阵
+	getUnreadUserNoticeCount(); //加载未读信息数量
+	
+	if(versusType == "today") {
+		tabBarChange(1, $(".vux-tab-container .vux-tab-item").eq(0)[0]);
+	} else if("scroll" == versusType) {
+		tabBarChange(2, $(".vux-tab-container .vux-tab-item").eq(1)[0]);
+	} else if("after" == versusType) {
+		tabBarChange(3, $(".vux-tab-container .vux-tab-item").eq(2)[0]);
+	} else if("end" == versusType) {
+		tabBarChange(4, $(".vux-tab-container .vux-tab-item").eq(3)[0]);
+	} else {
+		tabBarChange(2, $(".vux-tab-container .vux-tab-item").eq(1)[0]);//默认加载scroll
+	}
+
 	setInterval("loadMatchVersusInterval()", 1000); //间隔加载对阵
 	setInterval("loadOtherData()", seconds * 1000); //间隔加载其它数据
 	
@@ -80,6 +92,7 @@ var loadMatchVersusInterval = function() {
 //间隔加载其它数据(赔率)的方法
 var loadOtherData = function(){
 	getBatchOddsAndPlayTypeStatus();
+	getUnreadUserNoticeCount();
 };
 
 //公告定时切换方法
@@ -595,7 +608,7 @@ var tabBarChange = function(index, ts) {
 
 //matchVersus点击事件
 var matchVersusClick = function(versusId){
-	window.location.href = "m/betDetail.jsp?versusId=" + versusId;
+	window.location.href = "m/betDetail.jsp?versusId=" + versusId + "&type=" + type;
 };
 
 //对阵str
@@ -1022,4 +1035,21 @@ var loadUserBalance = function(callback){
 var updateBalance = function(balance){
 	userBalance = balance;
 	$("#userBalanceDiv").html(balance.toFixed(2));
+};
+
+//更新未读信息方法
+var getUnreadUserNoticeCount = function(){
+	loadData({
+		"url" : "user/getUnreadUserNoticeCount",
+		"hideLoading" : true,
+		"success" : function(data){
+			if(data.code == 100) {
+				if(data.result > 0) { //有未读信息
+					$("li.notice-count").prepend('<div data-v-1db5fc32="" class="notice-badge"></div>');
+				} else { //没有未读信息
+					$("div.notice-badge").remove();
+				}
+			}
+		}
+	});
 };

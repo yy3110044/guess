@@ -17,7 +17,7 @@ $(document).ready(function(){initData("${param.versusId}", <%=com.yy.guess.util.
 	<div id="app" class="">
 		<nav data-v-1db5fc32="" class="app-header">
 			<ul data-v-1db5fc32="">
-				<li data-v-1db5fc32="" onclick="window.location.href='${basePath}m/index.jsp'" class="base-icon history-back"></li>
+				<li data-v-1db5fc32="" onclick="window.location.href='${basePath}m/index.jsp?type=${param.type}'" class="base-icon history-back"></li>
 				<li data-v-1db5fc32="">游戏竞猜</li>
 				<li data-v-1db5fc32="" class="base-icon"></li>
 			</ul>

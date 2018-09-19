@@ -32,7 +32,11 @@ var login = function(){
 		}
 	});
 };
+var msg = "<%=com.yy.fast4j.Fast4jUtils.urlDecode(request.getParameter("msg"))%>";
 $(document).ready(function(){
+	if(!empty(msg)) {
+		m_toast(msg);
+	}
 	loadData({
 		"url" : "isLoginBySession",
 		"success" : function(data) {
@@ -47,7 +51,7 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-	<div id="app" class="">
+	<div id="app">
 		<nav data-v-1db5fc32="" class="app-header"><ul data-v-1db5fc32=""><li data-v-1db5fc32="" onclick="window.history.back()" class="base-icon history-back"></li><li data-v-1db5fc32=""></li><li data-v-1db5fc32="" class="base-icon"></li></ul></nav>
 		<div class="weui-tab">
 			<div id="vux_view_box_body" class="weui-tab__panel vux-fix-safari-overflow-scrolling">

@@ -1,6 +1,5 @@
 package com.yy.guess.service.impl;
 
-import java.text.DecimalFormat;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,11 +11,13 @@ import com.yy.guess.mapper.BetMapper;
 import com.yy.guess.mapper.RateRecordMapper;
 import com.yy.guess.mapper.TradeFlowMapper;
 import com.yy.guess.mapper.UserMapper;
+import com.yy.guess.mapper.UserNoticeMapper;
 import com.yy.guess.po.Bet;
 import com.yy.guess.po.PlayType;
 import com.yy.guess.po.RateRecord;
 import com.yy.guess.po.TradeFlow;
 import com.yy.guess.po.User;
+import com.yy.guess.po.UserNotice;
 import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.po.enums.BetStatus;
 import com.yy.guess.po.enums.TradeType;
@@ -44,6 +45,9 @@ public class BetServiceImpl implements BetService {
     
     @Autowired
     private RateRecordMapper rrm;
+    
+    @Autowired
+    private UserNoticeMapper unm;
     
     @Autowired
     private PlayTypeService pts;
@@ -161,12 +165,12 @@ public class BetServiceImpl implements BetService {
     	int result = playType.getResult();
 		if(result < 0) { //左方胜
 			if(bet.getBetDirection() == BetDirection.LEFT) {
-				this.settlement(bet.getId(), bet.getUserId(), bet.getLeftOdds() * bet.getBetAmount(), cfgCom.getPlatformRate());
+				this.settlement(bet, bet.getUserId(), bet.getLeftOdds() * bet.getBetAmount(), cfgCom.getPlatformRate());
 				return;
 			}
 		} else if(result > 0) { //右方胜
 			if(bet.getBetDirection() == BetDirection.RIGHT) {
-				this.settlement(bet.getId(), bet.getUserId(), bet.getRightOdds() * bet.getBetAmount(), cfgCom.getPlatformRate());
+				this.settlement(bet, bet.getUserId(), bet.getRightOdds() * bet.getBetAmount(), cfgCom.getPlatformRate());
 				return;
 			}
 		} else {
@@ -175,7 +179,7 @@ public class BetServiceImpl implements BetService {
 		}
 		mapper.updateStatus(BetStatus.未猜中, bet.getId());
     }
-	private void settlement(int betId, int userId, double amount, double platformRate) {
+	private void settlement(Bet bet, int userId, double amount, double platformRate) {
 		User user = um.findById(userId); //取出未更改前用户
 
 		double choucheng = amount * platformRate; //平台抽成
@@ -183,7 +187,7 @@ public class BetServiceImpl implements BetService {
 		
 		um.plusBalance(shide, userId);//更改余额
 		
-		mapper.updateStatusAndRealPayBonus(BetStatus.已结算, shide, betId);//更改bet状态
+		mapper.updateStatusAndRealPayBonus(BetStatus.已结算, shide, bet.getId());//更改bet状态
 		
 		//添加流水记录
 		TradeFlow flow = new TradeFlow();
@@ -192,9 +196,29 @@ public class BetServiceImpl implements BetService {
 		flow.setPreBalance(user.getBalance());
 		flow.setAmount(shide);
 		flow.setType(TradeType.返奖);
-		DecimalFormat df = new DecimalFormat("0.00");
-		flow.setDescription("返奖：" + df.format(amount) + "，实得：" + df.format(shide) + "，平台抽成：" + df.format(choucheng));
+		flow.setDescription("返奖：" + Util.formatNumber(amount) + "，实得：" + Util.formatNumber(shide) + "，平台抽成：" + Util.formatNumber(choucheng));
 		tfm.add(flow);
+		
+		//发送通知
+		UserNotice un = new UserNotice();
+		un.setUserId(user.getId());
+		un.setUserName(user.getUserName());
+		un.setTitle("恭喜中奖");
+		StringBuilder content = new StringBuilder();
+		content.append("<div data-v-7c5a7d97=\"\" class=\"card-body\" style=\"font-size:1.4rem;\">下注金额：¥" + Util.formatNumber(bet.getBetAmount()) + "</div>");
+		double odds = 0;
+		switch(bet.getBetDirection()) {
+		case LEFT:odds = bet.getLeftOdds();
+		case RIGHT:odds = bet.getRightOdds();
+		}
+		content.append("<div data-v-7c5a7d97=\"\" class=\"card-body\" style=\"font-size:1.4rem;\">赔率：" + Util.formatNumber(odds) + "</div>");
+		content.append("<div data-v-7c5a7d97=\"\" class=\"card-body\" style=\"font-size:1.4rem;\">中奖金额：¥" + Util.formatNumber(amount) + "</div>");
+		content.append("<div data-v-7c5a7d97=\"\" class=\"card-body\" style=\"font-size:1.4rem;\">平台抽成：¥" + Util.formatNumber(choucheng) + "</div>");
+		content.append("<div data-v-7c5a7d97=\"\" class=\"card-body\" style=\"font-size:1.4rem;\">实得金额：¥" + Util.formatNumber(shide) + "</div>");
+		content.append("<div data-v-7c5a7d97=\"\" class=\"card-body\" style=\"font-size:1.4rem;\">订单号：" + bet.getOrderNumber() + "</div>");
+		un.setContent(content.toString());
+		un.setSystemNotice(true);
+		unm.add(un);
 		
 		//父用户返点
 		choucheng = this.recursiveUserRate(user, um.findById(user.getSuperUserId()), choucheng);
@@ -202,7 +226,7 @@ public class BetServiceImpl implements BetService {
 		//添加平台抽成记录
 		RateRecord record = new RateRecord();
 		record.setUserId(userId);
-		record.setBetId(betId);
+		record.setBetId(bet.getId());
 		record.setAmount(choucheng);
 		record.setPlatformRate(platformRate);
 		rrm.add(record);

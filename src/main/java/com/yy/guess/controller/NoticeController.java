@@ -78,6 +78,7 @@ public class NoticeController {
 		qc.addCondition("id", "=", noticeId);
 		qc.addCondition("userId", "=", userId);
 		UserNotice notice = uns.find(qc);
+		uns.setHadRead(true, userId, noticeId);//把消息设为已读
 		return new ResponseObject(100, "返回成功", notice);
 	}
 	

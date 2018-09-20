@@ -19,7 +19,7 @@ $(document).ready(function(){
 var sendNotice = function(userId, e) {
 	var str = '';
 	str += '<tr class="contentTr detailTr"><td colspan="99" style="padding:4px;">';
-	str += '<input type="text" id="noticeTitle" placeholder="输入通知标题"><br>';
+	str += '<input type="text" id="noticeTitle" placeholder="输入通知标题" style="width:300px;"><br>';
 	str += '<textarea id="noticeContent" placeholder="输入通知内容" style="width:300px;height:150px;margin-top:5px;margin-bottom:5px;"></textarea><br>';
 	str += '&nbsp;&nbsp;<input type="button" onclick="sendNotice2(' + userId + ')" value="发送">';
 	str += '&nbsp;&nbsp;<input type="button" onclick="$(this).parent().parent().remove()" value="关闭">';
@@ -51,6 +51,21 @@ var sendNotice2 = function(userId){
 	});
 };
 
+//更新真实姓名锁定状态
+var updateRealNameLock = function(userId, e){
+	var realNameLock = $.trim($(e).val());
+	loadData({
+		url : "administration/updateRealNameLock",
+		data : {
+			"realNameLock" : realNameLock,
+			"userId" : userId
+		},
+		success : function(data) {
+			showMsg(data.msg);
+		}
+	});
+};
+
 var query = function(pageSize, pageNo) {
 	var userId = $.trim($("#userId").val());
 	var userName = $.trim($("#userName").val());
@@ -73,6 +88,16 @@ var query = function(pageSize, pageNo) {
 					{field : "id"},
 					{field : "userName"},
 					{fn : function(obj){return '<span style="font-weight:bold;">¥</span>' + obj.balance.toFixed(2);}},
+					{fn : function(obj){
+						var str = '';
+						str += obj.realName;
+						str += '&nbsp;&nbsp;&nbsp;&nbsp;<span title="锁定后，用户不可更改" style="color:red">锁定：</span>';
+						str += '<select onchange="updateRealNameLock(' + obj.id + ', this)" style="width:45px;padding:0px;">';
+						str += '<option value="true"' + (obj.realNameLock ? ' selected="selected"' : '') + '>是</option>';
+						str += '<option value="false"' + (obj.realNameLock ? '' : ' selected="selected"') + '>否</option>';
+						str += '</select>';
+						return str;
+					}},
 					{field : "nickName"},
 					{field : "qq"},
 					{field : "phone"},
@@ -190,10 +215,10 @@ var updateInfo = function(userId, e) {
 				var obj = data.result;
 				var str = '';
 				str += '<tr class="contentTr detailTr"><td colspan="99" style="padding:4px;">';
-				str += '<div style="margin-top:4px;">昵称：<input type="text" id="updateInfo_nickName" value="' + obj.nickName + '"></div>';
-				str += '<div style="margin-top:4px;">QQ：<input type="text" id="updateInfo_qq" value="' + obj.qq + '"></div>';
-				str += '<div style="margin-top:4px;">手机：<input type="text" id="updateInfo_phone" value="' + obj.phone + '"></div>';
-				str += '<div style="margin-top:4px;">邮箱：<input type="text" id="updateInfo_email" value="' + obj.email + '"></div>';
+				str += '<div style="margin-top:4px;">昵称：<input type="text" id="updateInfo_nickName" value="' + (empty(obj.nickName) ? "" : obj.nickName) + '"></div>';
+				str += '<div style="margin-top:4px;">QQ：<input type="text" id="updateInfo_qq" value="' + (empty(obj.qq) ? "" : obj.qq) + '"></div>';
+				str += '<div style="margin-top:4px;">手机：<input type="text" id="updateInfo_phone" value="' + (empty(obj.phone) ? "" : obj.phone) + '"></div>';
+				str += '<div style="margin-top:4px;">邮箱：<input type="text" id="updateInfo_email" value="' + (empty(obj.email) ? "" : obj.email) + '"></div>';
 				str += '<div style="margin-top:4px;"><input type="button" value="修改" onclick="updateInfo2(' + userId + ')">&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().parent().remove()"></div>';
 				str += '</td></tr>';
 				$("tr.detailTr").remove();
@@ -306,6 +331,7 @@ var updateBalance2 = function(userId){
 			<td><strong>id</strong></td>
 			<td><strong>用户名</strong></td>
 			<td><strong>余额</strong></td>
+			<td><strong>真实姓名</strong></td>
 			<td><strong>昵称 </strong></td>
 			<td><strong>qq</strong></td>
 			<td><strong>手机</strong></td>

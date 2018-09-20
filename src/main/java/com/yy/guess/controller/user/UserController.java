@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.User;
@@ -37,5 +38,13 @@ public class UserController {
 	public ResponseObject getBalance(HttpServletRequest req) {
 		int userId = (Integer)req.getAttribute("userId");
 		return new ResponseObject(100, "返回成功", us.getBalance(userId));
+	}
+	
+	//更改真实姓名
+	@RequestMapping("/updateRealName")
+	public ResponseObject updateRealName(@RequestParam String realName, HttpServletRequest req) {
+		int userId = (Integer)req.getAttribute("userId");
+		us.updateRealName(realName, userId);
+		return new ResponseObject(100, "更改成功");
 	}
 }

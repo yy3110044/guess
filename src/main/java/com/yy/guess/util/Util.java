@@ -2,6 +2,9 @@ package com.yy.guess.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -50,6 +53,13 @@ public class Util {
 			}
 		}
 		return false;
+	}
+	
+	//保留两位小数、不四舍五入
+	public static String formatNumber(double num) {
+		NumberFormat format = new DecimalFormat("0.00");
+		format.setRoundingMode(RoundingMode.FLOOR);
+		return format.format(num);
 	}
 	
 	public static ConfigComponent getConfigCom(ServletContext sc) {

@@ -142,7 +142,10 @@ public class LoginAboutController {
 		user.setUserName(userName);
 		user.setPassWord(DigestUtils.md5Hex(passWord));
 		user.setNickName(nickName);
-		user.setRealName(realName);
+		if(!Fast4jUtils.empty(realName)) {
+			user.setRealName(realName);
+			user.setRealNameLock(true);
+		}
 		user.setQq(qq);
 		user.setPhone(phone);
 		user.setEmail(email);

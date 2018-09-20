@@ -1,5 +1,6 @@
 package com.yy.guess.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -53,6 +54,6 @@ public class UserNoticeServiceImpl implements UserNoticeService {
 
 	@Override
 	public void setHadRead(boolean hadRead, int userId, int noticeId) {
-		mapper.setHadRead(hadRead, userId, noticeId);
+		mapper.setHadRead(hadRead, new Date(), userId, noticeId);
 	}
 }

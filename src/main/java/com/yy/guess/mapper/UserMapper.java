@@ -36,4 +36,12 @@ public interface UserMapper {
     
     @Select("select id from guess_user where userName = #{userName}")
     Integer getUserIdByUserName(String userName);
+    
+    //修改真实姓名锁定状态
+    @Update("update guess_user set realNameLock = #{realNameLock} where id = #{userId}")
+    void updateRealNameLock(boolean realNameLock, int userId);
+    
+    //修改真实姓名
+    @Update("update guess_user set realName = #{realName}, realNameLock = 1 where id = #{userId} and realNameLock = 0")
+    void updateRealName(String realName, int userId);
 }

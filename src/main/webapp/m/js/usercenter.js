@@ -20,6 +20,8 @@ $(document).ready(function(){
 					} else { //没有未读信息
 						$("div.notice-badge").remove();
 					}
+				} else {
+					m_toast(data.msg);
 				}
 			}
 		});
@@ -30,6 +32,8 @@ $(document).ready(function(){
 				if(data.code == 100) {
 					$("div.user-name span.vux-label-desc").html(data.result.userName);
 					$("span.wallet-lebal-balance").html("&nbsp;¥" + data.result.balance.toFixed(2));
+				} else {
+					m_toast(data.msg);
 				}
 			}
 		});
@@ -231,6 +235,186 @@ $(document).ready(function(){
 		loadBetList(false, 1, false);
 		break;
 		
-	/**************************************************************************/
+	/***********************************用户通知页***************************************/
+	case "notice.jsp":
+		var mescroll = null;
+		var loadUserNoticeList = function(pageNo, hideLoading) {
+			loadData({
+				"url" : "user/userNoticeList",
+				"data" : {"pageNo" : pageNo},
+				"hideLoading" : hideLoading,
+				"success" : function(data) {
+					if(data.code == 100) {
+						var list = data.result.list;
+						var page = data.result.page;
+						
+						var str = '';
+						if(list != null && list.length > 0) {
+							for(var i=0; i<list.length; i++) {
+								var obj = list[i];
+								str += '<section data-v-6a2bb1cf="" class="notice-content" data-notice-id="' + obj.id + '">';
+								str += '	<div data-v-6a2bb1cf="" class="content-title">';
+								str += '		<div data-v-6a2bb1cf="" class="notice-icon"></div>';
+								if(obj.hadRead) {
+									str += '		<div data-v-6a2bb1cf="">' + obj.title + '</div>';
+								} else {
+									str += '		<div data-v-6a2bb1cf="" style="color:rgb(255,255,255);">' + obj.title + '</div>';
+								}
+								str += '		<div data-v-6a2bb1cf="" class="notice-time">' + obj.createTime + '</div>';
+								str += '	</div>';
+								str += '</section>';
+							}
+						}
+
+						if(pageNo == 1) { //第一页清空
+							if(mescroll != null) {
+								mescroll.scrollTo(0); //滚动到顶部
+								mescroll.setPageNum(1); //把页数重设为1
+							}
+							$("#vux_view_box_body .notice-page").empty();
+						}
+						
+						$("#vux_view_box_body .notice-page").append(str);
+						
+						if(mescroll != null) {
+							mescroll.endSuccess(page.pageSize, page.next);//在这里关闭加载提示
+						}
+					} else {
+						m_toast(data.msg);
+					}
+					if(mescroll != null) {
+						mescroll.endErr();//在这里关闭加载提示
+					}
+				},
+				"complete" : function(){
+					$("section.notice-content").click(function(){
+						window.location.href = "m/usercenter/noticeDetail.jsp?noticeId=" + $(this).attr("data-notice-id");
+					});
+				},
+				"error" : function() {
+					if(mescroll != null) {
+						mescroll.endErr();
+					}
+				}
+			});
+		};
+		mescroll = new MeScroll("vux_view_box_body", {
+			"down" : {
+				"use" : true,
+				"auto" : false,
+				"callback" : function(){
+					loadUserNoticeList(1, true);
+				}
+			},
+			"up" : {
+				"use" : true,
+				"auto" : false,
+				"isBounce" : false,
+				"htmlNodata" : '没有更多消息了...',
+				"callback" : function(page){
+					loadUserNoticeList(page.num + 1, true);
+				}
+			}
+		});
+		loadUserNoticeList(1, false);
+		break;
+
+	/***********************************用户详情页***************************************/
+	case "noticeDetail.jsp":
+		loadData({
+			"url" : "user/userNoticeDetail",
+			"data" : {"noticeId" : noticeId},
+			"hideLoading" : true,
+			"success" : function(data) {
+				if(data.code == 100) {
+					$("#vux_view_box_body .notice-time").html(data.result.createTime);
+					$("#vux_view_box_body .card-header").html(data.result.title);
+					if(data.result.systemNotice) {//系统信息去掉缩进
+						$("#vux_view_box_body .card-body").css("text-indent", "");
+					}
+					$("#vux_view_box_body .card-body").html(data.result.content);
+				} else {
+					m_toast(data.msg);
+				}
+			}
+		});
+		break;
+		
+	/***********************************设置首页***************************************/
+	case "setting/index.jsp":
+		$("#logout").click(function(){
+			loadData({
+				"url" : "userLogout",
+				"success" : function(data) {
+					if(data.code == 100) {
+						window.location.href = "m/login.jsp?msg=" + encodeURI("您已成功退出");
+					}
+				}
+			});
+		});
+		
+		loadData({
+			"url" : "user/getUserInfo",
+			"hideLoading" : true,
+			"success" : function(data) {
+				if(data.code == 100) {
+					var obj = data.result;
+					$("#realName .weui-cell__ft .cell-text").html(obj.realName);
+					if(!obj.realNameLock) {
+						$("#realName").addClass("vux-tap-active weui-cell_access");
+						$("#realName").click(function(){
+							window.location.href = "m/usercenter/setting/realNameModify.jsp";
+						});
+					}
+				}
+			}
+		});
+		break;
+	/***********************************真实姓名设置页***************************************/
+	case "setting/realNameModify.jsp":
+		loadData({
+			"url" : "user/getUserInfo",
+			"hideLoading" : true,
+			"success" : function(data) {
+				if(data.code == 100) {
+					if(!empty(data.result.realName)) {
+						$("#realName").val(data.result.realName);
+						$(".button-content").parent().parent().removeClass("base-button-disabled");
+					}
+				}
+			}
+		});
+		var realNameInput = function(){
+			var e = $("#realName");
+			var realName = $.trim(e.val());
+			e.val(realName);
+			if(empty(realName)) {
+				$(".button-content").parent().parent().addClass("base-button-disabled");
+			} else {
+				$(".button-content").parent().parent().removeClass("base-button-disabled");
+			}
+		};
+		$("#realName").keyup(realNameInput);
+		$("#realName").blur(realNameInput);
+		$("#realName").focus(realNameInput);
+		$("#realName").click(realNameInput);
+		$(".button-content").click(function(){
+			var realName = $.trim($("#realName").val());
+			if(empty(realName)) {
+				m_toast("请输入真实姓名");
+				return;
+			}
+			loadData({
+				"url" : "user/updateRealName",
+				"data" : {"realName" : realName},
+				"hideLoading" : true,
+				"success" : function(data){
+					if(data.code == 100) {
+						window.location.href = "m/usercenter/setting/index.jsp";
+					}
+				}
+			});
+		});
+		break;
 	}
 });

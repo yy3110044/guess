@@ -80,6 +80,7 @@ $(document).ready(function(){
 	$("#userName,#passWord1,#passWord2").keyup(checkInput);
 	$("#userName,#passWord1,#passWord2").blur(checkInput);
 	$("#userName,#passWord1,#passWord2").focus(checkInput);
+	$("#userName,#passWord1,#passWord2").click(checkInput);
 });
 </script>
 </head>

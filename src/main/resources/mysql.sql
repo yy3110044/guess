@@ -12,6 +12,7 @@ CREATE TABLE `guess_user` (
   `balance` decimal(15, 6) COMMENT '帐户余额',
   `nickName` varchar(128) COMMENT '昵称',
   `realName` varchar(128) COMMENT '真实姓名',
+  `realNameLock` bit(1) COMMENT '真实姓名锁定，锁定后不可更改',
   `qq` varchar(128) COMMENT 'qq',
   `phone` varchar(128) COMMENT '手机号码',
   `email` varchar(128) COMMENT '电子邮箱',
@@ -25,6 +26,7 @@ CREATE TABLE `guess_user` (
   `createTime` datetime COMMENT '记录创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `userName` (`userName`),
+  UNIQUE KEY `phone` (`phone`),
   KEY `superUserId` (`superUserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8;
 
@@ -283,8 +285,8 @@ CREATE TABLE `guess_user_notice`(
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `userId` int(11) NOT NULL COMMENT '用户id',
   `userName` varchar(128) COMMENT '用户名',
-  `title` varchar(128) NOT NULL COMMENT '通知标题',
-  `content` varchar(512) NOT NULL COMMENT '通知内容',
+  `title` varchar(256) NOT NULL COMMENT '通知标题',
+  `content` text NOT NULL COMMENT '通知内容',
   `hadRead` bit(1) COMMENT '是否已读取',
   `readTime` datetime COMMENT '用户读取时间',
   `systemNotice` bit(1) COMMENT '是否是系统通知',
@@ -297,7 +299,7 @@ CREATE TABLE `guess_user_notice`(
 DROP TABLE IF EXISTS `guess_system_notice`;
 CREATE TABLE `guess_system_notice`(
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-  `content` varchar(256) COMMENT '通知内容',
+  `content` varchar(512) COMMENT '通知内容',
   `top` int(11) COMMENT '置顶排序字段',
   `createTime` datetime COMMENT '创建时间',
   PRIMARY KEY (`id`),

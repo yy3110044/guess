@@ -11,6 +11,7 @@ public class User {
 	private double balance;
 	private String nickName;
 	private String realName;
+	private boolean realNameLock;
 	private String qq;
 	private String phone;
 	private String email;
@@ -63,6 +64,12 @@ public class User {
 	}
 	public void setRealName(String realName) {
 		this.realName = realName;
+	}
+	public boolean isRealNameLock() {
+		return realNameLock;
+	}
+	public void setRealNameLock(boolean realNameLock) {
+		this.realNameLock = realNameLock;
 	}
 	public String getQq() {
 		return qq;

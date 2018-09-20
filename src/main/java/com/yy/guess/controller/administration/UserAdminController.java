@@ -143,4 +143,11 @@ public class UserAdminController {
 		us.updateInfo(nickName, qq, phone, email, userId);
 		return new ResponseObject(100, "修改成功");
 	}
+	
+	//更改用户真实姓名锁定状态
+	@RequestMapping("/updateRealNameLock")
+	public ResponseObject updateRealNameLock(@RequestParam boolean realNameLock, @RequestParam int userId) {
+		us.updateRealNameLock(realNameLock, userId);
+		return new ResponseObject(100, "修改成功");
+	}
 }

@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into guess_user(id, userName, passWord, withdrawPassword, balance, nickName, realName, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime)
-        values(#{id}, #{userName}, #{passWord}, #{withdrawPassword}, #{balance}, #{nickName}, #{realName}, #{qq}, #{phone}, #{email}, #{registTime}, #{lastLoginIp}, #{lastLoginTime}, #{lastLoginType}, #{superUserId}, #{rebateRate}, #{subordinateDefaultRebateRate}, #{createTime})
+        insert into guess_user(id, userName, passWord, withdrawPassword, balance, nickName, realName, realNameLock, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime)
+        values(#{id}, #{userName}, #{passWord}, #{withdrawPassword}, #{balance}, #{nickName}, #{realName}, #{realNameLock}, #{qq}, #{phone}, #{email}, #{registTime}, #{lastLoginIp}, #{lastLoginTime}, #{lastLoginType}, #{superUserId}, #{rebateRate}, #{subordinateDefaultRebateRate}, #{createTime})
     </insert>
 
     <delete id="delete" parameterType="int">
@@ -17,12 +17,12 @@
 
     <update id="update" parameterType="com.yy.guess.po.User">
         update guess_user set
-        userName = #{userName}, passWord = #{passWord}, withdrawPassword = #{withdrawPassword}, balance = #{balance}, nickName = #{nickName}, realName = #{realName}, qq = #{qq}, phone = #{phone}, email = #{email}, registTime = #{registTime}, lastLoginIp = #{lastLoginIp}, lastLoginTime = #{lastLoginTime}, lastLoginType = #{lastLoginType}, superUserId = #{superUserId}, rebateRate = #{rebateRate}, subordinateDefaultRebateRate = #{subordinateDefaultRebateRate}, createTime = #{createTime}
+        userName = #{userName}, passWord = #{passWord}, withdrawPassword = #{withdrawPassword}, balance = #{balance}, nickName = #{nickName}, realName = #{realName}, realNameLock = #{realNameLock}, qq = #{qq}, phone = #{phone}, email = #{email}, registTime = #{registTime}, lastLoginIp = #{lastLoginIp}, lastLoginTime = #{lastLoginTime}, lastLoginType = #{lastLoginType}, superUserId = #{superUserId}, rebateRate = #{rebateRate}, subordinateDefaultRebateRate = #{subordinateDefaultRebateRate}, createTime = #{createTime}
         where id = #{id}
     </update>
 
     <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.User">
-        select id, userName, passWord, withdrawPassword, balance, nickName, realName, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime from guess_user
+        select id, userName, passWord, withdrawPassword, balance, nickName, realName, realNameLock, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime from guess_user
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -44,12 +44,12 @@
     </select>
 
     <select id="findById" parameterType="int" resultType="com.yy.guess.po.User">
-        select id, userName, passWord, withdrawPassword, balance, nickName, realName, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime from guess_user
+        select id, userName, passWord, withdrawPassword, balance, nickName, realName, realNameLock, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime from guess_user
         where id = #{id}
     </select>
 
     <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.User">
-        select id, userName, passWord, withdrawPassword, balance, nickName, realName, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime from guess_user
+        select id, userName, passWord, withdrawPassword, balance, nickName, realName, realNameLock, qq, phone, email, registTime, lastLoginIp, lastLoginTime, lastLoginType, superUserId, rebateRate, subordinateDefaultRebateRate, createTime from guess_user
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">

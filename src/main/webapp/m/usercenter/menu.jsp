@@ -11,7 +11,7 @@
 			<ul data-v-1db5fc32="">
 				<li data-v-1db5fc32="" onclick="window.location.href='m/index.jsp'" class="base-icon history-back"></li>
 				<li data-v-1db5fc32="">个人中心</li>
-				<li data-v-1db5fc32=""><a data-v-1db5fc32="" href="javascript:;" class="base-icon account-setting"></a></li>
+				<li data-v-1db5fc32=""><a data-v-1db5fc32="" href="m/usercenter/setting/index.jsp" class="base-icon account-setting"></a></li>
 			</ul>
 		</nav>
 		<div class="weui-tab dark-view">
@@ -39,7 +39,7 @@
 									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">投注记录</label></p><span class="vux-label-desc"></span></div>
 									<div class="weui-cell__ft"></div>
 								</div>
-								<div data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
+								<div onclick="window.location.href='m/usercenter/notice.jsp'" data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
 									<div class="weui-cell__hd"><div data-v-0df6a7f4="" class="base-icon notice-icon"></div></div>
 									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">通知</label></p><span class="vux-label-desc"></span></div>
 									<div class="weui-cell__ft"></div>

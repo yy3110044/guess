@@ -1,5 +1,6 @@
 package com.yy.guess.mapper;
 
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
@@ -17,6 +18,6 @@ public interface UserNoticeMapper {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
     
-    @Update("update guess_user_notice set hadRead = #{hadRead} where id = #{noticeId} and userId = #{userId}")
-    void setHadRead(boolean hadRead, int userId, int noticeId);
+    @Update("update guess_user_notice set hadRead = #{hadRead}, readTime = #{readTime} where id = #{noticeId} and userId = #{userId}")
+    void setHadRead(boolean hadRead, Date readTime, int userId, int noticeId);
 }

@@ -73,4 +73,14 @@ public class UserServiceImpl implements UserService {
 		Integer userId = mapper.getUserIdByUserName(userName);
 		return userId == null ? 0 : userId;
 	}
+
+	@Override
+	public void updateRealNameLock(boolean realNameLock, int userId) {
+		mapper.updateRealNameLock(realNameLock, userId);
+	}
+
+	@Override
+	public void updateRealName(String realName, int userId) {
+		mapper.updateRealName(realName, userId);
+	}
 }

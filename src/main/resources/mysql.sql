@@ -8,7 +8,7 @@ CREATE TABLE `guess_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `userName` varchar(128) NOT NULL COMMENT '用户名',
   `passWord` varchar(128) NOT NULL COMMENT '密码(md5加密过后的)',
-  `withdrawPassword` varchar(128) COMMENT '取款密码',
+  `withdrawPassWord` varchar(128) COMMENT '取款密码',
   `balance` decimal(15, 6) COMMENT '帐户余额',
   `nickName` varchar(128) COMMENT '昵称',
   `realName` varchar(128) COMMENT '真实姓名',

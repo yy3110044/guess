@@ -83,4 +83,19 @@ public class UserServiceImpl implements UserService {
 	public void updateRealName(String realName, int userId) {
 		mapper.updateRealName(realName, userId);
 	}
+
+	@Override
+	public void updateInfo(String nickName, String qq, String email, int userId) {
+		mapper.updateInfo2(nickName, qq, email, userId);
+	}
+
+	@Override
+	public void updatePassWord(String passWord, int userId) {
+		mapper.updatePassWord(passWord, userId);
+	}
+
+	@Override
+	public void updateWithdrawPassword(String withdrawPassWord, int userId) {
+		mapper.updateWithdrawPassword(withdrawPassWord, userId);
+	}
 }

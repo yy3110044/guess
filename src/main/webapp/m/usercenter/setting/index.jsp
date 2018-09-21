@@ -25,15 +25,10 @@
 								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">真实姓名</label></p><span class="vux-label-desc"></span></div>
 								<div class="weui-cell__ft"><p data-v-70e7ffa8="" class="cell-text"></p></div>
 							</div>
-							<div data-v-70e7ffa8="" class="weui-cell vux-tap-active weui-cell_access">
+							<div onclick="window.location.href='m/usercenter/setting/infoModify.jsp'" data-v-70e7ffa8="" class="weui-cell vux-tap-active weui-cell_access">
 								<div class="weui-cell__hd"></div>
-								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">修改手机</label></p><span class="vux-label-desc"></span></div>
-								<div class="weui-cell__ft"><p data-v-70e7ffa8="" class="cell-text">15182830910</p></div>
-							</div>
-							<div data-v-70e7ffa8="" class="weui-cell vux-tap-active weui-cell_access">
-								<div class="weui-cell__hd"></div>
-								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">修改生日</label></p><span class="vux-label-desc"></span></div>
-								<div class="weui-cell__ft"><p data-v-70e7ffa8="" class="cell-text">请选择您的生日</p></div>
+								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">资料设置</label></p><span class="vux-label-desc"></span></div>
+								<div class="weui-cell__ft"></div>
 							</div>
 						</div>
 					</div>
@@ -41,12 +36,17 @@
 						<div class="weui-cells vux-no-group-title">
 							<div data-v-70e7ffa8="" class="weui-cell vux-tap-active weui-cell_access">
 								<div class="weui-cell__hd"></div>
-								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">管理银行卡</label></p><span class="vux-label-desc"></span></div>
+								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">银行卡管理</label></p><span class="vux-label-desc"></span></div>
 								<div class="weui-cell__ft"></div>
 							</div>
-							<div data-v-70e7ffa8="" class="weui-cell vux-tap-active weui-cell_access">
+							<div onclick="window.location.href='m/usercenter/setting/passWord.jsp'" data-v-70e7ffa8="" class="weui-cell vux-tap-active weui-cell_access">
 								<div class="weui-cell__hd"></div>
-								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">修改密码</label></p><span class="vux-label-desc"></span></div>
+								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">登录密码管理</label></p><span class="vux-label-desc"></span></div>
+								<div class="weui-cell__ft"></div>
+							</div>
+							<div onclick="window.location.href='m/usercenter/setting/withdrawPassWord.jsp'" data-v-70e7ffa8="" class="weui-cell vux-tap-active weui-cell_access">
+								<div class="weui-cell__hd"></div>
+								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">资金密码管理</label></p><span class="vux-label-desc"></span></div>
 								<div class="weui-cell__ft"></div>
 							</div>
 						</div>

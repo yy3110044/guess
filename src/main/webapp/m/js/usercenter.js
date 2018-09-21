@@ -30,7 +30,7 @@ $(document).ready(function(){
 			"hideLoading" : true,
 			"success" : function(data){
 				if(data.code == 100) {
-					$("div.user-name span.vux-label-desc").html(data.result.userName);
+					$("div.user-name span.vux-label-desc").html(empty(data.result.nickName) ? data.result.userName : data.result.nickName);
 					$("span.wallet-lebal-balance").html("&nbsp;¥" + data.result.balance.toFixed(2));
 				} else {
 					m_toast(data.msg);
@@ -381,6 +381,8 @@ $(document).ready(function(){
 						$("#realName").val(data.result.realName);
 						$(".button-content").parent().parent().removeClass("base-button-disabled");
 					}
+				} else {
+					m_toast(data.msg);
 				}
 			}
 		});
@@ -414,6 +416,272 @@ $(document).ready(function(){
 					}
 				}
 			});
+		});
+		break;
+	/***********************************资料修改页***************************************/
+	case "setting/infoModify.jsp":
+		loadData({
+			"url" : "user/getUserInfo",
+			"hideLoading" : true,
+			"success" : function(data) {
+				if(data.code == 100) {
+					$("#nickName").val(data.result.nickName);
+					$("#qq").val(data.result.qq);
+					$("#email").val(data.result.email);
+				} else {
+					m_toast(data.msg);
+				}
+			}
+		});
+		$(".button-content").click(function(){
+			var nickName = $.trim($("#nickName").val());
+			var qq = $.trim($("#qq").val());
+			var email = $.trim($("#email").val());
+			loadData({
+				"url" : "user/updateInfo",
+				"data" : {
+					"nickName" : nickName,
+					"qq" : qq,
+					"email" : email
+				},
+				"success" : function(data) {
+					m_toast(data.msg);
+				}
+			});
+		});
+		break;
+	/***********************************登录密码管理页***************************************/
+	case "setting/passWord.jsp":
+		var checkInput = function(){
+			var oldPassWord = $("#oldPassWord").val();
+			var newPassWord1 = $("#newPassWord1").val();
+			var newPassWord2 = $("#newPassWord2").val();
+			if(empty(oldPassWord)) {
+				$("div.helper-text").remove();
+				$("#oldPassWord").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">请输入旧密码</div></div>');
+				$(".button-content").parent().parent().addClass("base-button-disabled");
+				return false;
+			}
+			if(empty(newPassWord1)) {
+				$("div.helper-text").remove();
+				$("#newPassWord1").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">请输入新密码</div></div>');
+				$(".button-content").parent().parent().addClass("base-button-disabled");
+				return false;
+			}
+			if(newPassWord1.length < 6) {
+				$("div.helper-text").remove();
+				$("#newPassWord1").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">密码不能少于6个字符</div></div>');
+				$(".button-content").parent().parent().addClass("base-button-disabled");
+				return false;
+			}
+			if(empty(newPassWord2)) {
+				$("div.helper-text").remove();
+				$("#newPassWord2").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">请再次输入新密码</div></div>');
+				$(".button-content").parent().parent().addClass("base-button-disabled");
+				return false;
+			}
+			if(newPassWord1 != newPassWord2) {
+				$("div.helper-text").remove();
+				$("#newPassWord2").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">两次输入密码不一致</div></div>');
+				$(".button-content").parent().parent().addClass("base-button-disabled");
+				return false;
+			}
+			$("div.helper-text").remove();
+			$(".button-content").parent().parent().removeClass("base-button-disabled");
+			return true;
+		};
+		$("#oldPassWord,#newPassWord1,#newPassWord2").keyup(checkInput);
+		$("#oldPassWord,#newPassWord1,#newPassWord2").blur(checkInput);
+		$("#oldPassWord,#newPassWord1,#newPassWord2").focus(checkInput);
+		$("#oldPassWord,#newPassWord1,#newPassWord2").click(checkInput);
+		$(".button-content").click(function(){
+			var oldPassWord = $("#oldPassWord").val();
+			var newPassWord1 = $("#newPassWord1").val();
+			var newPassWord2 = $("#newPassWord2").val();
+			if(checkInput()) {
+				loadData({
+					"url" : "user/updatePassWord",
+					"data" : {
+						"oldPassWord" : oldPassWord,
+						"newPassWord" : newPassWord1
+					},
+					"success" : function(data){
+						m_toast(data.msg);
+						if(data.code == 100) {
+							$("#oldPassWord,#newPassWord1,#newPassWord2").val("");
+						}
+					}
+				});
+			}
+		});
+		break;
+	/***********************************资金密码管理页***************************************/
+	case "setting/withdrawPassWord.jsp":
+		var checkInput = function(){
+			var haveWithdrawPassWord = $.trim($("#title").attr("data-have-withdrawPassWord"));
+			if("true" == haveWithdrawPassWord) { //有资金密码
+				var oldWithdrawPassWord = $("#oldWithdrawPassWord").val();
+				var newWithdrawPassWord1 = $("#newWithdrawPassWord1").val();
+				var newWithdrawPassWord2 = $("#newWithdrawPassWord2").val();
+				if(empty(oldWithdrawPassWord)) {
+					$("div.helper-text").remove();
+					$("#oldWithdrawPassWord").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">请输入旧密码</div></div>');
+					$(".button-content").parent().parent().addClass("base-button-disabled");
+					return false;
+				}
+				if(empty(newWithdrawPassWord1)) {
+					$("div.helper-text").remove();
+					$("#newWithdrawPassWord1").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">请输入新密码</div></div>');
+					$(".button-content").parent().parent().addClass("base-button-disabled");
+					return false;
+				}
+				if(newWithdrawPassWord1.length < 6) {
+					$("div.helper-text").remove();
+					$("#newWithdrawPassWord1").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">密码不能少于6个字符</div></div>');
+					$(".button-content").parent().parent().addClass("base-button-disabled");
+					return false;
+				}
+				if(empty(newWithdrawPassWord2)) {
+					$("div.helper-text").remove();
+					$("#newWithdrawPassWord2").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">请再次输入新密码</div></div>');
+					$(".button-content").parent().parent().addClass("base-button-disabled");
+					return false;
+				}
+				if(newWithdrawPassWord1 != newWithdrawPassWord2) {
+					$("div.helper-text").remove();
+					$("#newWithdrawPassWord2").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">两次输入密码不一致</div></div>');
+					$(".button-content").parent().parent().addClass("base-button-disabled");
+					return false;
+				}
+				$("div.helper-text").remove();
+				$(".button-content").parent().parent().removeClass("base-button-disabled");
+				return true;
+			} else if("false" == haveWithdrawPassWord) { //没有资金密码
+				var newWithdrawPassWord1 = $("#newWithdrawPassWord1").val();
+				var newWithdrawPassWord2 = $("#newWithdrawPassWord2").val();
+				if(empty(newWithdrawPassWord1)) {
+					$("div.helper-text").remove();
+					$("#newWithdrawPassWord1").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">请输入密码</div></div>');
+					$(".button-content").parent().parent().addClass("base-button-disabled");
+					return false;
+				}
+				if(newWithdrawPassWord1.length < 6) {
+					$("div.helper-text").remove();
+					$("#newWithdrawPassWord1").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">密码不能少于6个字符</div></div>');
+					$(".button-content").parent().parent().addClass("base-button-disabled");
+					return false;
+				}
+				if(empty(newWithdrawPassWord2)) {
+					$("div.helper-text").remove();
+					$("#newWithdrawPassWord2").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">请再次输入密码</div></div>');
+					$(".button-content").parent().parent().addClass("base-button-disabled");
+					return false;
+				}
+				if(newWithdrawPassWord2 != newWithdrawPassWord1) {
+					$("div.helper-text").remove();
+					$("#newWithdrawPassWord2").next().next().after('<div data-v-0fdb235f="" class="helper-text"><div data-v-0fdb235f="" class="alert-icon"></div><div data-v-0fdb235f="">两次输入密码不一致</div></div>');
+					$(".button-content").parent().parent().addClass("base-button-disabled");
+					return false;
+				}
+				$("div.helper-text").remove();
+				$(".button-content").parent().parent().removeClass("base-button-disabled");
+				return true;
+			}
+		};
+		loadData({
+			"url" : "user/haveWithdrawPassWord",
+			"hideLoading" : true,
+			"success" : function(data) {
+				if(data.code == 100) {
+					if(data.result) { //有资金密码
+						$("#title").html("修改资金密码");
+						$("title").html("修改资金密码 " + $("title").html());
+						$("#title").attr("data-have-withdrawPassWord", "true");
+						var str = '';
+						str += '<div data-v-34db6eca="" class="change-password-page router-view">';
+						str += '	<form data-v-34db6eca="" onsubmit="return false">';
+						str += '		<div data-v-0fdb235f="" data-v-34db6eca="" class="base-input"><input data-v-0fdb235f="" id="oldWithdrawPassWord" type="password" placeholder="请输入旧密码" autocomplete="off" maxlength="12"><label data-v-0fdb235f="" for="oldWithdrawPassWord" class="input-label">旧密码</label><span data-v-0fdb235f="" class="focus-border"></span></div>';
+						str += '		<div data-v-0fdb235f="" data-v-34db6eca="" class="base-input"><input data-v-0fdb235f="" id="newWithdrawPassWord1" type="password" placeholder="请输入6-11位英文或数字" autocomplete="off" maxlength="12"><label data-v-0fdb235f="" for="newWithdrawPassWord1" class="input-label">新密码</label><span data-v-0fdb235f="" class="focus-border"></span></div>';
+						str += '		<div data-v-0fdb235f="" data-v-34db6eca="" class="base-input"><input data-v-0fdb235f="" id="newWithdrawPassWord2" type="password" placeholder="请再次确认密码" autocomplete="off" maxlength="12"><label data-v-0fdb235f="" for="newWithdrawPassWord2" class="input-label">确认密码</label><span data-v-0fdb235f="" class="focus-border"></span></div>';
+						str += '		<div data-v-34db6eca="" style="height:26px;"></div>';
+						str += '		<div data-v-0f69c571="" data-v-34db6eca="" class="base-button base-button-disabled"><div data-v-0f69c571="" class="button-border"><button data-v-0f69c571="" type="button" class="button-content">确认</button></div></div>';
+						str += '	</form>';
+						str += '</div>';
+						$("#vux_view_box_body").html(str);
+					} else { //没有资金密码
+						$("#title").html("设置资金密码");
+						$("title").html("设置资金密码 " + $("title").html());
+						$("#title").attr("data-have-withdrawPassWord", "false");
+						var str = '';
+						str += '<div data-v-34db6eca="" class="change-password-page router-view">';
+						str += '	<form data-v-34db6eca="" onsubmit="return false">';
+						str += '		<div data-v-0fdb235f="" data-v-34db6eca="" class="base-input"><input data-v-0fdb235f="" id="newWithdrawPassWord1" type="password" placeholder="请输入6-11位英文或数字" autocomplete="off" maxlength="12"><label data-v-0fdb235f="" for="newWithdrawPassWord1" class="input-label">设置密码</label><span data-v-0fdb235f="" class="focus-border"></span></div>';
+						str += '		<div data-v-0fdb235f="" data-v-34db6eca="" class="base-input"><input data-v-0fdb235f="" id="newWithdrawPassWord2" type="password" placeholder="请再次确认密码" autocomplete="off" maxlength="12"><label data-v-0fdb235f="" for="newWithdrawPassWord2" class="input-label">再次输入</label><span data-v-0fdb235f="" class="focus-border"></span></div>';
+						str += '		<div data-v-34db6eca="" style="height:26px;"></div>';
+						str += '		<div data-v-0f69c571="" data-v-34db6eca="" class="base-button base-button-disabled"><div data-v-0f69c571="" class="button-border"><button data-v-0f69c571="" type="button" class="button-content">确认</button></div></div>';
+						str += '	</form>';
+						str += '</div>';
+						$("#vux_view_box_body").html(str);
+					}
+				} else {
+					m_toast(data.msg);
+				}
+			},
+			"complete" : function(data) {
+				if(data.result) { //有资金密码
+					$("#oldWithdrawPassWord,#newWithdrawPassWord1,#newWithdrawPassWord2").keyup(checkInput);
+					$("#oldWithdrawPassWord,#newWithdrawPassWord1,#newWithdrawPassWord2").blur(checkInput);
+					$("#oldWithdrawPassWord,#newWithdrawPassWord1,#newWithdrawPassWord2").focus(checkInput);
+					$("#oldWithdrawPassWord,#newWithdrawPassWord1,#newWithdrawPassWord2").click(checkInput);
+				} else { //没有资金密码
+					$("#newWithdrawPassWord1,#newWithdrawPassWord2").keyup(checkInput);
+					$("#newWithdrawPassWord1,#newWithdrawPassWord2").blur(checkInput);
+					$("#newWithdrawPassWord1,#newWithdrawPassWord2").focus(checkInput);
+					$("#newWithdrawPassWord1,#newWithdrawPassWord2").click(checkInput);
+				}
+				$(".button-content").click(function(){
+					var haveWithdrawPassWord = $.trim($("#title").attr("data-have-withdrawPassWord"));
+					if("true" == haveWithdrawPassWord) { //有资金密码
+						var oldWithdrawPassWord = $("#oldWithdrawPassWord").val();
+						var newWithdrawPassWord1 = $("#newWithdrawPassWord1").val();
+						var newWithdrawPassWord2 = $("#newWithdrawPassWord2").val();
+						if(checkInput()) {
+							loadData({
+								"url" : "user/updateWithdrawPassWord",
+								"data" : {
+									"oldWithdrawPassWord" : oldWithdrawPassWord,
+									"newWithdrawPassWord" : newWithdrawPassWord1
+								},
+								"success" : function(data) {
+									m_toast(data.msg);
+									if(data.code == 100) {
+										$("#oldWithdrawPassWord,#newWithdrawPassWord1,#newWithdrawPassWord2").val("");
+									}
+								}
+							});
+						}
+					} else { //没有资金密码
+						var newWithdrawPassWord1 = $("#newWithdrawPassWord1").val();
+						var newWithdrawPassWord2 = $("#newWithdrawPassWord2").val();
+						if(checkInput()) {
+							loadData({
+								"url" : "user/updateWithdrawPassWord",
+								"data" : {
+									"oldWithdrawPassWord" : "",
+									"newWithdrawPassWord" : newWithdrawPassWord1
+								},
+								"success" : function(data) {
+									m_toast(data.msg);
+									if(data.code == 100) {
+										$("#newWithdrawPassWord1,#newWithdrawPassWord2").val();
+										setTimeout('window.location.reload()', 2000);
+									}
+								}
+							});
+						}
+					}
+				});
+			}
 		});
 		break;
 	}

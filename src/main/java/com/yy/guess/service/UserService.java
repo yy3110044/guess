@@ -16,9 +16,13 @@ public interface UserService {
 
     double getBalance(int userId);
     void updateInfo(String nickName, String qq, String phone, String email, int userId);
+    void updateInfo(String nickName, String qq, String email, int userId);
     void updateRebateRate(double rebateRate, int userId);
     int getUserIdByUserName(String userName); //返回用户id，0代表无
     
     void updateRealNameLock(boolean realNameLock, int userId);
     void updateRealName(String realName, int userId);
+    
+    void updatePassWord(String passWord, int userId);
+    void updateWithdrawPassword(String withdrawPassWord, int userId);
 }

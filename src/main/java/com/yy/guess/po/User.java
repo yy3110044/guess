@@ -7,7 +7,7 @@ public class User {
 	private int id;
 	private String userName;
 	private String passWord;
-	private String withdrawPassword;
+	private String withdrawPassWord;
 	private double balance;
 	private String nickName;
 	private String realName;
@@ -41,11 +41,11 @@ public class User {
 	public void setPassWord(String passWord) {
 		this.passWord = passWord;
 	}
-	public String getWithdrawPassword() {
-		return withdrawPassword;
+	public String getWithdrawPassWord() {
+		return withdrawPassWord;
 	}
-	public void setWithdrawPassword(String withdrawPassword) {
-		this.withdrawPassword = withdrawPassword;
+	public void setWithdrawPassWord(String withdrawPassWord) {
+		this.withdrawPassWord = withdrawPassWord;
 	}
 	public double getBalance() {
 		return balance;

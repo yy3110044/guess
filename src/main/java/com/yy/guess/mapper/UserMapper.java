@@ -26,6 +26,9 @@ public interface UserMapper {
     
     @Update("update guess_user set nickName = #{nickName}, qq = #{qq}, phone = #{phone}, email = #{email} where id = #{userId}")
     void updateInfo(String nickName, String qq, String phone, String email, int userId);
+    
+    @Update("update guess_user set nickName = #{nickName}, qq = #{qq}, email = #{email} where id = #{userId}")
+    void updateInfo2(String nickName, String qq, String email, int userId);
 
     @Update("update guess_user set rebateRate = #{rebateRate} where id = #{userId}")
     void updateRebateRate(double rebateRate, int userId);
@@ -44,4 +47,12 @@ public interface UserMapper {
     //修改真实姓名
     @Update("update guess_user set realName = #{realName}, realNameLock = 1 where id = #{userId} and realNameLock = 0")
     void updateRealName(String realName, int userId);
+    
+    //修改登录密码
+    @Update("update guess_user set passWord = #{passWord} where id = #{userId}")
+    void updatePassWord(String passWord, int userId);
+    
+    //修改资金密码
+    @Update("update guess_user set withdrawPassWord = #{withdrawPassWord} where id = #{userId}")
+    void updateWithdrawPassword(String withdrawPassWord, int userId);
 }

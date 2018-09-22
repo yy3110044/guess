@@ -53,12 +53,12 @@
 						</div>
 						<div data-v-0df6a7f4="">
 							<div class="weui-cells vux-no-group-title">
-								<div onclick="window.location.href='m/usercenter/rules.jsp'" data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
+								<div onclick="window.location.href='m/rules.jsp'" data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
 									<div class="weui-cell__hd"><div data-v-0df6a7f4="" class="base-icon rule-icon"></div></div>
 									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">玩法规则</label></p><span class="vux-label-desc"></span></div>
 									<div class="weui-cell__ft"></div>
 								</div>
-								<div data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
+								<div onclick="window.location.href='m/about.jsp'" data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
 									<div class="weui-cell__hd"><div data-v-0df6a7f4="" class="base-icon about-icon"></div></div>
 									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">关于我们</label></p><span class="vux-label-desc"></span></div>
 									<div class="weui-cell__ft"></div>

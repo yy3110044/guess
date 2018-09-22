@@ -3,13 +3,12 @@
 <head>
 <title>玩法规则 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <%@include file="/m/head-common.jsp"%>
-<script src="m/js/usercenter.js"></script>
 </head>
 <body>
 	<div id="app">
 		<nav data-v-1db5fc32="" class="app-header">
 			<ul data-v-1db5fc32="">
-				<li data-v-1db5fc32="" onclick="window.location.href='m/usercenter/menu.jsp'" class="base-icon history-back"></li>
+				<li data-v-1db5fc32="" onclick="window.history.back()" class="base-icon history-back"></li>
 				<li data-v-1db5fc32="">玩法规则</li>
 				<li data-v-1db5fc32="" class="base-icon"></li>
 			</ul>

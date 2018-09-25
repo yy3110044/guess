@@ -25,7 +25,7 @@
 									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">您好!</label></p><span class="vux-label-desc"></span></div>
 									<div class="weui-cell__ft"></div>
 								</div>
-								<div data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
+								<div onclick="window.location.href='m/usercenter/wallet/index.jsp'" data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
 									<div class="weui-cell__hd"><div data-v-0df6a7f4="" class="base-icon wallet-icon"></div></div>
 									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">钱包</label></p><span class="vux-label-desc"></span></div>
 									<div class="weui-cell__ft"><p data-v-0df6a7f4="" class="wallet-lebal"><span data-v-0df6a7f4="">余额</span><span data-v-0df6a7f4="" class="wallet-lebal-balance"></span></p></div>

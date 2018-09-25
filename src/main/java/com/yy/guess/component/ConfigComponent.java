@@ -100,4 +100,16 @@ public class ConfigComponent {
 		String str = configMap.get("clientLoadDataInterval");
 		return Integer.parseInt(str);
 	}
+	
+	//返回最小提款金额
+	public double getWithdrawalMin() {
+		String str = configMap.get("withdrawalMin");
+		return Double.parseDouble(str);
+	}
+	
+	//返回最大提款金额
+	public double getWithdrawalMax() {
+		String str = configMap.get("withdrawalMax");
+		return Double.parseDouble(str);
+	}
 }

@@ -93,6 +93,8 @@ INSERT INTO guess_config VALUES(null, 'betAmountMin', '0.01', '下注金额下�
 INSERT INTO guess_config VALUES(null, 'betAmountMax', '10000', '下注金额上限，单位：元');
 INSERT INTO guess_config VALUES(null, 'customerServiceUrl', 'https://www.baidu.com/', '客服链接');
 INSERT INTO guess_config VALUES(null, 'clientLoadDataInterval', '60', '客户端加载数据间隔，单位：秒');
+INSERT INTO guess_config VALUES(null, 'withdrawalMin', '100', '最小提款金额');
+INSERT INTO guess_config VALUES(null, 'withdrawalMax', '10000', '最大提款金额');
 
 /*体育运动表*/
 DROP TABLE IF EXISTS `guess_sport`;
@@ -305,5 +307,38 @@ CREATE TABLE `guess_system_notice`(
   PRIMARY KEY (`id`),
   KEY `top` (`top`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*用户银行帐号*/
+DROP TABLE IF EXISTS `guess_user_bank_account`;
+CREATE TABLE `guess_user_bank_account`(
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `userId` int(11) NOT NULL COMMENT '用户ID',
+  `userName` varchar(128) NOT NULL COMMENT '用户名',
+  `bankCode` varchar(128) COMMENT '银行代码，例：ALIPAY、ICBC',
+  `bankName` varchar(128) COMMENT '银行名',
+  `bankAccount` varchar(128) COMMENT '银行帐号',
+  `bankAccountName` varchar(128) COMMENT '开户人姓名',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+/*用户提款*/
+DROP TABLE IF EXISTS `guess_user_withdrawal`;
+CREATE TABLE `guess_user_withdrawal` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `userId` int(11) NOT NULL COMMENT '用户ID',
+  `userName` varchar(128) NOT NULL COMMENT '用户名',
+  `amount` decimal(15, 6) COMMENT '提款金额',
+  `bankCode` varchar(128) COMMENT '银行代码，例：ALIPAY、ICBC',
+  `bankName` varchar(128) COMMENT '银行名',
+  `bankAccount` varchar(128) COMMENT '银行帐号',
+  `bankAccountName` varchar(128) COMMENT '开户人姓名',
+  `status` enum('处理中', '已拒绝', '已同意') COMMENT '状态',
+  `remark` varchar(256) COMMENT '备注',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 show tables;

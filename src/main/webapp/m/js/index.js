@@ -258,7 +258,7 @@ var numberInputShow = function(leftTeamName, rightTeamName, matchName, playTypeI
 	str += '		<div data-v-60a57f0c="" class="remove-all">' + matchName + '</div>';
 	str += '		<div data-v-60a57f0c="" class="pop-header-text">';
 	str += '			<div data-v-60a57f0c="" class="pop-header-balance">余额</div>';
-	str += '			<div data-v-60a57f0c="" id="userBalanceDiv">' + userBalance.toFixed(2) + '</div>';
+	str += '			<div data-v-60a57f0c="" id="userBalanceDiv">' + getMoneyStr(userBalance) + '</div>';
 	str += '		</div>';
 	str += '		<div data-v-60a57f0c="" class="pop-header-close" onclick="numberInputClose()"></div>';
 	str += '	</section>';
@@ -1034,7 +1034,7 @@ var loadUserBalance = function(callback){
 //更新余额方法
 var updateBalance = function(balance){
 	userBalance = balance;
-	$("#userBalanceDiv").html(balance.toFixed(2));
+	$("#userBalanceDiv").html(getMoneyStr(balance));
 };
 
 //更新未读信息方法

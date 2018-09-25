@@ -4,6 +4,10 @@
 <title>修改姓名 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <%@include file="/m/head-common.jsp"%>
 <script src="m/js/usercenter.js"></script>
+<script>
+var msg = "<%=com.yy.fast4j.Fast4jUtils.urlDecode(request.getParameter("msg"))%>";
+$(document).ready(function(){if(!empty(msg)) m_alert(msg);});
+</script>
 </head>
 <body>
 	<div id="app">

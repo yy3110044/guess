@@ -2,6 +2,10 @@ var empty = function(str) {
 	return str == null || "" == str;
 };
 
+//不四舍五入保留两位小数
+var getMoneyStr = function(amount) {
+	return (Math.floor(amount * 100) / 100).toFixed(2);
+};
 /**
  * obj.url：链接
  * obj.data：参数

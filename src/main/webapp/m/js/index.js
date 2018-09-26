@@ -620,7 +620,9 @@ var getMatchVersusStr = function(versus, playType, remainingTime){
 		str += '		<img data-v-18da170e="" src="' + (empty(versus.matchLogoUrl) ? versus.sportLogoUrl : versus.matchLogoUrl) + '" width="20px">';
 		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name  + '</div>';
 		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
-		str += '		<div data-v-18da170e="" class="play-count">' + (versus.playTypeCount > 1 ? ('+' + versus.playTypeCount) : '') + '</div>';
+		if(versus.playTypeCount > 1) {
+			str += '		<div data-v-18da170e="" class="play-count">' + ('+' + versus.playTypeCount) + '</div>';
+		}
 		str += '	</section>';
 		str += '	<section data-v-18da170e="" class="card-body">';
 		str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.leftTeamLogoUrl + '" class="team-logo"></div>';
@@ -658,7 +660,9 @@ var getMatchVersusStr = function(versus, playType, remainingTime){
 		str += '		<img data-v-18da170e="" src="' + (empty(versus.matchLogoUrl) ? versus.sportLogoUrl : versus.matchLogoUrl) + '" width="20px">';
 		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name + '</div>';
 		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
-		str += '		<div data-v-18da170e="" class="play-count">' + (versus.playTypeCount > 1 ? ('+' + versus.playTypeCount) : '') + '</div>';
+		if(versus.playTypeCount > 1) {
+			str += '		<div data-v-18da170e="" class="play-count">' + ("+" + versus.playTypeCount) + '</div>';
+		}
 		str += '	</section>';
 		str += '	<section data-v-18da170e="" class="card-body">';
 		str += '		<div data-v-18da170e="" class="card-body-team"><img data-v-18da170e="" src="' + versus.leftTeamLogoUrl + '" class="team-logo"></div>';

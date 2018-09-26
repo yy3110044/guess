@@ -85,4 +85,29 @@
         </if>
     </select>
     <!--****************************************************************分隔线****************************************************************-->
+
+	<select id="queryByIndex" resultType="com.yy.guess.po.TradeFlow">
+		select id, userId, userName, preBalance, amount, type, description, createTime from guess_trade_flow
+		where userId = #{userId}
+		<choose>
+			<when test="index == 0"></when>
+			<when test="index == 1">and (type = '下注' or type = '返点' or type = '返奖' or type = '退款')</when>
+			<when test="index == 2">and (type = '充值' or type = '提现')</when>
+			<when test="index == 3">and type = '其它'</when>
+		</choose>
+		order by id DESC
+		<if test="page != null">
+			limit ${page.beginIndex}, ${page.pageSize}
+		</if>
+	</select>
+	<select id="queryByIndexCount" resultType="int">
+		select count(*) from guess_trade_flow
+		where userId = #{userId}
+		<choose>
+			<when test="index == 0"></when>
+			<when test="index == 1">and (type = '下注' or type = '返点' or type = '返奖' or type = '退款')</when>
+			<when test="index == 2">and (type = '充值' or type = '提现')</when>
+			<when test="index == 3">and type = '其它'</when>
+		</choose>
+	</select>
 </mapper>

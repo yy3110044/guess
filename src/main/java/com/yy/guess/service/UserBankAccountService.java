@@ -13,4 +13,5 @@ public interface UserBankAccountService {
     List<UserBankAccount> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+    int deleteAccount(int userBankAccountId, int userId);//删除一个银行帐号并返回剩余个数
 }

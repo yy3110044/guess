@@ -50,4 +50,10 @@ public class UserBankAccountServiceImpl implements UserBankAccountService {
         return mapper.getCount(qc);
     }
     /*****************************************************************分隔线************************************************************************/
+
+	@Override
+	public int deleteAccount(int userBankAccountId, int userId) {
+		mapper.deleteAccount(userBankAccountId, userId);
+		return mapper.getCount(new QueryCondition().addCondition("userId", "=", userId));
+	}
 }

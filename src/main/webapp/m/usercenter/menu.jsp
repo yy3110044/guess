@@ -44,11 +44,13 @@
 									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">通知</label></p><span class="vux-label-desc"></span></div>
 									<div class="weui-cell__ft"></div>
 								</div>
+								<!--
 								<div data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
 									<div class="weui-cell__hd"><div data-v-0df6a7f4="" class="base-icon activity-icon"></div></div>
 									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">活动</label></p><span class="vux-label-desc"></span></div>
 									<div class="weui-cell__ft"></div>
 								</div>
+								-->
 							</div>
 						</div>
 						<div data-v-0df6a7f4="">

@@ -34,11 +34,6 @@
 					</div>
 					<div data-v-70e7ffa8="">
 						<div class="weui-cells vux-no-group-title">
-							<div data-v-70e7ffa8="" class="weui-cell vux-tap-active weui-cell_access">
-								<div class="weui-cell__hd"></div>
-								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">银行卡管理</label></p><span class="vux-label-desc"></span></div>
-								<div class="weui-cell__ft"></div>
-							</div>
 							<div onclick="window.location.href='m/usercenter/setting/passWord.jsp'" data-v-70e7ffa8="" class="weui-cell vux-tap-active weui-cell_access">
 								<div class="weui-cell__hd"></div>
 								<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">登录密码管理</label></p><span class="vux-label-desc"></span></div>

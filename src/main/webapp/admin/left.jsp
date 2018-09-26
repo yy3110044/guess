@@ -17,6 +17,7 @@
 			<a href="admin/user/userNoticeList.jsp">用户通知</a>
 			<a href="admin/tradeFlow/tradeFlowList.jsp">交易流水</a>
 			<a href="admin/user/betList.jsp">下注列表</a>
+			<a href="admin/user/withdrawalList.jsp">提款列表</a>
 		</div>
 		<div>
 			<span>竞猜管理</span>

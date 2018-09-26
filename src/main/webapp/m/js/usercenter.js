@@ -679,7 +679,10 @@ $(document).ready(function(){
 								"success" : function(data) {
 									m_toast(data.msg);
 									if(data.code == 100) {
-										$("#newWithdrawPassWord1,#newWithdrawPassWord2").val();
+										if(!empty(msg)) {
+											window.location.href = "m/usercenter/wallet/withdrawal.jsp";
+										}
+										$("#newWithdrawPassWord1,#newWithdrawPassWord2").val("");
 										setTimeout('window.location.reload()', 2000);
 									}
 								}
@@ -720,6 +723,7 @@ $(document).ready(function(){
 							str += '		<div data-v-ed4b0372="" class="content-item">';
 							str += '			<img data-v-ed4b0372="" src="' + getBankImg(obj.bankCode) + '" width="40px">';
 							str += '			<div data-v-ed4b0372="" class="item-text">' + obj.bankName + '&nbsp;尾号(' + obj.bankAccount.substring(obj.bankAccount.length - 4) + ')</div>';
+							str += '			<div data-v-ed4b0372="" class="bank-delete" style="margin-left:10px;font-size:26px;color:rgb(186, 25, 25);">×</div>';
 							str += '		</div>';
 							str += '	</div>';
 							str += '</div>';
@@ -741,6 +745,35 @@ $(document).ready(function(){
 					$("div.card-header .user-name").html(bankName + "(" + bankAccount.substring(bankAccount.length - 4) + ")");
 					$("#bankSelector,#bankSelectorLevel").hide();
 				});
+				$("div.bank-delete").click(function(e){
+					var ts = $(this);
+					var userBankAccountId = $.trim(ts.parent().parent().parent().attr("data-user-bank-account-id"));
+					loadData({
+						"url" : "user/deleteBankAccount",
+						"data" : {
+							"userBankAccountId" : userBankAccountId
+						},
+						"success" : function(data) {
+							if(data.code == 100) {
+								m_alert(data.msg, function(){
+									window.location.reload();
+								});
+							} else {
+								m_toast(data.msg);
+							}
+						}
+					});
+					e.stopPropagation();//阻止事件传递
+				});
+			}
+		});
+		loadData({
+			"url" : "user/haveWithdrawPassWord",
+			"hideLoading" : true,
+			"success" : function(data){
+				if(!data.result) {
+					window.location.href = "m/usercenter/setting/withdrawPassWord.jsp?msg=" + encodeURI("请先设置资金密码");
+				}
 			}
 		});
 		loadData({
@@ -762,7 +795,8 @@ $(document).ready(function(){
 		});
 		var checkInput = function(){
 			var amount = $.trim($("#amount").val());
-			if(empty(amount) || isNaN(amount)) {
+			var withdrawPassWord = $("#withdrawPassWord").val();
+			if(empty(amount) || isNaN(amount) || empty(withdrawPassWord)) {
 				$("button.button-content").parent().parent().addClass("base-button-disabled");
 			} else {
 				$("button.button-content").parent().parent().removeClass("base-button-disabled");
@@ -772,25 +806,31 @@ $(document).ready(function(){
 			$("#amount").val($("#balance").html());
 			checkInput();
 		});
-		$("#amount").keyup(checkInput);
-		$("#amount").blur(checkInput);
-		$("#amount").focus(checkInput);
-		$("#amount").click(checkInput);
+		$("#amount,#withdrawPassWord").keyup(checkInput);
+		$("#amount,#withdrawPassWord").blur(checkInput);
+		$("#amount,#withdrawPassWord").focus(checkInput);
+		$("#amount,#withdrawPassWord").click(checkInput);
 		$("button.button-content").click(function(){
 			var userBankAccountId = $.trim($("#userBankAccountId").val());
 			var amount = $.trim($("#amount").val());
+			var withdrawPassWord = $("#withdrawPassWord").val();
 			if(empty(userBankAccountId)) {
 				m_toast("请选择收款帐号，若没有，请先绑定");
 				return;
 			}
 			if(empty(amount) || isNaN(amount)) {
-				m_toast("请输入提款金额");
+				m_toast("请正确输入提款金额");
+				return;
+			}
+			if(empty(withdrawPassWord)) {
+				m_toast("请输入资金密码");
 				return;
 			}
 			loadData({
 				"url" : "user/withdrawal",
 				"data" : {
 					"userBankAccountId" : userBankAccountId,
+					"withdrawPassWord" : withdrawPassWord,
 					"amount" : amount
 				},
 				"success" : function(data){
@@ -885,6 +925,128 @@ $(document).ready(function(){
 				}
 			});
 		});
+		break;
+	/***********************************交易记录页***************************************/
+	case "wallet/tradeFlow.jsp":
+		$("#vux-scroller-kdi54").height($(window).height() - 92);//设置滚动div高度
+		var mescroll = new MeScroll("vux-scroller-kdi54", {
+			"down" : {
+				"use" : true,
+				"auto" : false,
+				"callback" : function(){
+					getTradeFlowList(1, true);
+				}
+			},
+			"up" : {
+				"use" : true,
+				"auto" : false,
+				"isBounce" : false,
+				"htmlNodata" : '<div data-v-1545e424="" class="empty-note">没有更多记录了...</div>',
+				"callback" : function(page){
+					getTradeFlowList(page.num + 1, true);
+				}
+			}
+		});
+		
+		var vuxTabItem = $("div.vux-tab-item");
+		vuxTabItem.click(function(){
+			var ts = $(this);
+			var index = ts.index();
+			vuxTabItem.removeClass("vux-tab-selected");
+			vuxTabItem.css("color", "rgb(186, 206, 241)");
+			ts.addClass("vux-tab-selected");
+			ts.css("color", "rgb(255, 255, 255)");
+			switch(index) {
+			case 0:
+				$("div.vux-tab-ink-bar-transition-forward").css({"left" : "0%", "right" : "75%"});
+				break;
+			case 1:
+				$("div.vux-tab-ink-bar-transition-forward").css({"left" : "25%", "right" : "50%"});
+				break;
+			case 2:
+				$("div.vux-tab-ink-bar-transition-forward").css({"left" : "50%", "right" : "25%"});
+				break;
+			case 3:
+				$("div.vux-tab-ink-bar-transition-forward").css({"left" : "75%", "right" : "0%"});
+				break;
+			}
+			getTradeFlowList(1, false);
+		});
+		var preCreateTime = null;
+		var getTradeFlowList = function(pageNo, hideLoading){
+			loadData({
+				"url" : "user/getTradeFlowList",
+				"hideLoading" : hideLoading,
+				"data" : {
+					"index" : $("div.vux-tab-selected").index(),
+					"pageNo" : pageNo
+				},
+				"success" : function(data) {
+					if(data.code == 100) {
+						var list = data.result.list;
+						var page = data.result.page;
+						
+						if(page.pageNo == 1) {
+							preCreateTime = null;
+						}
+						
+						var str = '';
+						for(var i=0; i<list.length; i++) {
+							var obj = list[i];
+							var currentCreateTime = obj.createTime.substring(0, 10);
+							str += '<div data-v-ddc22438="" class="record-list">';
+							if(preCreateTime == null || preCreateTime != currentCreateTime) {
+								str += '	<div data-v-ddc22438="" class="items-date"><div data-v-ddc22438="" class="date-text">' + currentCreateTime + '</div></div>';
+							}
+							str += '	<div data-v-ddc22438="" class="record-item">';
+							str += '		<div data-v-ddc22438="" class="record-item-content">';
+							str += '			<div data-v-ddc22438="" class="item-content">';
+							str += '				<div data-v-ddc22438="" class="trade-type">' + obj.type + '</div>';
+							if(obj.amount > 0) {
+								str += '				<div data-v-ddc22438="" class="trade-amount" style="color:green;"><span data-v-ddc22438="">+</span>' + getMoneyStr(obj.amount) + '</div>';
+							} else if(obj.amount < 0) {
+								str += '				<div data-v-ddc22438="" class="trade-amount" style="color:rgb(186, 25, 25);">' + getMoneyStr(obj.amount) + '</div>';
+							} else {
+								str += '				<div data-v-ddc22438="" class="trade-amount">' + getMoneyStr(obj.amount) + '</div>';
+							}
+							str += '			</div>';
+							str += '			<div data-v-ddc22438="" style="height:5px;"></div>';
+							str += '			<div data-v-ddc22438="" class="item-content">';
+							str += '				<div data-v-ddc22438="" class="trade-time">' + obj.createTime + '</div>';
+							str += '				<div data-v-ddc22438="" class="trade-status success">比赛取消，下注金额退回</div>';
+							str += '			</div>';
+							str += '		</div>';
+							str += '	</div>';
+							str += '</div>';
+							preCreateTime = currentCreateTime;
+						}
+
+						if(page.pageNo == 1) {
+							if(mescroll != null) {
+								mescroll.scrollTo(0); //滚动到顶部
+								mescroll.setPageNum(1); //把页数重设为1
+							}
+							$("#tradeFlowListDiv").empty();
+						}
+						$("#tradeFlowListDiv").append(str);
+						if(mescroll != null) {
+							mescroll.endSuccess(page.pageSize, page.next);//在这里关闭加载提示
+						}
+					} else {
+						m_toast(data.msg);
+						if(mescroll != null) {
+							mescroll.endErr();
+						}
+					}
+				},
+				"error" : function() {
+					if(mescroll != null) {
+						mescroll.endErr();
+					}
+				}
+			});
+		};
+		getTradeFlowList(1, false);
 		break;
 	}
 });

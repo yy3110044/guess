@@ -35,6 +35,13 @@
 									<span data-v-7ec847aa="" class="focus-border"></span>
 								</div>
 								<div data-v-ed4b0372="" class="amount-notice">钱包余额&nbsp;¥<span id="balance"></span>，&nbsp;<span data-v-ed4b0372="" class="set-max-amount">全部提现</span></div>
+								
+								<div data-v-7ec847aa="" data-v-ed4b0372="" class="amount-input">
+									<input data-v-7ec847aa="" id="withdrawPassWord" type="password" autocomplete="off" placeholder="输入资金密码" style="padding-left:0px;">
+									<label data-v-7ec847aa="" for="withdrawPassWord" class="input-label">资金密码</label>
+									<span data-v-7ec847aa="" class="focus-border"></span>
+								</div>
+								
 								<div data-v-0f69c571="" data-v-ed4b0372="" class="base-button base-button-disabled"><div data-v-0f69c571="" class="button-border"><button data-v-0f69c571="" type="button" class="button-content">确认</button></div></div>
 							</form>
 						</div>

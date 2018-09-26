@@ -149,7 +149,7 @@ public class BetServiceImpl implements BetService {
     		this.settlement(betId, pt);
     		break;
     	case 未比赛:
-    		this.refund(betId, null);
+    		this.refund(betId, "比赛取消，下注金额退回");
     		break;
     	default:
     		break;

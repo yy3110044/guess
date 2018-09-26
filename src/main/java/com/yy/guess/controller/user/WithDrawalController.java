@@ -2,6 +2,8 @@ package com.yy.guess.controller.user;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,21 +83,24 @@ public class WithDrawalController {
 	
 	//提款
 	@RequestMapping("/withdrawal")
-	public ResponseObject withdrawal(@RequestParam int userBankAccountId, @RequestParam double amount, HttpServletRequest req) {
+	public ResponseObject withdrawal(@RequestParam int userBankAccountId, @RequestParam double amount, @RequestParam String withdrawPassWord, HttpServletRequest req) {
 		if(amount <= 0) {
-			return new ResponseObject(103, "提款金额必须大于零");
+			return new ResponseObject(101, "提款金额必须大于零");
 		}
 		if(amount < cfgCom.getWithdrawalMin() || amount > cfgCom.getWithdrawalMax()) {
-			return new ResponseObject(104, "单笔提款金额范围：" + cfgCom.getWithdrawalMin() + " ~ " + cfgCom.getWithdrawalMax());
+			return new ResponseObject(102, "单笔提款金额范围：" + cfgCom.getWithdrawalMin() + " ~ " + cfgCom.getWithdrawalMax());
 		}
 		UserBankAccount account = ubas.findById(userBankAccountId);
 		if(account == null) {
-			return new ResponseObject(101, "收款帐号不存在");
+			return new ResponseObject(103, "收款帐号不存在");
 		}
 		int userId = (Integer)req.getAttribute("userId");
 		User user = us.findById(userId);
+		if(!user.getWithdrawPassWord().equals(DigestUtils.md5Hex(withdrawPassWord))) {
+			return new ResponseObject(104, "资金密码错误");
+		}
 		if(amount > user.getBalance()) {
-			return new ResponseObject(102, "您的余额不足");
+			return new ResponseObject(105, "您的余额不足");
 		}
 		UserWithdrawal uw = new UserWithdrawal();
 		uw.setUserId(user.getId());
@@ -108,5 +113,12 @@ public class WithDrawalController {
 		uw.setStatus(UserWithdrawalStatus.处理中);
 		uws.withdrawal(uw);
 		return new ResponseObject(100, "提款申请提交成功");
+	}
+	
+	//删除一个银行帐号
+	@RequestMapping("/deleteBankAccount")
+	public ResponseObject deleteBankAccount(@RequestParam int userBankAccountId, HttpServletRequest req) {
+		int userId = (Integer)req.getAttribute("userId");
+		return new ResponseObject(100, "删除成功", ubas.deleteAccount(userBankAccountId, userId));
 	}
 }

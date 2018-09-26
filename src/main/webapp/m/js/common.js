@@ -60,7 +60,9 @@ var loadData = function(obj){
 };
 
 //提示框1
-var m_alert = function(msg){
+var m_alert_ok_callback = null;
+var m_alert = function(msg, ok_callback){
+	m_alert_ok_callback = ok_callback;
 	var str = '';
 	str += '<div id="m_alert_div" class="base-alert v-transfer-dom">';
 	str += '	<div data-v-cd2dfd02="" class="vux-x-dialog">';
@@ -77,6 +79,7 @@ var m_alert = function(msg){
 	$("body").append(str);
 };
 var m_alert_close = function(){
+	if(m_alert_ok_callback != null) m_alert_ok_callback();
 	$("#m_alert_div").remove();
 };
 

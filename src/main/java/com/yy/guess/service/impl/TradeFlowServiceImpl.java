@@ -10,6 +10,8 @@ import com.yy.guess.po.TradeFlow;
 import com.yy.guess.po.User;
 import com.yy.guess.po.enums.TradeType;
 import com.yy.guess.service.TradeFlowService;
+import com.yy.guess.util.QueryResult;
+import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 
 @Repository("tradeFlowService")
@@ -79,5 +81,12 @@ public class TradeFlowServiceImpl implements TradeFlowService {
 		mapper.add(flow);
 		um.plusBalance(amount, userId);
 		return new Object[]{100, "更改成功"};
+	}
+
+	@Override
+	public QueryResult<TradeFlow> queryByIndex(int userId, int index, Page page) {
+		List<TradeFlow> list = mapper.queryByIndex(userId, index, page);
+		page.setRowCount(mapper.queryByIndexCount(userId, index));
+		return new QueryResult<TradeFlow>(list, page);
 	}
 }

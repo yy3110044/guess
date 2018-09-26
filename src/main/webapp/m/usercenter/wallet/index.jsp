@@ -11,7 +11,7 @@
 			<ul data-v-1db5fc32="">
 				<li data-v-1db5fc32="" onclick="window.location.href='m/usercenter/menu.jsp'" class="base-icon history-back"></li>
 				<li data-v-1db5fc32="">钱包</li>
-				<li data-v-1db5fc32=""><a data-v-1db5fc32="" href="" class="base-icon wallet-record"></a></li>
+				<li data-v-1db5fc32=""><a data-v-1db5fc32="" href="m/usercenter/wallet/tradeFlow.jsp" class="base-icon wallet-record"></a></li>
 			</ul>
 		</nav>
 		<div class="weui-tab">

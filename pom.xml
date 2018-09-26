@@ -9,6 +9,10 @@
 	<name>guess Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	
+	<properties>
+		<zxing.version>3.3.3</zxing.version>
+	</properties>
+	
 	<!-- springboot基础父pom配置 -->
 	<parent>
         <groupId>org.springframework.boot</groupId>
@@ -72,6 +76,18 @@
         	<groupId>org.apache.commons</groupId>
         	<artifactId>commons-text</artifactId>
         	<version>1.4</version>
+        </dependency>
+        
+        <!-- zxing二维码生成与解析 -->
+        <dependency>
+        	<groupId>com.google.zxing</groupId>
+        	<artifactId>core</artifactId>
+        	<version>${zxing.version}</version>
+        </dependency>
+        <dependency>
+        	<groupId>com.google.zxing</groupId>
+        	<artifactId>javase</artifactId>
+        	<version>${zxing.version}</version>
         </dependency>
 	</dependencies>
 	<build>

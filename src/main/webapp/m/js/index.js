@@ -621,7 +621,7 @@ var getMatchVersusStr = function(versus, playType, remainingTime){
 		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name  + '</div>';
 		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
 		if(versus.playTypeCount > 1) {
-			str += '		<div data-v-18da170e="" class="play-count">' + ('+' + versus.playTypeCount) + '</div>';
+			str += '		<div data-v-18da170e="" class="play-count">' + ('+' + (versus.playTypeCount - 1)) + '</div>';
 		}
 		str += '	</section>';
 		str += '	<section data-v-18da170e="" class="card-body">';
@@ -661,7 +661,7 @@ var getMatchVersusStr = function(versus, playType, remainingTime){
 		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.sportName + '&nbsp;' + versus.matchName + '&nbsp;' + versus.name + '</div>';
 		str += '		<div data-v-18da170e="" class="match-round">&nbsp;/&nbsp;bo' + versus.boCount + '</div>';
 		if(versus.playTypeCount > 1) {
-			str += '		<div data-v-18da170e="" class="play-count">' + ("+" + versus.playTypeCount) + '</div>';
+			str += '		<div data-v-18da170e="" class="play-count">' + ("+" + (versus.playTypeCount - 1)) + '</div>';
 		}
 		str += '	</section>';
 		str += '	<section data-v-18da170e="" class="card-body">';

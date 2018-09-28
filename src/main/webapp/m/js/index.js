@@ -945,6 +945,10 @@ var bet = function(playTypeId, betDirection, betAmount){
 					m_confirm("您还未登录，请先登录", function(){
 						window.location.href = "m/login.jsp";
 					});
+				} else if(data.code == 105) {
+					m_confirm("您的余额不足，是否前往充值", function(){
+						window.location.href = 'm/usercenter/wallet/index.jsp';
+					});
 				} else {
 					m_toast(data.msg);
 				}

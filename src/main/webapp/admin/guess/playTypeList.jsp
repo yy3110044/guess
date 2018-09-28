@@ -483,7 +483,7 @@ $(document).ready(function(){
 	<table class="table table-bordered table-striped table-hover">
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
-				<span id="versusTitle"></span>&nbsp;&nbsp;局数：<select id="versusBo" onchange="versusBoChange()" style="width:70px;"></select>&nbsp;&nbsp;<a href="admin/guess/playTypeAdd.jsp" target="_blank">添加玩法</a>
+				<span id="versusTitle"></span>&nbsp;&nbsp;局数：<select id="versusBo" onchange="versusBoChange()" style="width:70px;"></select>&nbsp;&nbsp;<a href="admin/guess/playTypeAdd.jsp?matchVersusId=${param.versusId}" target="_blank">添加玩法</a>
 			</td>
 		</tr>
 		<tr align="center">

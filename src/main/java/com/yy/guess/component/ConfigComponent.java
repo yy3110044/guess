@@ -112,4 +112,16 @@ public class ConfigComponent {
 		String str = configMap.get("withdrawalMax");
 		return Double.parseDouble(str);
 	}
+	
+	//返回最小充值金额
+	public double getPayMin() {
+		String str = configMap.get("payMin");
+		return Double.parseDouble(str);
+	}
+	
+	//返回最大充值金额
+	public double getPayMax() {
+		String str = configMap.get("payMax");
+		return Double.parseDouble(str);
+	}
 }

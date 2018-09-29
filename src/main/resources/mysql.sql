@@ -95,6 +95,8 @@ INSERT INTO guess_config VALUES(null, 'customerServiceUrl', 'https://www.baidu.c
 INSERT INTO guess_config VALUES(null, 'clientLoadDataInterval', '60', '客户端加载数据间隔，单位：秒');
 INSERT INTO guess_config VALUES(null, 'withdrawalMin', '100', '最小提款金额');
 INSERT INTO guess_config VALUES(null, 'withdrawalMax', '10000', '最大提款金额');
+INSERT INTO guess_config VALUES(null, 'payMin', '10', '最小充值金额');
+INSERT INTO guess_config VALUES(null, 'payMax', '10000', '最大充值金额');
 
 /*体育运动表*/
 DROP TABLE IF EXISTS `guess_sport`;
@@ -339,6 +341,24 @@ CREATE TABLE `guess_user_withdrawal` (
   `createTime` datetime COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*充值支付订单*/
+DROP TABLE IF EXISTS `guess_pay_order`;
+CREATE TABLE `guess_pay_order` (
+  `id` char(64) NOT NULL COMMENT '主键ID，使用UUID',
+  `userId` int(11) NOT NULL COMMENT '用户ID',
+  `userName` varchar(128) NOT NULL COMMENT '用户名',
+  `amount` decimal(15, 6) COMMENT '充值金额',
+  `subject` varchar(128) COMMENT '商品名',
+  `payType` varchar(128) COMMENT '支付类型，如：ALIPAY_WAP、ALIPAY_PC等',
+  `status` enum('未支付', '已支付', '支付异常') COMMENT '订单状态',
+  `notifyTime` datetime COMMENT '服务商回调通知时间',
+  `notifyCount` int(11) COMMENT '服务商回调通知次数',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`),
+  KEY `createTime` (`createTime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 show tables;

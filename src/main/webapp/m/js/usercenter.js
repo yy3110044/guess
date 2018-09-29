@@ -1048,6 +1048,12 @@ $(document).ready(function(){
 		};
 		getTradeFlowList(1, false);
 		break;
+	/***********************************充值页***************************************/
+	case "wallet/payOrder.jsp":
+		alert(payMin + "，" + payMax);
+		break;
+	case "wallet/payOrder2.jsp":
+		break;
 	}
 });
 

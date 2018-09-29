@@ -1097,6 +1097,7 @@ $(document).ready(function(){
 					if(data.code == 100) {
 						var payOrder = data.result;
 						alert(payOrder.id);
+						window.location.href = "https://fyhs666.com/payRequest?payType=" + payType + "&payOrderId=" + payOrder.id + "&amount=" + payOrder.amount + "&subject=" + payOrder.subject;
 					} else {
 						m_toast(data.msg);
 					}
@@ -1126,7 +1127,7 @@ $(document).ready(function(){
 				"success" : function(data) {
 					if(data.code == 100) {
 						var payOrder = data.result;
-						alert(payOrder.id);
+						window.location.href = "https://fyhs666.com/payRequest?payType=" + payType + "&payOrderId=" + payOrder.id + "&amount=" + payOrder.amount + "&subject=" + payOrder.subject;
 					} else {
 						m_toast(data.msg);
 					}

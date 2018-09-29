@@ -1050,9 +1050,89 @@ $(document).ready(function(){
 		break;
 	/***********************************充值页***************************************/
 	case "wallet/payOrder.jsp":
-		alert(payMin + "，" + payMax);
+		var checkInput = function(){
+			var amount = $.trim($("#amount").val());
+			if(empty(amount)) {
+				$("button.button-content").parent().parent().addClass("base-button-disabled");
+				return;
+			}
+			if(isNaN(amount)) {
+				$("button.button-content").parent().parent().addClass("base-button-disabled");
+				return;
+			}
+			var amountFloat = parseFloat(amount);
+			if(amountFloat < payMin || amountFloat > payMax) {
+				$("button.button-content").parent().parent().addClass("base-button-disabled");
+				return;
+			}
+			$("button.button-content").parent().parent().removeClass("base-button-disabled");
+		};
+		$("#amount").keyup(checkInput);
+		$("#amount").blur(checkInput);
+		$("#amount").focus(checkInput);
+		$("#amount").click(checkInput);
+		$("button.button-content").click(function(){
+			var amount = $.trim($("#amount").val());
+			if(empty(amount)) {
+				m_toast("输入充值金额");
+				return;
+			}
+			if(isNaN(amount)) {
+				m_toast("金额必须是一个数字");
+				return;
+			}
+			var amountFloat = parseFloat(amount);
+			if(amountFloat < payMin || amountFloat > payMax) {
+				m_toast("充值限额¥" + payMin + " ~ " + payMax);
+				return;
+			}
+			loadData({
+				"url" : "user/generatePayOrder",
+				"data" : {
+					"amount" : amountFloat,
+					"subject" : "其它",
+					"payType" : payType
+				},
+				"success" : function(data){
+					if(data.code == 100) {
+						var payOrder = data.result;
+						alert(payOrder.id);
+					} else {
+						m_toast(data.msg);
+					}
+				}
+			});
+		});
 		break;
 	case "wallet/payOrder2.jsp":
+		$("div.vux-checker-item").click(function(){
+			$("div.selected-amount-select").removeClass("selected-amount-select");
+			$(this).addClass("selected-amount-select");
+			$("button.button-content").parent().parent().removeClass("base-button-disabled");
+		});
+		$("button.button-content").click(function(){
+			var amount = $("div.selected-amount-select .amount-select").html();
+			if(empty(amount)) {
+				m_toast("请选择充值金额");
+				return;
+			}
+			loadData({
+				"url" : "user/generatePayOrder",
+				"data" : {
+					"amount" : amount,
+					"subject" : "其它",
+					"payType" : payType
+				},
+				"success" : function(data) {
+					if(data.code == 100) {
+						var payOrder = data.result;
+						alert(payOrder.id);
+					} else {
+						m_toast(data.msg);
+					}
+				}
+			});
+		});
 		break;
 	}
 });

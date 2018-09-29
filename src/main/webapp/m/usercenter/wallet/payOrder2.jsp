@@ -4,6 +4,9 @@
 <title>充值 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <%@include file="/m/head-common.jsp"%>
 <script src="m/js/usercenter.js"></script>
+<script>
+var payType = "<%=request.getParameter("payType")%>";
+</script>
 </head>
 <body>
 	<div id="app">
@@ -57,7 +60,7 @@
 						</div>
 						<div data-v-4e00d1d3="" class="card-padding submit-button">
 							<div data-v-0f69c571="" data-v-4e00d1d3="" class="base-button base-button-disabled">
-								<div data-v-0f69c571="" class="button-border"><button data-v-0f69c571="" type="submit" class="button-content">确认</button></div>
+								<div data-v-0f69c571="" class="button-border"><button data-v-0f69c571="" type="button" class="button-content">确认</button></div>
 							</div>
 						</div>
 					</form>

@@ -7,6 +7,7 @@
 <script>
 var payMin = <%=cfgCom.getPayMin()%>;
 var payMax = <%=cfgCom.getPayMax()%>;
+var payType = "<%=request.getParameter("payType")%>";
 </script>
 </head>
 <body>
@@ -25,7 +26,7 @@ var payMax = <%=cfgCom.getPayMax()%>;
 						<div data-v-4e00d1d3="" class="payItem-list">
 							<div data-v-4e00d1d3="" class="card-padding amount-input-margin">
 								<div data-v-7ec847aa="" data-v-4e00d1d3="" class="amount-input">
-									<input data-v-7ec847aa="" id="amount" type="number" autocomplete="off" pattern="[0-9]*">
+									<input data-v-7ec847aa="" id="amount" type="number" autocomplete="off" step="0.01">
 									<label data-v-7ec847aa="" for="amount" class="input-label">金额</label>
 									<span data-v-7ec847aa="" class="rmb-icon"></span>
 									<span data-v-7ec847aa="" class="focus-border"></span>
@@ -35,7 +36,7 @@ var payMax = <%=cfgCom.getPayMax()%>;
 						</div>
 						<div data-v-4e00d1d3="" class="card-padding submit-button">
 							<div data-v-0f69c571="" data-v-4e00d1d3="" class="base-button base-button-disabled">
-								<div data-v-0f69c571="" class="button-border"><button data-v-0f69c571="" type="submit" class="button-content">确认</button></div>
+								<div data-v-0f69c571="" class="button-border"><button data-v-0f69c571="" type="button" class="button-content">确认</button></div>
 							</div>
 						</div>
 					</form>

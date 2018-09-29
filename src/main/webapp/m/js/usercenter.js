@@ -1013,7 +1013,7 @@ $(document).ready(function(){
 							str += '			<div data-v-ddc22438="" style="height:5px;"></div>';
 							str += '			<div data-v-ddc22438="" class="item-content">';
 							str += '				<div data-v-ddc22438="" class="trade-time">' + obj.createTime + '</div>';
-							str += '				<div data-v-ddc22438="" class="trade-status success">比赛取消，下注金额退回</div>';
+							str += '				<div data-v-ddc22438="" class="trade-status success">' + obj.description + '</div>';
 							str += '			</div>';
 							str += '		</div>';
 							str += '	</div>';

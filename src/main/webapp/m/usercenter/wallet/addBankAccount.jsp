@@ -62,6 +62,10 @@ $(document).ready(function(){if(!empty(msg)) m_alert(msg);});
 		<div data-v-da80ad50="" class="popup-content" id="vux-scroller-px8ds" style="touch-action:auto;user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);position:relative;overflow:scroll;">
 			<div class="xs-container" style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) translateZ(0px);">
 				<div data-v-da80ad50="" style="transform-origin:0px 0px 0px;transform:translate(0px, 0px) scale(1) translateZ(0px);">
+					<div data-v-da80ad50="" class="bank-item" data-bank-code="ALIPAY" data-bank-name="支付宝">
+						<img data-v-da80ad50="" src="" width="40px">
+						<div data-v-da80ad50="" class="bank-name">支付宝</div>
+					</div>
 					<div data-v-da80ad50="" class="bank-item" data-bank-code="ICBC" data-bank-name="中国工商银行">
 						<img data-v-da80ad50="" src="" width="40px">
 						<div data-v-da80ad50="" class="bank-name">中国工商银行</div>

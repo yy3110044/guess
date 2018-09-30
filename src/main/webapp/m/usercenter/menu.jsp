@@ -69,8 +69,8 @@
 						</div>
 					</section>
 					<section data-v-0df6a7f4="" class="button-group">
-						<a data-v-0df6a7f4="" href="javascript:;" class="button">推荐</a>
-						<div data-v-0df6a7f4="" class="button">代理</div>
+						<a data-v-0df6a7f4="" href="<%=com.yy.guess.util.Util.getConfigCom(application).getCustomerServiceUrl()%>" class="button">推荐</a>
+						<div onclick="m_toast('请直接联系客服')" data-v-0df6a7f4="" class="button">代理</div>
 						<a data-v-e7bb725a="" data-v-0df6a7f4="" href="<%=com.yy.guess.util.Util.getConfigCom(application).getCustomerServiceUrl()%>" target="_blank" rel="noopener noreferrer" class="customer-service button">联系</a>
 					</section>
 				</div>

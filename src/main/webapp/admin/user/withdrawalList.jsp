@@ -16,6 +16,7 @@ var query = function(pageSize, pageNo){
 	var endTime = $.trim($("#endTime").val());
 	loadData({
 		"url" : "administration/withdrawalList",
+		"hideLoading" : true,
 		"data" : {
 			"status" : "全部" == status ? null : status,
 			"startTime" : startTime,
@@ -33,11 +34,21 @@ var query = function(pageSize, pageNo){
 					{"field" : "bankName"},
 					{"field" : "bankAccount"},
 					{"field" : "bankAccountName"},
-					{"field" : "status"},
+					{"fn" : function(data){
+						if("处理中" == data.status) {
+							return data.status;
+						} else if("已同意" == data.status) {
+							return '<span style="color:red;">' + data.status + '</span>';
+						} else if("已拒绝" == data.status) {
+							return '<span style="color:blue;">' + data.status + '</span>';
+						} else {
+							return data.status;
+						}
+					}},
 					{"field" : "remark"},
 					{"field" : "createTime"},
-					{"fn" : function(){
-						var str = '';
+					{"fn" : function(obj){
+						var str = '<a href="javascript:;" onclick="detail(' + obj.id + ', this)">详情</a>';
 						return str;
 					}}
 				]);
@@ -50,7 +61,87 @@ var query = function(pageSize, pageNo){
 };
 $(document).ready(function(){
 	query(20, 1);
+	setInterval("intervalQuery()", 20000);
 });
+
+var intervalQuery = function(){
+	if($("tr.detailTr").length > 0) {
+		return;
+	}
+	query(20, 1);
+};
+
+var detail = function(withdrawalId, e){
+	loadData({
+		"url" : "administration/getWithdrawal",
+		"data" : {"withdrawalId" : withdrawalId},
+		"success" : function(data) {
+			if(data.code == 100) {
+				var obj = data.result;
+				var str = '';
+				str += '<tr class="contentTr detailTr"><td colspan="99" style="padding:4px;">';
+				str += '<div style="margin-top:5px;">提款用户：' + obj.userName + "</div>";
+				str += '<div style="margin-top:5px;">提款金额：' + obj.amount + '</div>';
+				str += '<div style="margin-top:5px;">收款银行：' + obj.bankName + '</div>';
+				str += '<div style="margin-top:5px;">收款帐号：' + obj.bankAccount + '</div>';
+				str += '<div style="margin-top:5px;">收款姓名：' + obj.bankAccountName + '</div>';
+				if("处理中" == obj.status) { //未处理
+					str += '<div style="margin-top:5px;">状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.UserWithdrawalStatus.class, "userWithdrawalStatus", "width:70px;", "处理中")%></div>';
+					str += '<div style="margin-top:5px;display:none;">备注：<input type="text" id="remark" value="' + (obj.remark == null ? "" : obj.remark) + '" style="width:500px;"></div>';
+					str += '<div style="margin-top:5px;"><input type="button" value="处理" onclick="chuli(' + obj.id + ')"></div>';
+				} else { //已处理
+					str += '<div style="margin-top:5px;">状态：<span style="color:' + (obj.status=="已同意"?"red;":"blue;") + '">' + obj.status + '</span></div>';
+					str += '<div style="margin-top:5px;">备注：' + (obj.remark == null ? "" : obj.remark) + '</div>';
+				}
+				str += '<div style="margin-top:5px;"><input type="button" onclick="$(this).parent().parent().parent().remove()" value="关闭"></div>';
+				str += '</td></tr>';
+				$("tr.detailTr").remove();
+				$(e).parent().parent().after(str);
+				$("#userWithdrawalStatus").change(statusChange);
+			} else {
+				showMsg(data.msg);
+			}
+		}
+	});
+};
+var chuli = function(withdrawalId) {
+	var status = $.trim($("#userWithdrawalStatus").val());
+	var remark = $.trim($("#remark").val());
+	if("处理中" == status) {
+		showMsg("请选择同意还是拒绝");
+		return;
+	} else {
+		loadData({
+			"url" : "administration/updateWithdrawal",
+			"data" : {
+				"withdrawalId" : withdrawalId,
+				"status" : status,
+				"remark" : remark
+			},
+			"success" : function(data) {
+				if(data.code == 100) {
+					showMsg(data.msg);
+				} else {
+					showMsg(data.msg);
+				}
+			}
+		});
+	}
+};
+var statusChange = function(){
+	var status = $.trim($(this).val());
+	if("处理中" == status) {
+		$("#remark").val("");
+		$("#remark").parent().hide();
+	} else if("已同意" == status) {
+		$("#remark").val("您的提款已到帐");
+		$("#remark").parent().show();
+	} else if("已拒绝" == status) {
+		$("#remark").val("");
+		$("#remark").attr("placeholder", "填写拒绝原因");
+		$("#remark").parent().show();
+	}
+};
 </script>
 </head>
 

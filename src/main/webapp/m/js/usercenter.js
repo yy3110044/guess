@@ -1013,7 +1013,7 @@ $(document).ready(function(){
 							str += '			<div data-v-ddc22438="" style="height:5px;"></div>';
 							str += '			<div data-v-ddc22438="" class="item-content">';
 							str += '				<div data-v-ddc22438="" class="trade-time">' + obj.createTime + '</div>';
-							str += '				<div data-v-ddc22438="" class="trade-status success">' + obj.description + '</div>';
+							str += '				<div data-v-ddc22438="" class="trade-status success">' + (obj.description == null ? "" : obj.description) + '</div>';
 							str += '			</div>';
 							str += '		</div>';
 							str += '	</div>';

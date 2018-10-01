@@ -2,6 +2,7 @@ package com.yy.guess.service;
 
 import java.util.List;
 import com.yy.guess.po.UserWithdrawal;
+import com.yy.guess.po.enums.UserWithdrawalStatus;
 import com.yy.fast4j.QueryCondition;
 
 public interface UserWithdrawalService {
@@ -14,4 +15,5 @@ public interface UserWithdrawalService {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
     void withdrawal(UserWithdrawal obj);
+    void updateWithdrawal(int withdrawalId, UserWithdrawalStatus status, String remark);
 }

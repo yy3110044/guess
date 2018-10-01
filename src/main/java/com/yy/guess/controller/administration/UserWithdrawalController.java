@@ -49,4 +49,16 @@ public class UserWithdrawalController {
 		Page page = qc.getPage(uws.getCount(qc));
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
 	}
+	
+	@RequestMapping("/getWithdrawal")
+	public ResponseObject getWithdrawal(@RequestParam int withdrawalId) {
+		return new ResponseObject(100, "返回成功", uws.findById(withdrawalId));
+	}
+	
+	//提款处理
+	@RequestMapping("/updateWithdrawal")
+	public ResponseObject updateWithdrawal(@RequestParam int withdrawalId, @RequestParam UserWithdrawalStatus status, String remark) {
+		uws.updateWithdrawal(withdrawalId, status, remark);
+		return new ResponseObject(100, "处理成功");
+	}
 }

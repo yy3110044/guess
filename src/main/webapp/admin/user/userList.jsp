@@ -90,7 +90,7 @@ var query = function(pageSize, pageNo) {
 					{fn : function(obj){return '<span style="font-weight:bold;">¥</span>' + obj.balance.toFixed(2);}},
 					{fn : function(obj){
 						var str = '';
-						str += obj.realName;
+						str += (obj.realName == null ? "" : obj.realName);
 						str += '&nbsp;&nbsp;&nbsp;&nbsp;<span title="锁定后，用户不可更改" style="color:red">锁定：</span>';
 						str += '<select onchange="updateRealNameLock(' + obj.id + ', this)" style="width:45px;padding:0px;">';
 						str += '<option value="true"' + (obj.realNameLock ? ' selected="selected"' : '') + '>是</option>';

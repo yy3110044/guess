@@ -172,12 +172,10 @@ a {
 			<div class="qrcode-title">手机扫描打开</div>
 			<img id="qrcode_img" src="qr.png?url=${basePath}m/index.jsp" style="width:214px;margin-bottom:40px;">
 		</div>
-		<!--
 		<div class="qrcode-border" id="app_qrcode">
-			<div class="qrcode-title">扫描下载APP</div>
-			<img id="qrcode_img" src="https://raybet39.com/assets/img/raybet0.gif" style="width:214px;margin-bottom:40px;">
+			<div class="qrcode-title">扫描下载Android APP</div>
+			<img id="qrcode_img" src="qr.png?url=${basePath}bet999.apk" style="width:214px;margin-bottom:40px;">
 		</div>
-		-->
 	</section>
 	<footer style="height: 100px"></footer>
 </body>

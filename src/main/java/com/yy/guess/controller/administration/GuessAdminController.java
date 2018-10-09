@@ -201,7 +201,7 @@ public class GuessAdminController {
 	 */
 	@RequestMapping("/getAllTeamsBySportId")
 	public ResponseObject getAllTeamsBySportId(@RequestParam int sportId) {
-		List<Team> list = ts.query(new QueryCondition().addCondition("sportId", "=", sportId));
+		List<Team> list = ts.query(new QueryCondition().addCondition("sportId", "=", sportId).addSort("name", SortType.ASC));
 		return new ResponseObject(100, "返回成功", list);
 	}
 	

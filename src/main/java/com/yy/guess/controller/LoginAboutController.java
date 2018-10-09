@@ -2,7 +2,10 @@ package com.yy.guess.controller;
 
 import java.util.Arrays;
 import java.util.Date;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,12 +56,14 @@ public class LoginAboutController {
 	public ResponseObject userLogin(@RequestParam String userName,
                                     @RequestParam String passWord,
                                     @RequestParam UserLoginType loginType,
-                                    HttpServletRequest req) {
+                                    @RequestParam(defaultValue="true") boolean autoLogin,
+                                    HttpServletRequest req,
+                                    HttpServletResponse resp) {
 		User user = us.find(new QueryCondition().addCondition("userName", "=", userName).addCondition("passWord", "=", DigestUtils.md5Hex(passWord)));
 		if(user == null) {
 			return new ResponseObject(101, "用户名或密码错误");
 		}
-		
+
 		UserLoginLog log = new UserLoginLog();
 		log.setUserId(user.getId());
 		log.setUserName(user.getUserName());
@@ -71,6 +76,18 @@ public class LoginAboutController {
 		switch(loginType) {
 		case WEB:
 			loginManager.webLogin(user.getId(), req.getSession());
+
+			Cookie userNameCookie = new Cookie("userName", userName);
+			Cookie passWordCookie = new Cookie("passWord", passWord);
+			if(autoLogin) {
+				userNameCookie.setMaxAge(1296000);
+				passWordCookie.setMaxAge(1296000);
+			} else {
+				userNameCookie.setMaxAge(0);
+				passWordCookie.setMaxAge(0);
+			}
+			resp.addCookie(userNameCookie);
+			resp.addCookie(passWordCookie);
 			return new ResponseObject(100, "登陆成功");
 		case APP:
 			return new ResponseObject(100, "登陆成功", loginManager.appLogin(user.getId()));

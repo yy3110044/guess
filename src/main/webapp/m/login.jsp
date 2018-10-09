@@ -2,57 +2,29 @@
 <html>
 <head>
 <title>用户登陆 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
-<%@include file="/m/head-common.jsp"%>
+<%@include file="/m/head-common.jsp"%><%
+String cookieUserName = "";
+String cookiePassWord = "";
+javax.servlet.http.Cookie[] cookies = request.getCookies();
+for(javax.servlet.http.Cookie cookie : cookies) {
+	switch(cookie.getName()) {
+	case "userName":
+		cookieUserName = cookie.getValue();
+		break;
+	case "passWord":
+		cookiePassWord = cookie.getValue();
+		break;
+	}
+}
+%>
+<script src="m/js/login.js"></script>
 <script>
-var login = function(){
-	var userName = $.trim($("#userName").val());
-	var passWord = $("#passWord").val();
-	if(empty(userName)) {
-		m_toast("输入用户名");
-		return;
-	}
-	if(empty(passWord)) {
-		m_toast("输入密码");
-		return;
-	}
-	loadData({
-		url : "userLogin",
-		data : {
-			"userName" : userName,
-			"passWord" : passWord,
-			"loginType" : "WEB"
-		},
-		success : function(data){
-			if(data.code == 100) {
-				m_toast(data.msg, true);
-				window.location.href = "${basePath}m/index.jsp";
-			} else {
-				m_toast(data.msg);
-			}
-		}
-	});
-};
 var msg = "<%=com.yy.fast4j.Fast4jUtils.urlDecode(request.getParameter("msg"))%>";
-$(document).ready(function(){
-	if(!empty(msg)) {
-		m_toast(msg);
-	}
-	loadData({
-		"url" : "isLoginBySession",
-		"success" : function(data) {
-			if(data.code == 100) {
-				if(data.result) {
-					window.location.href = "${basePath}m/index.jsp";
-				}
-			}
-		}
-	});
-});
 </script>
 </head>
 <body>
 	<div id="app">
-		<nav data-v-1db5fc32="" class="app-header"><ul data-v-1db5fc32=""><li data-v-1db5fc32="" onclick="window.history.back()" class="base-icon history-back"></li><li data-v-1db5fc32=""></li><li data-v-1db5fc32="" class="base-icon"></li></ul></nav>
+		<nav data-v-1db5fc32="" class="app-header"><ul data-v-1db5fc32=""><li data-v-1db5fc32="" onclick="window.location.href='m/index.jsp'" class="base-icon history-back"></li><li data-v-1db5fc32=""></li><li data-v-1db5fc32="" class="base-icon"></li></ul></nav>
 		<div class="weui-tab">
 			<div id="vux_view_box_body" class="weui-tab__panel vux-fix-safari-overflow-scrolling">
 				<div data-v-2a361258="" class="login-page router-view">
@@ -72,13 +44,13 @@ $(document).ready(function(){
 							<div data-v-0fdb235f="" class="right-icon" style="background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjJweCIgaGVpZ2h0PSIyMnB4IiB2aWV3Qm94PSIwIDAgMjIgMjIiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8IS0tIEdlbmVyYXRvcjogU2tldGNoIDQ5LjMgKDUxMTY3KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT7mmL7npLrlr4bnoIE8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+CiAgICA8ZGVmcz48L2RlZnM+CiAgICA8ZyBpZD0i6Zu356ue5oqAMi4wLWNvcHkiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGlkPSJpY29u5YiH5Zu+IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNzAuMDAwMDAwLCAtMTIyNS4wMDAwMDApIiBmaWxsPSIjM0Y1NDZBIj4KICAgICAgICAgICAgPGcgaWQ9IuaYvuekuuWvhueggSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzAuMDAwMDAwLCAxMjI1LjAwMDAwMCkiPgogICAgICAgICAgICAgICAgPHBhdGggZD0iTTExLDE3IEM2LjU4MTcyMiwxNyAzLDEyLjk5NTMwMDMgMywxMSBDMyw5LjAwNDY5OTcxIDYuNTgxNzIyLDUgMTEsNSBDMTEsNi42MTU3MjI2NiAxMSwxNC44Mjc3NTg4IDExLDE3IFogTTExLDE1IEM3LjY4NjI5MTUsMTUgNSwxMS44MDg3OTcyIDUsMTEgQzUsMTAuMTkxMjAyOCA3LjY4NjI5MTUsNyAxMSw3IEMxMSw4LjA3NzE0ODQ0IDExLDEzLjU1MTgzOTIgMTEsMTUgWiIgaWQ9IkNvbWJpbmVkLVNoYXBlIj48L3BhdGg+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNMTksMTcgQzE0LjU4MTcyMiwxNyAxMSwxMi45OTUzMDAzIDExLDExIEMxMSw5LjAwNDY5OTcxIDE0LjU4MTcyMiw1IDE5LDUgQzE5LDYuNjE1NzIyNjYgMTksMTQuODI3NzU4OCAxOSwxNyBaIE0xOSwxNSBDMTUuNjg2MjkxNSwxNSAxMywxMS44MDg3OTcyIDEzLDExIEMxMywxMC4xOTEyMDI4IDE1LjY4NjI5MTUsNyAxOSw3IEMxOSw4LjA3NzE0ODQ0IDE5LDEzLjU1MTgzOTIgMTksMTUgWiIgaWQ9IkNvbWJpbmVkLVNoYXBlIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNS4wMDAwMDAsIDExLjAwMDAwMCkgc2NhbGUoLTEsIDEpIHRyYW5zbGF0ZSgtMTUuMDAwMDAwLCAtMTEuMDAwMDAwKSAiPjwvcGF0aD4KICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0xMSwxNCBDOS4zNDMxNDU3NSwxNCA4LDEyLjY1Njg1NDIgOCwxMSBDOCw5LjM0MzE0NTc1IDkuMzQzMTQ1NzUsOCAxMSw4IEMxMi42NTY4NTQyLDggMTQsOS4zNDMxNDU3NSAxNCwxMSBDMTQsMTIuNjU2ODU0MiAxMi42NTY4NTQyLDE0IDExLDE0IFogTTExLDEzIEMxMi4xMDQ1Njk1LDEzIDEzLDEyLjEwNDU2OTUgMTMsMTEgQzEzLDkuODk1NDMwNSAxMi4xMDQ1Njk1LDkgMTEsOSBDOS44OTU0MzA1LDkgOSw5Ljg5NTQzMDUgOSwxMSBDOSwxMi4xMDQ1Njk1IDkuODk1NDMwNSwxMyAxMSwxMyBaIiBpZD0iQ29tYmluZWQtU2hhcGUiPjwvcGF0aD4KICAgICAgICAgICAgPC9nPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zdmc+');"></div>
 							-->
 						</div>
-						<section data-v-2a361258="" class="login-setting" style="visibility:hidden;">
+						<section data-v-2a361258="" class="login-setting">
 							<label data-v-2a361258="" class="container">
-								<span data-v-2a361258="">记住我</span>
-								<input type="checkbox">
+								<span data-v-2a361258="">自动登陆</span>
+								<input id="autoLogin" data-token1="<%=cookieUserName%>" data-token2="<%=cookiePassWord%>" type="checkbox" checked="checked">
 								<span class="checkmark"></span>
 							</label>
-							<a data-v-2a361258="" href="javascript:;" class="forgot-pwd">忘记密码?</a>
+							<a data-v-2a361258="" href="javascript:;" class="forgot-pwd" style="visibility:hidden;">忘记密码?</a>
 						</section>
 						<div data-v-0f69c571="" data-v-2a361258="" class="base-button">
 							<div data-v-0f69c571="" class="button-border">

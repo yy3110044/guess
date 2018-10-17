@@ -52,6 +52,7 @@ public class GuessMonitor implements Runnable {
 				bs.settlementOrRefund(id);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e.toString());
 		}
 	}

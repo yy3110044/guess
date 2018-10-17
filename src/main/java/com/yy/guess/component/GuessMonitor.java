@@ -46,14 +46,14 @@ public class GuessMonitor implements Runnable {
 	}
 	@Override
 	public void run() {
-		try {
-			List<Integer> betIdList = bs.getBetIdList(BetStatus.已下注);
-			for(Integer id : betIdList) {
+		List<Integer> betIdList = bs.getBetIdList(BetStatus.已下注);
+		for(Integer id : betIdList) {
+			try {
 				bs.settlementOrRefund(id);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error(e.toString());
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.toString());
 		}
 	}
 }

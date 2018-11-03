@@ -361,4 +361,59 @@ CREATE TABLE `guess_pay_order` (
   KEY `createTime` (`createTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+/*********************************NEW*****************************************/
+/*竞猜项目new*/
+DROP TABLE IF EXISTS `new_guess_item`;
+CREATE TABLE `new_guess_item` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `name` varchar(128) NOT NULL COMMENT '项目名称',
+  `logoUrl` varchar(512) COMMENT 'log图url',
+  `description` varchar(512) COMMENT '项目描述',
+  `createTime` datetime COMMENT '记录创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
+
+/*竞猜对阵new*/
+DROP TABLE IF EXISTS `new_guess_versus`;
+CREATE TABLE `new_guess_versus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `name` varchar(512) NOT NULL COMMENT '竞猜名称',
+  `logoUrl` varchar(512) COMMENT 'logo图url',
+  `itemId` int(11) NOT NULL COMMENT '类目id，new_guess_item id',
+  `itemName` varchar(128) COMMENT '类目名',
+  `returnRate` decimal(15, 6) COMMENT '赔率返还率，默认为1',
+  `betAmountMin` decimal(15, 6) COMMENT '下注金额下限，单位：元',
+  `betAmountMax` decimal(15, 6) COMMENT '下注金额上限，单位：元',
+  `betAllAmount` decimal(15, 6) COMMENT '下注总金额',
+  `startTime` datetime COMMENT '开始时间',
+  `endTime` datetime COMMENT '结束时间(如果创建对阵时设置了结束时间，那么时间到的时候就自动暂停下注，如果没有设置，则在结果对阵结果时设置这个时间)',
+  `betPause` bit(1) COMMENT '是否暂停下注',
+  `winner` int(11) COMMENT '胜的那个结果new_guess_versus_item id，零表示未结束(还没有结果)，负数表示流局',
+  `status` enum('未开始', '进行中', '已结束', '流局') COMMENT '状态',
+  `superVersusId` int(11) COMMENT '属于哪个父对阵，零表示没有父对阵',
+  `childVersusCount` int(11) COMMENT '子对阵数量',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `itemId` (`itemId`),
+  KEY `superVersusId` (`superVersusId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*竞猜类目表*/
+DROP TABLE IF EXISTS `new_guess_versus_item`;
+CREATE TABLE `new_guess_versus_item` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `name` varchar(256) NOT NULL COMMENT '竞猜名',
+  `versusId` int(11) NOT NULL COMMENT '对阵id',
+  `betAmount` decimal(15, 6) COMMENT '下注金额',
+  `fixedOdds` bit(1) COMMENT '是否固定赔率',
+  `odds` decimal(15, 6) COMMENT '赔率，当赔率为固定时，使用此值',
+  `changeOddsMin` decimal(15, 6) COMMENT '变动赔率下限，为零表示不限制',
+  `changeOddsMax` decimal(15, 6) COMMENT '变动赔率上限，为零表示不限制',
+  `createTime` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `versusId` (`versusId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 show tables;

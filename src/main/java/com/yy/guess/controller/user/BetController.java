@@ -31,6 +31,7 @@ import com.yy.guess.service.UserService;
  * @author 49803
  *
  */
+@Deprecated//过时，不用这个了
 @CrossOrigin
 @RestController
 @RequestMapping(value="/user", method=RequestMethod.POST)

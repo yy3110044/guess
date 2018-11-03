@@ -17,6 +17,7 @@ import com.yy.guess.service.PayOrderService;
 import com.yy.guess.service.UserService;
 import com.yy.guess.util.Util;
 
+@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(value="/user", method=RequestMethod.POST)

@@ -415,5 +415,6 @@ CREATE TABLE `new_guess_versus_item` (
   PRIMARY KEY (`id`),
   KEY `versusId` (`versusId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*********************************NEW*****************************************/
 
 show tables;

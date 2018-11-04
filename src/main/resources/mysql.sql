@@ -388,7 +388,7 @@ CREATE TABLE `new_guess_versus` (
   `betAmountMax` decimal(15, 6) COMMENT '下注金额上限，单位：元',
   `betAllAmount` decimal(15, 6) COMMENT '下注总金额',
   `startTime` datetime COMMENT '开始时间',
-  `endTime` datetime COMMENT '结束时间(如果创建对阵时设置了结束时间，那么时间到的时候就自动暂停下注，如果没有设置，则在结果对阵结果时设置这个时间)',
+  `endTime` datetime COMMENT '结束时间，关闭下注下记录',
   `betPause` bit(1) COMMENT '是否暂停下注',
   `winner` int(11) COMMENT '胜的那个结果new_guess_versus_item id，零表示未结束(还没有结果)，负数表示流局',
   `status` enum('未开始', '进行中', '已结束', '流局') COMMENT '状态',
@@ -397,7 +397,9 @@ CREATE TABLE `new_guess_versus` (
   `createTime` datetime COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `itemId` (`itemId`),
-  KEY `superVersusId` (`superVersusId`)
+  KEY `superVersusId` (`superVersusId`),
+  KEY `status` (`status`),
+  KEY `startTime` (`startTime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*竞猜类目表*/

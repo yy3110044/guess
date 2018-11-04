@@ -29,6 +29,7 @@ import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.RedisUtil;
 import com.yy.fast4j.QueryCondition.SortType;
 
+@Deprecated
 @Repository("playTypeService")
 @Transactional
 public class PlayTypeServiceImpl implements PlayTypeService {

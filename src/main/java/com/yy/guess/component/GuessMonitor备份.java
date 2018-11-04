@@ -1,6 +1,5 @@
 package com.yy.guess.component;
 
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,10 +11,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import com.yy.fast4j.QueryCondition;
-import com.yy.guess.po.NewGuessVersus;
-import com.yy.guess.po.enums.NewGuessVersusStatus;
-import com.yy.guess.service.NewGuessVersusService;
+import com.yy.guess.po.enums.BetStatus;
+import com.yy.guess.service.BetService;
 
 /**
  * 竞猜监听
@@ -23,19 +20,19 @@ import com.yy.guess.service.NewGuessVersusService;
  * @author 49803
  *
  */
-@Component
-public class GuessMonitor implements Runnable {
-	private static final Logger logger = LogManager.getLogger(GuessMonitor.class);
+@Deprecated
+public class GuessMonitor备份 implements Runnable {
+	private static final Logger logger = LogManager.getLogger(GuessMonitor备份.class);
 	
 	private ScheduledExecutorService service;
 	
 	@Autowired
-	private NewGuessVersusService ngvs;
+	private BetService bs;
 	
 	@Value("${web.config.guessMonitorDelay:20000}")
 	private long delay; //延迟，单位：毫秒
 	
-	public GuessMonitor() {
+	public GuessMonitor备份() {
 		service = Executors.newSingleThreadScheduledExecutor();
 	}
 	
@@ -49,17 +46,14 @@ public class GuessMonitor implements Runnable {
 	}
 	@Override
 	public void run() {
-		try {
-			QueryCondition qc = new QueryCondition();
-			qc.addCondition("status", "=", NewGuessVersusStatus.未开始);
-			qc.addCondition("startTime", "<=", new Date());
-			List<NewGuessVersus> list = ngvs.query(qc);
-			for(NewGuessVersus versus : list) {
-				ngvs.checkStart(versus);
+		List<Integer> betIdList = bs.getBetIdList(BetStatus.已下注);
+		for(Integer id : betIdList) {
+			try {
+				bs.settlementOrRefund(id);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error(e.toString());
 			}
-		} catch (Exception e) {
-			logger.error(e.toString());
-			e.printStackTrace();
 		}
 	}
 }

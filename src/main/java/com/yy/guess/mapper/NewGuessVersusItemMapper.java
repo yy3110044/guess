@@ -2,6 +2,8 @@ package com.yy.guess.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import com.yy.guess.po.NewGuessVersusItem;
 import com.yy.fast4j.QueryCondition;
 
@@ -15,4 +17,5 @@ public interface NewGuessVersusItemMapper {
     List<NewGuessVersusItem> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+    void addList(@Param("versusItemList") List<NewGuessVersusItem> versusItemList);
 }

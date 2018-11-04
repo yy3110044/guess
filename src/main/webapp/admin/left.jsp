@@ -21,10 +21,11 @@
 		</div>
 		<div>
 			<span>竞猜管理</span>
-			<a href="admin/guess/sportList.jsp">项目列表</a>
+			<a href="admin/v2/newGuessItem/list.jsp">项目列表</a>
 			<a href="admin/guess/teamList.jsp">战队列表</a>
 			<a href="admin/guess/matchList.jsp">赛事列表</a>
 			<a href="admin/guess/matchVersusList.jsp">对阵列表</a>
+			<a href="admin/v2/newGuessVersus/list.jsp">竞猜列表</a>
 		</div>
 	</div>
 </div>

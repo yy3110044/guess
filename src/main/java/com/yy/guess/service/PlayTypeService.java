@@ -8,6 +8,7 @@ import com.yy.guess.po.enums.BetDirection;
 import com.yy.guess.po.enums.MatchStatus;
 import com.yy.fast4j.QueryCondition;
 
+@Deprecated
 public interface PlayTypeService {
     void add(PlayType obj);
     void delete(int id);

@@ -85,4 +85,12 @@
         </if>
     </select>
     <!--****************************************************************分隔线****************************************************************-->
+    
+    <insert id="addList" parameterType="java.util.Collection">
+    	 insert into new_guess_versus_item(id, name, versusId, betAmount, fixedOdds, odds, changeOddsMin, changeOddsMax, createTime)
+    	 values
+    	 <foreach collection="versusItemList" item="obj" separator=",">
+    	 	(#{obj.id}, #{obj.name}, #{obj.versusId}, #{obj.betAmount}, #{obj.fixedOdds}, #{obj.odds}, #{obj.changeOddsMin}, #{obj.changeOddsMax}, #{obj.createTime})
+    	 </foreach>
+    </insert>
 </mapper>

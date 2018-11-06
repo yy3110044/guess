@@ -1,6 +1,8 @@
 package com.yy.guess.mapper;
 
 import java.util.List;
+
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
 import com.yy.guess.po.NewGuessVersus;
@@ -25,4 +27,10 @@ public interface NewGuessVersusMapper {
     
     @Update("update new_guess_versus set betPause = #{betPause} where id = #{versusId}")
     void updateBetPause(boolean betPause, int versusId);
+    
+    @Update("update new_guess_versus set betAllAmount = 0, endTime = null, betPause = 0, resultItemId = 0, resultItemName = null, status = '未开始' where id = #{versusId}")
+    void reset(int versusId);
+    
+    @Delete("delete from new_guess_versus where superVersusId = #{superVersusId}")
+    void deleteBySuperVersusId(int superVersusId);
 }

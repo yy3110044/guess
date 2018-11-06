@@ -16,21 +16,6 @@ public class NewGuessVersusItemServiceImpl implements NewGuessVersusItemService 
     private NewGuessVersusItemMapper mapper;
 
     @Override
-    public void add(NewGuessVersusItem obj) {
-        mapper.add(obj);
-    }
-
-    @Override
-    public void delete(int id) {
-        mapper.delete(id);
-    }
-
-    @Override
-    public void update(NewGuessVersusItem obj) {
-        mapper.update(obj);
-    }
-
-    @Override
     public NewGuessVersusItem find(QueryCondition qc) {
         return mapper.find(qc);
     }

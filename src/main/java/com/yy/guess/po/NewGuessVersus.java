@@ -16,7 +16,8 @@ public class NewGuessVersus {
 	private Date startTime;
 	private Date endTime;
 	private boolean betPause = false;
-	private int winner = 0;
+	private int resultItemId = 0;
+	private String resultItemName;
 	private NewGuessVersusStatus status = NewGuessVersusStatus.未开始;
 	private int superVersusId = 0;
 	private int childVersusCount = 0;
@@ -93,11 +94,17 @@ public class NewGuessVersus {
 	public void setBetPause(boolean betPause) {
 		this.betPause = betPause;
 	}
-	public int getWinner() {
-		return winner;
+	public int getResultItemId() {
+		return resultItemId;
 	}
-	public void setWinner(int winner) {
-		this.winner = winner;
+	public void setResultItemId(int resultItemId) {
+		this.resultItemId = resultItemId;
+	}
+	public String getResultItemName() {
+		return resultItemName;
+	}
+	public void setResultItemName(String resultItemName) {
+		this.resultItemName = resultItemName;
 	}
 	public NewGuessVersusStatus getStatus() {
 		return status;

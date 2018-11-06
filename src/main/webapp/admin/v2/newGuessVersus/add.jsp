@@ -13,6 +13,7 @@
 <script src="js/jquery.iframe-transport.js"></script>
 <script src="admin/js/common.js"></script>
 <script>
+var superVersusId = "${empty param.superVersusId ? '0' : param.superVersusId}";
 var globalChangeOddsMin = 1.1;
 var globalChangeOddsMax = 20;
 
@@ -23,6 +24,21 @@ $(document).ready(function(){
 		"imgId" : "logoUrl",
 		"defaultImgUrl" : "images/sportDefaultLogo.png"
 	});
+	
+	if(!empty(superVersusId) && parseInt(superVersusId) > 0) {
+		loadData({
+			"url" : "administration/v2/versusAdmin/versusGet",
+			"data" : {"versusId" : superVersusId},
+			"success" : function(data) {
+				if(data.code == 100) {
+					if(data.result != null) {
+						$("#fatherVersus").show();
+						$("#fatherVersus span").html(data.result.name);
+					}
+				}
+			}
+		});
+	}
 	
 	loadData({
 		"url" : "administration/v2/itemAdmin/getAll",
@@ -148,13 +164,15 @@ var add = function() {
 			"betAmountMin" : parseFloat(betAmountMin),
 			"betAmountMax" : parseFloat(betAmountMax),
 			"startTime" : startTime,
-			"superVersusId" : "${empty param.superVersusId ? '0' : param.superVersusId}",
+			"superVersusId" : superVersusId,
 			"versusItems[]" : versusItemParam.params
 		},
 		"success" : function(data) {
 			showMsg(data.msg);
 			if(data.code == 100) {
-				
+				$("#name").val("");
+				$("div.versusItemDiv").remove();
+				$("#totalgailv").empty();
 			}
 		}
 	});
@@ -214,6 +232,10 @@ var getVersusItemParam = function() {
 	<div class="title_right"><strong>添加竞猜</strong><span style="color:red;font-size:18px;padding-left:200px;" id="showMsg"></span></div>
 	<div style="width:900px; margin:auto">
 	<table class="table table-bordered">
+		<tr id="fatherVersus" style="display:none;">
+			<td width="12%" align="right" nowrap="nowrap" bgcolor="#f1f1f1"></td>
+			<td>添加&nbsp;<span style="font-weight:bold;"></span>&nbsp;的子对阵</td>
+		</tr>
 		<tr>
 			<td width="12%" align="right" nowrap="nowrap" bgcolor="#f1f1f1">竞猜名称：</td>
 			<td><input type="text" id="name" style="width:400px;"></td>

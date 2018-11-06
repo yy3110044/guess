@@ -12,4 +12,10 @@ public class CachePre {
 	//右方奖金池
 	@Deprecated
 	public static final String GUESS_RIGHT_BONUS_POOL = "guess_right_bonus_pool";
+	
+	//对阵
+	public static final String NEW_GUESS_VERSUS = "new_guess_versus";
+	
+	//对阵竞猜项
+	public static final String NEW_GUESS_VERSUS_ITEM = "new_guess_versus_item";
 }

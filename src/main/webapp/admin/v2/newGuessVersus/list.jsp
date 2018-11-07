@@ -95,6 +95,67 @@ var viewVersusCache = function(versusId, e) {
 	}
 };
 
+//全局赔率切换
+var globalUseFixedOddsChange = function(e) {
+	var useFixedOdds = $(e).val();
+	if(!empty(useFixedOdds)) {
+		$("select.versus-item-use-fixed-odds").val(useFixedOdds);
+		if("true" == useFixedOdds) {
+			$("input.versus-item-fixed-odds").removeAttr("readonly");
+			$("input.versus-item-change-odds").attr("readonly", "readonly");
+		} else if("false" == useFixedOdds) {
+			$("input.versus-item-fixed-odds").attr("readonly", "readonly");
+			$("input.versus-item-change-odds").removeAttr("readonly");
+		}
+	}
+}
+
+//赔率切换
+var useFixedOddsChange = function(e){
+	var ts = $(e);
+	var useFixedOdds = ts.val();
+	if("true" == useFixedOdds) {
+		ts.parent().next().find("input").removeAttr("readonly");
+		ts.parent().next().next().find("input").attr("readonly", "readonly");
+	} else if("false" == useFixedOdds) {
+		ts.parent().next().next().find("input").removeAttr("readonly");
+		ts.parent().next().find("input").attr("readonly", "readonly");
+	}
+};
+
+//赔率变化策略切换
+var changeOddsStrategyChange = function(e) {
+	var ts = $(e);
+	var strategy = parseInt(ts.val());
+	if(strategy > 0) {
+		var next = ts.next();
+		next.val(next.attr("data-change-value"));
+	} else if(strategy < 0) {
+		var next = ts.next();
+		next.val(next.attr("data-change-ratio"));
+	} else {
+		ts.next().val("0");
+	}
+};
+
+//全局赔率变化策略切换
+var globalChangeOddsStrategyChange = function(type, e) {
+	var strategy = $(e).val();
+	if(!empty(strategy)) {
+		var select = $("select." + type);
+		select.val(strategy);
+		select.next().each(function(){
+			if(parseInt(strategy) > 0) {
+				$(this).val($(this).attr("data-change-value"));
+			} else if(parseInt(strategy) < 0) {
+				$(this).val($(this).attr("data-change-ratio"));
+			} else {
+				$(this).val("0");
+			}
+		});
+	}
+};
+
 //查看竞猜项
 var viewVersusItem = function(versusId, e) {
 	if($("tr.versusItemChild" + versusId).length > 0) {
@@ -112,31 +173,57 @@ var viewVersusItem = function(versusId, e) {
 					
 					str += '<div class="itemDiv"><table class="table table-bordered table-striped table-hover my-table" style="text-align:center;width:auto;">';
 					str += '<thead>';
-					str += '<tr><th colspan="8">' + versus.name + '&nbsp;竞猜项详情</th><th><input type="button" value="关闭" onclick="$(this).parent().parent().parent().parent().parent().parent().parent().remove()"></th></tr>';
-					str += '<tr><th>竞猜名</th><th>下注金额</th><th>赔率类型</th><th>固定赔率</th><th>变动赔率</th><th style="color:red;">实际赔率</th><th>变动下限</th><th>变动上限</th><th></th></tr>';
+					str += '<tr><th colspan="11">' + versus.name + '&nbsp;竞猜项详情</th><th><input type="button" value="关闭" onclick="$(this).parent().parent().parent().parent().parent().parent().parent().remove()"></th></tr>';
+					str += '<tr><th>竞猜名</th><th>下注金额</th><th>下注比例/公平赔率</th><th>赔率类型</th><th>固定赔率</th><th>变动赔率</th><th style="color:red;">实际赔率</th><th>赔率增加限制</th><th>赔率减少限制</th><th>变动下限</th><th>变动上限</th><th></th></tr>';
 					str += '</thead>';
 					str += '<tbody>';
 					for(var i=0; i<versusItemList.length; i++) {
 						var versusItem = versusItemList[i];
-						str += '<tr>';
-						str += '<td>' + versusItem.name + '</td>';
-						str += '<td data-betAmount="' + versusItem.betAmount + '" class="bet-amount-td">¥' + versusItem.betAmount.toFixed(2) + '</td>';
-						str += '<td><select style="width:55px;"><option value="true"' + (versusItem.fixedOdds?' selected="selected"':'') + '>固定</option><option value="false"' + (versusItem.fixedOdds?'':' selected="selected"') + '>变动</option></select></td>';
-						str += '<td><input type="text" value="' + versusItem.odds + '" style="width:50px;"></td>';
-						str += '<td data-betAmount="' + versusItem.betAmount + '" class="change-odds-td"></td>';
+						str += '<tr data-versus-item-id="' + versusItem.id + '">';
+						str += '<td><input type="text" class="versus-item-name" value="' + versusItem.name + '"></td>';
+						str += '<td>¥' + versusItem.betAmount.toFixed(2) + '</td>';
+						str += '<td data-bet-amount="' + versusItem.betAmount + '" class="betAmountTd"></td>';
+						str += '<td><select class="versus-item-use-fixed-odds" style="width:55px;" onchange="useFixedOddsChange(this)"><option value="true"' + (versusItem.useFixedOdds?' selected="selected"':'') + '>固定</option><option value="false"' + (versusItem.useFixedOdds?'':' selected="selected"') + '>变动</option></select></td>';
+						str += '<td><input class="versus-item-fixed-odds" type="text" value="' + versusItem.fixedOdds + '"' + (versusItem.useFixedOdds?'':' readonly="readonly"') + ' style="width:50px;"></td>';
+						str += '<td><input class="versus-item-change-odds" type="text" value="' + versusItem.changeOdds + '"' + (versusItem.useFixedOdds?' readonly="readonly"':'') + ' style="width:50px;"></td>';
 						str += '<td></td>';
-						str += '<td><input type="text" value="' + versusItem.changeOddsMin + '" style="width:50px;"></td>';
-						str += '<td><input type="text" value="' + versusItem.changeOddsMax + '" style="width:50px;"></td>';
-						str += '<td><input type="button" value="修改"></td>';
+						
+						str += '<td>';
+						str += '<select class="versus-item-change-odds-plus-strategy" style="width:73px;" onchange="changeOddsStrategyChange(this)"><option value="0"' + (versusItem.changeOddsPlusStrategy==0?' selected="selected"':'') + '>不限制</option><option value="-1"' + (versusItem.changeOddsPlusStrategy<0?' selected="selected"':'') + '>百分比</option><option value="1"' + (versusItem.changeOddsPlusStrategy>0?' selected="selected"':'') + '>固定值</option></select>';
+						if(versusItem.changeOddsPlusStrategy > 0) {
+							str += '&nbsp;<input class="versus-item-change-odds-plus-val" type="text" data-change-value="' + versusItem.changeOddsPlusValue + '" data-change-ratio="' + versusItem.changeOddsPlusRatio + '" value="' + versusItem.changeOddsPlusValue + '" style="width:50px;">';
+						} else if(versusItem.changeOddsPlusStrategy < 0) {
+							str += '&nbsp;<input class="versus-item-change-odds-plus-val" type="text" data-change-value="' + versusItem.changeOddsPlusValue + '" data-change-ratio="' + versusItem.changeOddsPlusRatio + '" value="' + versusItem.changeOddsPlusRatio + '" style="width:50px;">';
+						} else {
+							str += '&nbsp;<input class="versus-item-change-odds-plus-val" type="text" data-change-value="' + versusItem.changeOddsPlusValue + '" data-change-ratio="' + versusItem.changeOddsPlusRatio + '" value="0" style="width:50px;">';
+						}
+						str += '</td>';
+						
+						str += '<td>';
+						str += '<select class="versus-item-change-odds-minus-strategy" style="width:73px;" onchange="changeOddsStrategyChange(this)"><option value="0"' + (versusItem.changeOddsMinusStrategy==0?' selected="selected"':'') + '>不限制</option><option value="-1"' + (versusItem.changeOddsMinusStrategy<0?' selected="selected"':'') + '>百分比</option><option value="1"' + (versusItem.changeOddsMinusStrategy>0?' selected="selected"':'') + '>固定值</option></select>';
+						if(versusItem.changeOddsMinusStrategy > 0) {
+							str += '&nbsp;<input class="versus-item-change-odds-minus-val" type="text" data-change-value="' + versusItem.changeOddsMinusValue + '" data-change-ratio="' + versusItem.changeOddsMinusRatio + '" value="' + versusItem.changeOddsMinusValue + '" style="width:50px;">';
+						} else if(versusItem.changeOddsMinusStrategy < 0) {
+							str += '&nbsp;<input class="versus-item-change-odds-minus-val" type="text" data-change-value="' + versusItem.changeOddsMinusValue + '" data-change-ratio="' + versusItem.changeOddsMinusRatio + '" value="' + versusItem.changeOddsMinusRatio + '" style="width:50px;">';
+						} else {
+							str += '&nbsp;<input class="versus-item-change-odds-minus-val" type="text" data-change-value="' + versusItem.changeOddsMinusValue + '" data-change-ratio="' + versusItem.changeOddsMinusRatio + '" value="0" style="width:50px;">';
+						}
+						str += '</td>';
+						
+						str += '<td><input type="text" class="versus-item-change-odds-min" value="' + versusItem.changeOddsMin + '" style="width:50px;"></td>';
+						str += '<td><input type="text" class="versus-item-change-odds-max" value="' + versusItem.changeOddsMax + '" style="width:50px;"></td>';
+						str += '<td><input type="button" value="修改" style="width:70px;"></td>';
 						str += '</tr>';
 					}
 					str += '<tr>';
-					str += '<td colspan="2"></td>';
-					str += '<td><select style="width:55px;"><option value="" selected="selected">选择</option><option value="true">固定</option><option value="false">变动</option></select></td>';
 					str += '<td colspan="3"></td>';
-					str += '<td><input type="text" style="width:50px;"></td>';
-					str += '<td><input type="text" style="width:50px;"></td>';
-					str += '<td><input type="button" value="统一修改"></td>';
+					str += '<td><select style="width:55px;" onchange="globalUseFixedOddsChange(this)"><option value="" selected="selected">选择</option><option value="true">固定</option><option value="false">变动</option></select></td>';
+					str += '<td colspan="3"></td>';
+					str += '<td><select style="width:73px;" onchange="globalChangeOddsStrategyChange(\'versus-item-change-odds-plus-strategy\', this)"><option value="" selected="selected">选择</option><option value="0">不限制</option><option value="-1">百分比</option><option value="1">固定值</option></select>&nbsp;<input type="text" style="width:50px;" placeholder="统一修改"></td>';
+					str += '<td><select style="width:73px;" onchange="globalChangeOddsStrategyChange(\'versus-item-change-odds-minus-strategy\', this)"><option value="" selected="selected">选择</option><option value="0">不限制</option><option value="-1">百分比</option><option value="1">固定值</option></select>&nbsp;<input type="text" style="width:50px;" placeholder="统一修改"></td>';
+					str += '<td><input type="text" style="width:50px;" placeholder="统一修改"></td>';
+					str += '<td><input type="text" style="width:50px;" placeholder="统一修改"></td>';
+					str += '<td><input type="button" value="统一修改" style="width:70px;"></td>';
 					str += '<tr>';
 					str += '</tbody>';
 					str += '</table></div>';
@@ -144,7 +231,7 @@ var viewVersusItem = function(versusId, e) {
 					str += '</td></tr>';
 					$("tr.versusItemTr").remove();
 					$(e).parent().parent().after(str);
-					jisuanChangeOdds(versus.betAllAmount);//计算变动赔率
+					betAmountRateAndOdds(versus.betAllAmount);//计算下注比例以及公平赔率
 				} else {
 					showMsg(data.msg);
 				}
@@ -153,22 +240,19 @@ var viewVersusItem = function(versusId, e) {
 	}
 };
 
-//计算变动赔率
-var jisuanChangeOdds = function(betAllAmount){
-	var allHasBet = true;
-	$("tr.versusItemTr .bet-amount-td").each(function(){
-		var betAmount = parseFloat($(this).attr("data-betAmount"));
-		if(betAmount <= 0) allHasBet = false;
-	});
-	$("tr.versusItemTr .change-odds-td").each(function(){
-		if(allHasBet) {
-			var betAmount = parseFloat($(this).attr("data-betAmount"));
-			var odds = 1 / (betAmount / betAllAmount);
-			$(this).html(odds.toFixed(2));
-		} else {
-			$(this).html("<span style=\"color:red;\">无</span>");
-		}
-	});
+//计算下注比例以及公平赔率
+var betAmountRateAndOdds = function(betAllAmount) {
+	if(betAllAmount > 0) {
+		$("td.betAmountTd").each(function(){
+			var ts = $(this);
+			var betAmount = parseFloat(ts.attr("data-bet-amount"));
+			if(betAmount > 0) {
+				var betRate = betAmount / betAllAmount;
+				var odds = 1 / betRate;
+				ts.html((betRate * 100).toFixed(2) + "%&nbsp;/&nbsp;" + odds.toFixed(2));
+			}
+		});
+	}
 };
 
 var query = function(pageSize, pageNo){

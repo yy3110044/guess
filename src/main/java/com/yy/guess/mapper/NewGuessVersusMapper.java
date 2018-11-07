@@ -19,6 +19,8 @@ public interface NewGuessVersusMapper {
     List<NewGuessVersus> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
+    List<NewGuessVersus> getAllUnEndVersus(); //返回所有未结束的versus;
+    
     @Update("update new_guess_versus set childVersusCount = childVersusCount + #{count} where id = #{versusId}")
     void plusChildVersusCount(int count, int versusId);//增加下级对阵数
     
@@ -27,9 +29,6 @@ public interface NewGuessVersusMapper {
     
     @Update("update new_guess_versus set betPause = #{betPause} where id = #{versusId}")
     void updateBetPause(boolean betPause, int versusId);
-    
-    @Update("update new_guess_versus set betAllAmount = 0, endTime = null, betPause = 0, resultItemId = 0, resultItemName = null, status = '未开始' where id = #{versusId}")
-    void reset(int versusId);
     
     @Delete("delete from new_guess_versus where superVersusId = #{superVersusId}")
     void deleteBySuperVersusId(int superVersusId);

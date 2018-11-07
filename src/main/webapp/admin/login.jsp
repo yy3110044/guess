@@ -49,13 +49,13 @@ var login = function(){
 			<td height="25" valign="bottom">用户名：</td>
 		</tr>
 		<tr>
-			<td><input type="text" id="userName" class="login_input login_user"/></td>
+			<td><input type="text" id="userName" value="admin" class="login_input login_user"/></td>
 		</tr>
 		<tr>
 	    	<td height="35" valign="bottom">密  码：</td>
 		</tr>
 		<tr>
-	    	<td><input type="password" id="passWord" class="login_input login_password"/></td>
+	    	<td><input type="password" id="passWord" value="123456" class="login_input login_password"/></td>
 		</tr>
 		<!-- 
 		<tr>

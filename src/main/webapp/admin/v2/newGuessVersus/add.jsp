@@ -16,6 +16,12 @@
 var superVersusId = "${empty param.superVersusId ? '0' : param.superVersusId}";
 var globalChangeOddsMin = 1.1;
 var globalChangeOddsMax = 20;
+var globalChangeOddsPlusRatio = 0.8;
+var globalChangeOddsPlusValue = 2;
+var globalChangeOddsPlusStrategy = 0;
+var globalChangeOddsMinusRatio = 0.4;
+var globalChangeOddsMinusValue = 1;
+var globalChangeOddsMinusStrategy = -1;
 
 $(document).ready(function(){
 	addImageUploadEvent({
@@ -33,7 +39,7 @@ $(document).ready(function(){
 				if(data.code == 100) {
 					if(data.result != null) {
 						$("#fatherVersus").show();
-						$("#fatherVersus span").html(data.result.name);
+						$("#fatherVersus span").html(data.result.versus.name);
 					}
 				}
 			}
@@ -69,7 +75,7 @@ var itemChange = function() {
 };
 
 var jisuangailv = function() {
-	var itemOddsInput = $("div.versusItemDiv .item_odds");
+	var itemOddsInput = $("div.versusItemDiv .item-odds");
 	var gailv = 0;
 	itemOddsInput.each(function(){
 		var ts = $(this);
@@ -97,18 +103,133 @@ var jisuangailv = function() {
 	}
 };
 
+var strategyChange = function(type, e) {
+	if("plus" == type) {
+		var val = parseInt($.trim($(e).val()));
+		if(val > 0) {
+			$(e).next().val(globalChangeOddsPlusValue);
+		} else if(val < 0) {
+			$(e).next().val(globalChangeOddsPlusRatio);
+		} else {
+			$(e).next().val("0");
+		}
+	} else if("minus" == type) {
+		var val = parseInt($.trim($(e).val()));
+		if(val > 0) {
+			$(e).next().val(globalChangeOddsMinusValue);
+		} else if(val < 0) {
+			$(e).next().val(globalChangeOddsMinusRatio);
+		} else {
+			$(e).next().val("0");
+		}
+	}
+};
+
 var versusItemAdd = function(e) {
 	var str = '';
 	str += '<div class="versusItemDiv" style="margin-top:4px;">';
-	str += '<input type="text" class="item_name" placeholder="名称">';
-	str += '&nbsp;&nbsp;<input onclick="jisuangailv()" onblur="jisuangailv()" onkeyup="jisuangailv()" onfocus="jisuangailv()" type="text" class="item_odds" placeholder="赔率" style="width:80px;">';
+	str += '<input type="text" class="item-name" placeholder="名称">';
+	str += '&nbsp;&nbsp;<select class="item-useFixedOdds" style="width:80px;"><option value="false">变动赔率</option><option value="true">固定赔率</option></select>';
+	str += '&nbsp;&nbsp;<input onclick="jisuangailv()" onblur="jisuangailv()" onkeyup="jisuangailv()" onfocus="jisuangailv()" type="text" class="item-odds" placeholder="赔率" style="width:50px;">';
 	str += '&nbsp;&nbsp;<span style="color:red;font-weight:bold" class="gailv"></span>';
-	str += '&nbsp;&nbsp;<select class="item_fixedOdds" style="width:80px;"><option value="false">变动赔率</option><option value="true">固定赔率</option></select>';
-	str += '&nbsp;&nbsp;变动下限:<input type="text" class="item_changeOddsMin" value="' + globalChangeOddsMin + '" placeholder="变动赔率下限" style="width:80px;">';
-	str += '&nbsp;&nbsp;变动上限:<input type="text" class="item_changeOddsMax" value="' + globalChangeOddsMax + '" placeholder="变动赔率上限" style="width:80px;">';
+	
+	str += '&nbsp;&nbsp;&nbsp;赔率增加限制:<select onchange="strategyChange(\'plus\', this)" class="item-changeOddsPlusStrategy" style="width:73px;"><option value="0"' + (globalChangeOddsPlusStrategy==0?' selected="selected"':'') + '>不限制</option><option value="-1"' + (globalChangeOddsPlusStrategy<0?' selected="selected"':'') + '>百分比</option><option value="1"' + (globalChangeOddsPlusStrategy>0?' selected="selected"':'') + '>固定值</option></select>';
+	if(globalChangeOddsPlusStrategy > 0) {
+		str += '&nbsp;限制值:<input type="text" value="' + globalChangeOddsPlusValue + '" class="item-limitPlusValue" style="width:50px;" placeholder="限制值">';
+	} else if(globalChangeOddsPlusStrategy < 0) {
+		str += '&nbsp;限制值:<input type="text" value="' + globalChangeOddsPlusRatio + '" class="item-limitPlusValue" style="width:50px;" placeholder="限制值">';
+	} else {
+		str += '&nbsp;限制值:<input type="text" value="0" style="width:50px;" class="item-limitPlusValue" placeholder="限制值">';
+	}
+	
+	str += '&nbsp;&nbsp;&nbsp;赔率减少限制:<select onchange="strategyChange(\'minus\', this)" class="item-changeOddsMinusStrategy" style="width:73px;"><option value="0"' + (globalChangeOddsMinusStrategy==0?' selected="selected"':'') + '>不限制</option><option value="-1"' + (globalChangeOddsMinusStrategy<0?' selected="selected"':'') + '>百分比</option><option value="1"' + (globalChangeOddsMinusStrategy>0?' selected="selected"':'') + '>固定值</option></select>';
+	if(globalChangeOddsMinusStrategy > 0) {
+		str += '&nbsp;限制值:<input type="text" value="' + globalChangeOddsMinusValue + '" class="item-limitMinusValue" style="width:50px;" placeholder="限制值">';
+	} else if(globalChangeOddsMinusStrategy < 0) {
+		str += '&nbsp;限制值:<input type="text" value="' + globalChangeOddsMinusRatio + '" class="item-limitMinusValue" style="width:50px;" placeholder="限制值">';
+	} else {
+		str += '&nbsp;限制值:<input type="text" value="0" style="width:50px;" class="item-limitMinusValue" placeholder="限制值">';
+	}
+
+	str += '&nbsp;&nbsp;&nbsp;变动下限:<input type="text" class="item-changeOddsMin" value="' + globalChangeOddsMin + '" placeholder="变动下限" style="width:50px;">';
+	str += '&nbsp;&nbsp;变动上限:<input type="text" class="item-changeOddsMax" value="' + globalChangeOddsMax + '" placeholder="变动上限" style="width:50px;">';
 	str += '&nbsp;&nbsp;<span style="color:red;font-weight:bold;cursor:pointer;" title="删除" onclick="versusItemDelete(this)">✖</span>';
 	str += '</div>';
 	$(e).parent().parent().append(str);
+};
+
+var getVersusItemParam = function() {
+	var itemDivs = $("div.versusItemDiv");
+	if(itemDivs.length < 2) {
+		return {"result" : false, "msg" : "必须至少添加两个竞猜项"};
+	}
+	var params = new Array();
+	var result = true;
+	var msg = "";
+	itemDivs.each(function(){
+		var ts = $(this);
+		var name = $.trim(ts.find(".item-name").val());
+		var useFixedOdds = $.trim(ts.find(".item-useFixedOdds").val());
+		var odds = $.trim(ts.find(".item-odds").val());
+		
+		var changeOddsPlusStrategy = parseInt($.trim(ts.find(".item-changeOddsPlusStrategy").val()));
+		var changeOddsPlusValue = 0;
+		var changeOddsPlusRatio = 0
+		if(changeOddsPlusStrategy != 0) {
+			var limitValue = $.trim(ts.find(".item-limitPlusValue").val());
+			if(empty(limitValue) || isNaN(limitValue)) {
+				result = false;
+				msg = "请正确输入限制值";
+				return;
+			}
+			if(changeOddsPlusStrategy > 0) {
+				changeOddsPlusValue = parseFloat(limitValue);
+			} else if(changeOddsPlusStrategy < 0) {
+				changeOddsPlusRatio = parseFloat(limitValue);
+			}
+		}
+
+		var changeOddsMinusStrategy = parseInt($.trim(ts.find(".item-changeOddsMinusStrategy").val()));
+		var changeOddsMinusValue = 0;
+		var changeOddsMinusRatio = 0;
+		if(changeOddsMinusStrategy != 0) {
+			var limitValue = $.trim(ts.find(".item-limitMinusValue").val());
+			if(empty(limitValue) || isNaN(limitValue)) {
+				result = false;
+				msg = "请正确输入限制值";
+				return;
+			}
+			if(changeOddsMinusStrategy > 0) {
+				changeOddsMinusValue = parseFloat(limitValue);
+			} else if(changeOddsMinusStrategy < 0) {
+				changeOddsMinusRatio = parseFloat(limitValue);
+			}
+		}
+		
+		var changeOddsMin = $.trim(ts.find(".item-changeOddsMin").val());
+		var changeOddsMax = $.trim(ts.find(".item-changeOddsMax").val());
+		if(empty(name)) {
+			result = false;
+			msg = "请输入竞猜项名";
+			return;
+		}
+		if(empty(odds) || isNaN(odds) || empty(changeOddsMin) || isNaN(changeOddsMin) || empty(changeOddsMax) || isNaN(changeOddsMax)) {
+			result = false;
+			msg = "请正确输入赔率";
+			return;
+		}
+		if(empty(useFixedOdds)) {
+			result = false;
+			msg = "请选择赔率类型";
+			return;
+		}
+		params.push(name + "|" + odds + "|" + useFixedOdds + "|" + changeOddsPlusStrategy + "|" + changeOddsPlusValue + "|" + changeOddsPlusRatio + "|" + changeOddsMinusStrategy + "|" + changeOddsMinusValue + "|" + changeOddsMinusRatio + "|" + changeOddsMin + "|" + changeOddsMax);
+	});
+	if(result) {
+		return {"result" : result, "msg" : msg, "params" : params};
+	} else {
+		return {"result" : result, "msg" : msg};
+	}
 };
 
 var versusItemDelete = function(e) {
@@ -152,6 +273,7 @@ var add = function() {
 		showMsg(versusItemParam.msg);
 		return;
 	}
+	
 	var itemArray = item.split(";");
 	loadData({
 		"url" : "administration/v2/versusAdmin/versusAdd",
@@ -177,44 +299,6 @@ var add = function() {
 		}
 	});
 };
-var getVersusItemParam = function() {
-	var itemDivs = $("div.versusItemDiv");
-	if(itemDivs.length < 2) {
-		return {"result" : false, "msg" : "必须至少添加两个竞猜项"};
-	}
-	var params = new Array();
-	var result = true;
-	var msg = "";
-	itemDivs.each(function(){
-		var ts = $(this);
-		var name = $.trim(ts.find(".item_name").val());
-		var odds = $.trim(ts.find(".item_odds").val());
-		var fixedOdds = $.trim(ts.find(".item_fixedOdds").val());
-		var changeOddsMin = $.trim(ts.find(".item_changeOddsMin").val());
-		var changeOddsMax = $.trim(ts.find(".item_changeOddsMax").val());
-		if(empty(name)) {
-			result = false;
-			msg = "请输入竞猜项名";
-			return;
-		}
-		if(empty(odds) || isNaN(odds) || empty(changeOddsMin) || isNaN(changeOddsMin) || empty(changeOddsMax) || isNaN(changeOddsMax)) {
-			result = false;
-			msg = "请正确输入赔率";
-			return;
-		}
-		if(empty(fixedOdds)) {
-			result = false;
-			msg = "请选择赔率类型";
-			return;
-		}
-		params.push(name + "|" + odds + "|" + fixedOdds + "|" + changeOddsMin + "|" + changeOddsMax);
-	});
-	if(result) {
-		return {"result" : result, "msg" : msg, "params" : params};
-	} else {
-		return {"result" : result, "msg" : msg};
-	}
-};
 </script>
 </head>
 <body>
@@ -230,11 +314,11 @@ var getVersusItemParam = function() {
 		<a href="javascript:;">添加竞猜</a>
 	</div>
 	<div class="title_right"><strong>添加竞猜</strong><span style="color:red;font-size:18px;padding-left:200px;" id="showMsg"></span></div>
-	<div style="width:900px; margin:auto">
+	<div style="width:100%; margin:auto">
 	<table class="table table-bordered">
 		<tr id="fatherVersus" style="display:none;">
 			<td width="12%" align="right" nowrap="nowrap" bgcolor="#f1f1f1"></td>
-			<td>添加&nbsp;<span style="font-weight:bold;"></span>&nbsp;的子对阵</td>
+			<td>添加&nbsp;<span style="font-weight:bold;"></span>&nbsp;的子竞猜</td>
 		</tr>
 		<tr>
 			<td width="12%" align="right" nowrap="nowrap" bgcolor="#f1f1f1">竞猜名称：</td>

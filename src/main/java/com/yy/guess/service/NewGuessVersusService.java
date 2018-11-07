@@ -12,11 +12,17 @@ public interface NewGuessVersusService {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
 
-    void addVersus(NewGuessVersus versus, List<NewGuessVersusItem> versusItemList);
+    void initCacheMap(); //初始化缓存map
+    
+    void addVersus(NewGuessVersus versus, List<NewGuessVersusItem> versusItemList);//添加versus
     void deleteVersus(int versusId); //删除一个versus，以及他的所有子竞猜
 
     void checkStart(NewGuessVersus versus);//检查是否到了开始时间，如果到了，就开启竞猜
     void cleanCache(int versusId);//清除缓存
     
-    void reset(int versusId); //重置一个竞猜，(清除下注额，并将状态设为未开始，并且暂停下注设为false，清除结束时间，结果)
+    void updateBetPause(boolean betPause, int versusId); //更新暂停状态
+    
+    NewGuessVersus getVersusCache(int versusId); //从redis缓存中获取versus，缓存中没有返回null;
+    List<NewGuessVersusItem> getVersusItemCacheByVersusId(int versusId); //从redis缓存中获取versusItemList
+    NewGuessVersusItem getVersusItemCache(int versusItemId); //从redis缓存中获取versusItem
 }

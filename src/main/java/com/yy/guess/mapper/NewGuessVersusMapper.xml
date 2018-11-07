@@ -85,4 +85,9 @@
         </if>
     </select>
     <!--****************************************************************分隔线****************************************************************-->
+    
+    <select id="getAllUnEndVersus" resultType="com.yy.guess.po.NewGuessVersus">
+		select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime from new_guess_versus
+        where status = '未开始' or status = '进行中'
+    </select>
 </mapper>

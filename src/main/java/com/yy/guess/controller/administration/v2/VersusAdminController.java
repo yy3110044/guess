@@ -40,6 +40,28 @@ public class VersusAdminController {
 		return new ResponseObject(100, "返回成功", new JsonResultMap().set("versus", versus).set("versusItemList", versusItemList));
 	}
 	
+	//返回某个对阵的缓存
+	@RequestMapping("/versusGetCache")
+	public ResponseObject versusGetCache(@RequestParam int versusId) {
+		NewGuessVersus versus = ngvs.getVersusCache(versusId);
+		List<NewGuessVersusItem> versusItemList = ngvs.getVersusItemCacheByVersusId(versusId);
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("versus", versus).set("versusItemList", versusItemList));
+	}
+	
+	//更新暂停状态
+	@RequestMapping("/versusBetPauseUpdate")
+	public ResponseObject versusBetPauseUpdate(@RequestParam boolean betPause, @RequestParam int versusId) {
+		NewGuessVersus versus = ngvs.findById(versusId);
+		if(versus == null) {
+			return new ResponseObject(101, "对阵不存在");
+		}
+		if(versus.getStatus() == NewGuessVersusStatus.已结束 || versus.getStatus() == NewGuessVersusStatus.流局) {
+			return new ResponseObject(102, "已结束的竞猜，请先重新开启");
+		}
+		ngvs.updateBetPause(betPause, versusId);
+		return new ResponseObject(100, "更改状态成功");
+	}
+	
 	//删除某个对阵
 	@RequestMapping("/versusDelete")
 	public ResponseObject versusDelete(@RequestParam int versusId) {
@@ -85,15 +107,30 @@ public class VersusAdminController {
 		List<NewGuessVersusItem> versusItemList = new ArrayList<NewGuessVersusItem>();
 		for(String item : versusItems) {
 			String[] strs = item.split("\\|");
+			
 			String versusItemName = strs[0];
 			String versusItemOdds = strs[1];
-			String versusItemFixedOdds = strs[2];
-			String versusItemChangeOddsMin = strs[3];
-			String versusItemChangeOddsMax = strs[4];
+			String versusItemUseFixedOdds = strs[2];
+			String versusItemChangeOddsPlusStrategy = strs[3];
+			String versusItemChangeOddsPlusValue = strs[4];
+			String versusItemChangeOddsPlusRatio = strs[5];
+			String versusItemChangeOddsMinusStrategy = strs[6];
+			String versusItemChangeOddsMinusValue = strs[7];
+			String versusItemChangeOddsMinusRatio = strs[8];
+			String versusItemChangeOddsMin = strs[9];
+			String versusItemChangeOddsMax = strs[10];
+			
 			NewGuessVersusItem versusItem = new NewGuessVersusItem();
 			versusItem.setName(versusItemName);
-			versusItem.setFixedOdds(Boolean.parseBoolean(versusItemFixedOdds));
-			versusItem.setOdds(Double.parseDouble(versusItemOdds));
+			versusItem.setFixedOdds(Double.parseDouble(versusItemOdds));
+			versusItem.setChangeOdds(Double.parseDouble(versusItemOdds));
+			versusItem.setUseFixedOdds(Boolean.parseBoolean(versusItemUseFixedOdds));
+			versusItem.setChangeOddsPlusRatio(Double.parseDouble(versusItemChangeOddsPlusRatio));
+			versusItem.setChangeOddsPlusValue(Double.parseDouble(versusItemChangeOddsPlusValue));
+			versusItem.setChangeOddsPlusStrategy(Integer.parseInt(versusItemChangeOddsPlusStrategy));
+			versusItem.setChangeOddsMinusRatio(Double.parseDouble(versusItemChangeOddsMinusRatio));
+			versusItem.setChangeOddsMinusValue(Double.parseDouble(versusItemChangeOddsMinusValue));
+			versusItem.setChangeOddsMinusStrategy(Integer.parseInt(versusItemChangeOddsMinusStrategy));
 			versusItem.setChangeOddsMin(Double.parseDouble(versusItemChangeOddsMin));
 			versusItem.setChangeOddsMax(Double.parseDouble(versusItemChangeOddsMax));
 			versusItemList.add(versusItem);

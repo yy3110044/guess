@@ -425,6 +425,27 @@ CREATE TABLE `new_guess_versus_item` (
   PRIMARY KEY (`id`),
   KEY `versusId` (`versusId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*********************************NEW*****************************************/
+
+/*竞猜下注表*/
+DROP TABLE IF EXISTS `new_guess_bet`;
+CREATE TABLE `new_guess_bet` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `orderNumber` char(64) NOT NULL COMMENT '订单号',
+  `versusId` int(11) NOT NULL COMMENT '下注的竞猜id',
+  `versusItemId` int(11) NOT NULL COMMENT '下注的竞猜项id',
+  `userId` int(11) NOT NULL COMMENT '用户id',
+  `userName` varchar(128) NOT NULL COMMENT '用户名',
+  `odds` decimal(15, 6) NOT NULL COMMENT '下注的赔率',
+  `betAmount` decimal(15, 6) NOT NULL COMMENT '下注金额',
+  `status` enum('未结算', '未猜中', '已猜中', '已退回') NOT NULL COMMENT '订单状态',
+  `payBonus` decimal(15, 6) COMMENT '发放的奖金',
+  `createTime` datetime NOT NULL COMMENT '创建时间',
+  KEY `versusId` (`versusId`),
+  KEY `versusItemId` (`versusItemId`),
+  KEY `userId` (`userId`),
+  KEY `status` (`status`),
+  UNIQUE KEY `orderNumber` (`orderNumber`),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 show tables;

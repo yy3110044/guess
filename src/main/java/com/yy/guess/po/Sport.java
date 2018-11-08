@@ -1,7 +1,7 @@
 package com.yy.guess.po;
 
 import java.util.Date;
-
+@Deprecated
 public class Sport {
 	private int id;
 	private String name;

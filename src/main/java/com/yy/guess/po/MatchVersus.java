@@ -2,7 +2,7 @@ package com.yy.guess.po;
 
 import java.util.Date;
 import com.yy.guess.po.enums.MatchStatus;
-
+@Deprecated
 public class MatchVersus {
 	private int id;
 	private String name;

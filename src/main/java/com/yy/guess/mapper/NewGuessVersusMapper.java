@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import com.yy.guess.po.NewGuessVersus;
 import com.yy.guess.po.enums.NewGuessVersusStatus;
@@ -36,4 +37,10 @@ public interface NewGuessVersusMapper {
     
     @Delete("delete from new_guess_versus where superVersusId = #{superVersusId}")
     void deleteBySuperVersusId(int superVersusId);
+    
+    @Select("select name from new_guess_versus where id = #{versusId}")
+    String getVersusNameByVersusId(int versusId);
+    
+    @Update("update new_guess_versus set endTime = #{endTime}, betPause = #{betPause}, resultItemId = #{resultItemId}, resultItemName = #{resultItemName}, status = #{status} where id = #{versusId}")
+    void updateVersusResult(Date endTime, boolean betPause, int resultItemId, String resultItemName, NewGuessVersusStatus status, int versusId);
 }

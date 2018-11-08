@@ -26,6 +26,7 @@ import com.yy.guess.service.PlayTypeService;
 import com.yy.guess.util.Util;
 import com.yy.fast4j.QueryCondition;
 
+@Deprecated
 @Repository("betService")
 @Transactional
 public class BetServiceImpl implements BetService {

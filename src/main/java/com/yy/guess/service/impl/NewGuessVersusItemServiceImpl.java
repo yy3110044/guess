@@ -8,6 +8,7 @@ import com.yy.guess.mapper.NewGuessVersusItemMapper;
 import com.yy.guess.po.NewGuessVersusItem;
 import com.yy.guess.service.NewGuessVersusItemService;
 import com.yy.guess.util.CachePre;
+import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.QueryCondition;
 
 @Repository("newGuessVersusItemService")
@@ -61,5 +62,29 @@ public class NewGuessVersusItemServiceImpl implements NewGuessVersusItemService 
 		for(NewGuessVersusItem versusItem : versusItemList) {
 			this.update(versusItem);
 		}
+	}
+
+	@Override
+	public String getVersusItemNameByVersusItemId(int versusItemId) {
+		return mapper.getVersusItemNameByVersusItemId(versusItemId);
+	}
+
+	@Override
+	public String[] getVersusItemNamesByVersusItemIds(int[] versusItemIds) {
+		String[] result = new String[versusItemIds.length];
+		for(int i=0; i<versusItemIds.length; i++) {
+			result[i] = mapper.getVersusItemNameByVersusItemId(versusItemIds[i]);
+		}
+		return result;
+	}
+
+	@Override
+	public JsonResultMap[] getVersusItemNamesByVersusItemIdsReturnMap(int[] versusItemIds) {
+		JsonResultMap[] result = new JsonResultMap[versusItemIds.length];
+		for(int i=0; i<versusItemIds.length; i++) {
+			result[i] = new JsonResultMap();
+			result[i].put(String.valueOf(versusItemIds[i]), mapper.getVersusItemNameByVersusItemId(versusItemIds[i]));
+		}
+		return result;
 	}
 }

@@ -6,6 +6,7 @@ import com.yy.guess.po.NewGuessVersus;
 import com.yy.guess.po.NewGuessVersusItem;
 import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.QueryCondition;
+import com.yy.fast4j.ResponseObject;
 
 public interface NewGuessVersusService {
     NewGuessVersus find(QueryCondition qc);
@@ -39,4 +40,12 @@ public interface NewGuessVersusService {
     JsonResultMap getVersusItemStatusToDatabase(int versusItemId);
     JsonResultMap getVersusItemStatusToDatabase(int[] versusItemIds);
     JsonResultMap[] getVersusItemStatusToDatabaseReturnArray(int[] versusItemIds);
+    
+    //根据versusId取得versusName
+    String getVersusNameByVersusId(int versusId);
+    String[] getVersusNamesByVersusIds(int[] versusIds);
+    JsonResultMap[] getVersusNamesByVersusIdsReturnMap(int[] versusIds);
+    
+    //更改结果
+    ResponseObject updateResult(int resultItemId, int versusId);
 }

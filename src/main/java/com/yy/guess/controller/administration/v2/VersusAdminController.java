@@ -3,6 +3,8 @@ package com.yy.guess.controller.administration.v2;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +20,9 @@ import com.yy.fast4j.ResponseObject;
 import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.guess.po.NewGuessVersus;
 import com.yy.guess.po.NewGuessVersusItem;
+import com.yy.guess.po.enums.NewGuessBetStatus;
 import com.yy.guess.po.enums.NewGuessVersusStatus;
+import com.yy.guess.service.NewGuessBetService;
 import com.yy.guess.service.NewGuessVersusItemService;
 import com.yy.guess.service.NewGuessVersusService;
 
@@ -31,6 +35,9 @@ public class VersusAdminController {
 	
 	@Autowired
 	private NewGuessVersusItemService ngvis;
+	
+	@Resource
+	private NewGuessBetService ngbs;
 	
 	//返回某个对阵
 	@RequestMapping("/versusGet")
@@ -145,12 +152,16 @@ public class VersusAdminController {
 	public ResponseObject versusList(@RequestParam(defaultValue="20") int pageSize,
 			                         @RequestParam(defaultValue="1") int pageNo,
 			                         @RequestParam(defaultValue="5") int showCount,
+			                         Integer versusId,
 			                         Integer itemId,
 			                         NewGuessVersusStatus status,
 			                         @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTimeStart,
 			                         @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTimeEnd) {
 		QueryCondition qc = new QueryCondition();
 		qc.addCondition("superVersusId", "=", 0);
+		if(versusId != null) {
+			qc.addCondition("id", "=", versusId);
+		}
 		if(itemId != null) {
 			qc.addCondition("itemId", "=", itemId);
 		}
@@ -329,9 +340,38 @@ public class VersusAdminController {
 	}
 	
 	//设置versus结果
-	@RequestMapping("/versusResultSet")
-	public ResponseObject versusResultSet(@RequestParam int versusId, @RequestParam int resultItemId) {
-		//未完成，
+	@RequestMapping("/versusSetResult")
+	public ResponseObject versusSetResult(@RequestParam int resultItemId, @RequestParam int versusId) {
+		ResponseObject ro = ngvs.updateResult(resultItemId, versusId);
+		new Thread(new BetSettlementRunnable(versusId)).start();//开一个线程结算
+		return ro;
+	}
+	
+	@RequestMapping("/getVersusNamesByVersusIds")
+	public ResponseObject getVersusNamesByVersusIds(HttpServletRequest req) {
+		String[] versusIds = req.getParameterValues("versusIds[]");
+		if(versusIds != null && versusIds.length > 0) {
+			int[] versusIdsInt = new int[versusIds.length];
+			for(int i=0; i<versusIds.length; i++) {
+				versusIdsInt[i] = Integer.parseInt(versusIds[i]);
+			}
+			return new ResponseObject(100, "返回成功", ngvs.getVersusNamesByVersusIds(versusIdsInt));
+		} else {
+			return new ResponseObject(101, "versusIds为空");
+		}
+	}
+	@RequestMapping("/getVersusItemNamesByVersusItemIds")
+	public ResponseObject getVersusItemNamesByVersusItemIds(HttpServletRequest req) {
+		String[] versusItemIds = req.getParameterValues("versusItemIds[]");
+		if(versusItemIds != null && versusItemIds.length > 0) {
+			int[] versusItemIdsInt = new int[versusItemIds.length];
+			for(int i=0; i<versusItemIds.length; i++) {
+				versusItemIdsInt[i] = Integer.parseInt(versusItemIds[i]);
+			}
+			return new ResponseObject(100, "返回成功", ngvis.getVersusItemNamesByVersusItemIds(versusItemIdsInt));
+		} else {
+			return new ResponseObject(101, "versusItemIds为空");
+		}
 	}
 	
 	private List<JsonResultMap> getVersusList(QueryCondition qc) {
@@ -344,5 +384,20 @@ public class VersusAdminController {
 			resultList.add(map);
 		}
 		return resultList;
+	}
+	
+	//bet结算线程类
+	private class BetSettlementRunnable implements Runnable {
+		private int versusId;
+		BetSettlementRunnable(int versusId) {
+			this.versusId = versusId;
+		}
+		@Override
+		public void run() {
+			List<Integer> betIdList = ngbs.getBetIdList(versusId, NewGuessBetStatus.未结算);
+			for(int betId : betIdList) {
+				ngbs.settlement(betId);//结算
+			}
+		}
 	}
 }

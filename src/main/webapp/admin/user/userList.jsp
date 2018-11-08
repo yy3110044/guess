@@ -119,7 +119,7 @@ var query = function(pageSize, pageNo) {
 						str += '&nbsp;<a href="javascript:;" onclick="updateBalance(' + obj.id + ', this)">修改余额</a>';
 						str += '&nbsp;<a href="admin/tradeFlow/tradeFlowList.jsp?userId=' + obj.id + '" target="_blank">查看流水</a>';
 						str += '&nbsp;<a href="javascript:;" onclick="sendNotice(' + obj.id + ', this)">发送通知</a>';
-						str += '&nbsp;<a href="admin/user/betList.jsp?userId=' + obj.id + '" target="_blank">查看下注</a>';
+						str += '&nbsp;<a href="admin/v2/newGuessBet/list.jsp?userId=' + obj.id + '" target="_blank">查看下注</a>';
 						return str;
 					}}
 				]);

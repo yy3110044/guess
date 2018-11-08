@@ -18,6 +18,13 @@ var betPauseChange = function(versusId, e) {
 		"data" : {"versusId" : versusId, "betPause" : betPause},
 		"success" : function(data) {
 			showMsg(data.msg);
+			if(data.code != 100) {
+				if("false" == betPause) {
+					$(e).val("true");
+				} else if("true" == betPause) {
+					$(e).val("false");
+				}
+			}
 		}
 	});
 };
@@ -506,7 +513,7 @@ var updateResult = function(versusId, e) {
 					}
 					str += '<option value="-1">├&nbsp;流局</option>';
 					str += '</select>';
-					str += '&nbsp;&nbsp;<input type="button" onclick="updateResult2(' + versusId + ')" value="修改">';
+					str += '&nbsp;&nbsp;<input type="button" onclick="updateResult2(' + versusId + ', this)" value="修改">';
 					str += '&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().parent().remove()">';
 					str += '</div>';
 					str += '</td></tr>';
@@ -519,7 +526,7 @@ var updateResult = function(versusId, e) {
 		});
 	}
 };
-var updateResult2 = function(versusId) {
+var updateResult2 = function(versusId, e) {
 	var resultItemId = $.trim($("#updateResultSelect").val());
 	if(!empty(resultItemId)) {
 		var resultItemIdInt = parseInt(resultItemId);
@@ -532,9 +539,58 @@ var updateResult2 = function(versusId) {
 				return;
 			}
 		}
-		
+		loadData({
+			"url" : "administration/v2/versusAdmin/versusSetResult",
+			"data" : {"resultItemId" : resultItemId, "versusId" : versusId},
+			"success" : function(data) {
+				showMsg(data.msg);
+				if(data.code == 100) {
+					var versusStatus = $(e).parent().parent().parent().prev().find(".versusStatus");
+					if(resultItemIdInt < 0) {
+						versusStatus.html("流局");
+					} else {
+						versusStatus.html("已结束");
+					}
+				}
+			}
+		});
 	} else {
 		showMsg("请选择结果");
+	}
+}
+
+//返回所有子竞猜
+var getAllChildVersus = function(superVersusId, e) {
+	if($("tr.childVersusTr" + superVersusId).length > 0) {
+		$("tr.childVersusTr" + superVersusId).remove();
+	} else {
+		loadData({
+			"url" : "administration/v2/versusAdmin/versusListBySuperVersusId",
+			"data" : {"superVersusId" : superVersusId},
+			"success" : function(data){
+				if(data.code == 100) {
+					var list = data.result;
+					if(list.length > 0) {
+						var str = '';
+						for(var i=0; i<list.length; i++) {
+							var versus = list[i].versus;
+							var versusItemList = list[i].versusItemList;
+							str += getVersusTrStr(versus, versusItemList, true, superVersusId);
+						}
+						str += '<tr align="center" class="contentTr childVersusTr childVersusTr' + superVersusId + '"><td colspan="15"></td>';
+						str += '<td>';
+						str += '<input type="button" value="关闭子竞猜" onclick="$(\'tr.childVersusTr\').remove()">';
+						str += '</td></tr>';
+						$("tr.childVersusTr").remove();
+						$(e).parent().parent().after(str);
+					} else {
+						showMsg("没有子竞猜");
+					}
+				} else {
+					showMsg(data.msg);
+				}
+			}
+		});
 	}
 }
 
@@ -546,6 +602,7 @@ var query = function(pageSize, pageNo){
 	loadData({
 		"url" : "administration/v2/versusAdmin/versusList",
 		"data" : {
+			"versusId" : $.trim($("#versusId").val()),
 			"itemId" : (itemId > 0 ? itemId : null),
 			"status" : ("全部" == status ? null : status),
 			"startTimeStart" : startTimeStart,
@@ -560,44 +617,7 @@ var query = function(pageSize, pageNo){
 				for(var i=0; i<list.length; i++) {
 					var versus = list[i].versus;
 					var versusItemList = list[i].versusItemList;
-					str += '<tr align="center" class="contentTr">';
-					str += '<td>' + versus.id + '</td>';
-					str += '<td class="versusName">' + versus.name + '</td>';
-					str += '<td><a href="' + versus.logoUrl + '" target="_blank"><img src="' + versus.logoUrl + '" style="width:30px;height:30px;"></a></td>';
-					str += '<td data-itemId=' + versus.itemId + '>' + versus.itemName + '</td>';
-					str += '<td class="versusReturnRate">' + versus.returnRate + '</td>';
-					str += '<td class="versusBetAmountMin">' + versus.betAmountMin.toFixed(2) + '</td>';
-					str += '<td class="versusBetAmountMax">' + versus.betAmountMax.toFixed(2) + '</td>';
-					str += '<td>¥' + versus.betAllAmount.toFixed(2) + '</td>';
-					str += '<td class="versusStartTime">' + versus.startTime + '</td>';
-					str += '<td>' + (versus.endTime == null ? "" : versus.endTime) + '</td>';
-					str += '<td><select onchange="betPauseChange(' + versus.id + ', this)" style="width:55px;"><option' + (versus.betPause?'':' selected="selected"') + ' value="false">开启</option><option' + (versus.betPause?' selected="selected"':'') + ' value="true">暂停</option></select></td>';
-					
-					if(versus.status == "未开始") {
-						str += '<td style="color:blue;">' + versus.status + '</td>';
-					} else if(versus.status == "进行中") {
-						str += '<td style="color:green;">' + versus.status + '</td>';
-					} else if(versus.status == "已结束") {
-						str += '<td style="color:red;">' + versus.status + '</td>';
-					} else if(versus.status == "流局") {
-						str += '<td style="color:black;">' + versus.status + '</td>';
-					} else {
-						str += '<td>' + versus.status + '</td>';
-					}
-					
-					str += '<td style="font-weight:bold" data-resultItemId="' + versus.resultItemId + '" data-resultItemName="' + versus.resultItemName + '">' + (versus.resultItemId > 0 ? versus.resultItemName : "") + '</td>';
-					str += '<td>' + versus.childVersusCount + '</td>';
-					str += '<td>' + versus.createTime + '</td>';
-					str += '<td>';
-					str += '<a href="javascript:;" onclick="viewVersusItem(' + versus.id + ', this)">查看竞猜项</a>';
-					str += '&nbsp;&nbsp;<a href="javascript:;" onclick="updateVersus(' + versus.id + ', this)">修改参数</a>';
-					str += '&nbsp;&nbsp;<a href="javascript:;" onclick="updateResult(' + versus.id + ', this)">修改结果</a>';
-					str += '&nbsp;&nbsp;<a href="javascript:;" onclick="viewVersusCache(' + versus.id + ', this)">查看缓存</a>';
-					str += '&nbsp;&nbsp;<a href="admin/v2/newGuessVersus/add.jsp?superVersusId=' + versus.id + '" target="_blank">添加子竞猜</a>';
-					str += '&nbsp;&nbsp;<a href="javascript:;">查看子竞猜</a>';
-					str += '&nbsp;&nbsp;<a href="javascript:;" onclick="deleteVersus(' + versus.id + ', this)">删除</a>';
-					str += '</td>';
-					str += '</tr>';
+					str += getVersusTrStr(versus, versusItemList, false);
 				}
 				
 				$("tr.contentTr").remove();
@@ -608,6 +628,51 @@ var query = function(pageSize, pageNo){
 			}
 		}
 	});
+};
+var getVersusTrStr = function(versus, versusItemList, child, superVersusId) {
+	var str = '';
+	str += '<tr align="center" class="contentTr' + (child ? (' childVersusTr' + superVersusId + ' childVersusTr') : '') + '">';
+	str += '<td>' + (child ? (superVersusId + '&nbsp;>&nbsp;') : '') + versus.id + '</td>';
+	str += '<td class="versusName">' + versus.name + '</td>';
+	str += '<td><a href="' + versus.logoUrl + '" target="_blank"><img src="' + versus.logoUrl + '" style="width:30px;height:30px;"></a></td>';
+	str += '<td data-itemId=' + versus.itemId + '>' + versus.itemName + '</td>';
+	str += '<td class="versusReturnRate">' + versus.returnRate + '</td>';
+	str += '<td class="versusBetAmountMin">' + versus.betAmountMin.toFixed(2) + '</td>';
+	str += '<td class="versusBetAmountMax">' + versus.betAmountMax.toFixed(2) + '</td>';
+	str += '<td>¥' + versus.betAllAmount.toFixed(2) + '</td>';
+	str += '<td class="versusStartTime">' + versus.startTime + '</td>';
+	str += '<td>' + (versus.endTime == null ? "" : versus.endTime) + '</td>';
+	str += '<td><select onchange="betPauseChange(' + versus.id + ', this)" style="width:55px;"><option' + (versus.betPause?'':' selected="selected"') + ' value="false">开启</option><option' + (versus.betPause?' selected="selected"':'') + ' value="true">暂停</option></select></td>';
+	
+	if(versus.status == "未开始") {
+		str += '<td style="color:blue;" class="versusStatus">' + versus.status + '</td>';
+	} else if(versus.status == "进行中") {
+		str += '<td style="color:green;" class="versusStatus">' + versus.status + '</td>';
+	} else if(versus.status == "已结束") {
+		str += '<td style="color:red;" class="versusStatus">' + versus.status + '</td>';
+	} else if(versus.status == "流局") {
+		str += '<td style="color:black;" class="versusStatus">' + versus.status + '</td>';
+	} else {
+		str += '<td class="versusStatus">' + versus.status + '</td>';
+	}
+	
+	str += '<td style="font-weight:bold" data-resultItemId="' + versus.resultItemId + '" data-resultItemName="' + versus.resultItemName + '">' + (versus.resultItemId > 0 ? versus.resultItemName : "") + '</td>';
+	str += '<td>' + (child ? "" : versus.childVersusCount) + '</td>';
+	str += '<td>' + versus.createTime + '</td>';
+	str += '<td>';
+	str += '<a href="javascript:;" onclick="viewVersusItem(' + versus.id + ', this)">查看竞猜项</a>';
+	str += '&nbsp;&nbsp;<a href="javascript:;" onclick="updateVersus(' + versus.id + ', this)">修改参数</a>';
+	str += '&nbsp;&nbsp;<a href="javascript:;" onclick="updateResult(' + versus.id + ', this)">修改结果</a>';
+	str += '&nbsp;&nbsp;<a href="javascript:;" onclick="viewVersusCache(' + versus.id + ', this)">查看缓存</a>';
+	if(!child) {
+		str += '&nbsp;&nbsp;<a href="javascript:;" onclick="getAllChildVersus(' + versus.id + ', this)">查看子竞猜</a>';
+		str += '&nbsp;&nbsp;<a href="admin/v2/newGuessVersus/add.jsp?superVersusId=' + versus.id + '" target="_blank">添加子竞猜</a>';
+	}
+	str += '&nbsp;&nbsp;<a href="admin/v2/newGuessBet/list.jsp?versusId=' + versus.id + '" target="_blank">查看下注</a>';
+	str += '&nbsp;&nbsp;<a href="javascript:;" onclick="deleteVersus(' + versus.id + ', this)">删除</a>';
+	str += '</td>';
+	str += '</tr>';
+	return str;
 };
 
 $(document).ready(function(){
@@ -651,6 +716,7 @@ div.itemDiv{margin-top:3px;margin-bottom:3px;}
 	<table class="table table-bordered table-striped table-hover">
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
+				&nbsp;&nbsp;ID：<input type="text" id="versusId" value="${param.versusId}" placeholder="输入ID查找">
 				&nbsp;&nbsp;类别：<select id="itemId" style="width:100px;"><option value="0">全部</option></select>
 				&nbsp;&nbsp;状态：<%=com.yy.fast4j.Fast4jUtils.getSelectHtmlStr(com.yy.guess.po.enums.NewGuessVersusStatus.class, "status", "width:70px;", null, new String[]{"全部"})%>
 				&nbsp;&nbsp;开始时间：<input type="text" id="startTimeStart" class="laydate-icon" onclick="laydate({istime:true,format:'YYYY-MM-DD hh:mm:ss'});" style="width:140px;cursor:pointer;" readonly="readonly">

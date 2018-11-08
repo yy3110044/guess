@@ -25,4 +25,7 @@ public interface NewGuessVersusItemMapper {
     
     @Select("select id from new_guess_versus_item where versusId = #{versusId}")
     List<Integer> getVersusItemIdList(int versusId);//返回竞猜下，的所有竞猜项idList
+    
+    @Select("select name from new_guess_versus_item where id = #{versusItemId}")
+    String getVersusItemNameByVersusItemId(int versusItemId);
 }

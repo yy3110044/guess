@@ -18,6 +18,7 @@ import com.yy.guess.service.NewGuessVersusService;
 import com.yy.guess.util.CachePre;
 import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.QueryCondition;
+import com.yy.fast4j.ResponseObject;
 
 @Repository("newGuessVersusService")
 @Transactional
@@ -249,5 +250,54 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 			versus.setBetAmountMax(betAmountMax);
 			versus.setStartTime(startTime);
 		}
+	}
+
+	@Override
+	public String getVersusNameByVersusId(int versusId) {
+		return mapper.getVersusNameByVersusId(versusId);
+	}
+
+	@Override
+	public String[] getVersusNamesByVersusIds(int[] versusIds) {
+		String[] result = new String[versusIds.length];
+		for(int i=0; i<versusIds.length; i++) {
+			result[i] = mapper.getVersusNameByVersusId(versusIds[i]);
+		}
+		return result;
+	}
+
+	@Override
+	public JsonResultMap[] getVersusNamesByVersusIdsReturnMap(int[] versusIds) {
+		JsonResultMap[] result = new JsonResultMap[versusIds.length];
+		for(int i=0; i<versusIds.length; i++) {
+			result[i] = new JsonResultMap();
+			result[i].put(String.valueOf(versusIds[i]), mapper.getVersusNameByVersusId(versusIds[i]));
+		}
+		return result;
+	}
+
+	@Override
+	public ResponseObject updateResult(int resultItemId, int versusId) {
+		NewGuessVersus versus = mapper.findById(versusId);
+		if(versus == null) {
+			return new ResponseObject(101, "竞猜不存在");
+		}
+		if(versus.getStatus() == NewGuessVersusStatus.已结束 || versus.getStatus() == NewGuessVersusStatus.流局) {
+			return new ResponseObject(102, "竞猜已结束，不能更改结果");
+		}
+		if(resultItemId == 0) {
+			return new ResponseObject(103, "结果不能为零");
+		}
+		if(resultItemId > 0) { //有结果
+			NewGuessVersusItem versusItem = ngvim.find(new QueryCondition().addCondition("id", "=", resultItemId).addCondition("versusId", "=", versusId));
+			if(versusItem == null) {
+				return new ResponseObject(104, "结果不存在");
+			}
+			mapper.updateVersusResult(new Date(), true, resultItemId, versusItem.getName(), NewGuessVersusStatus.已结束, versusId);
+		} else if(resultItemId < 0) {//流局
+			mapper.updateVersusResult(new Date(), true, resultItemId, "流局", NewGuessVersusStatus.流局, versusId);
+		}
+		this.cleanCache(versusId);//清除缓存
+		return new ResponseObject(100, "修改成功");
 	}
 }

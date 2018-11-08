@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.guess.mapper.NewGuessBetMapper">
+    <insert id="add" parameterType="com.yy.guess.po.NewGuessBet">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into new_guess_bet(id, orderNumber, versusId, versusItemId, userId, userName, odds, betAmount, status, payBonus, createTime)
+        values(#{id}, #{orderNumber}, #{versusId}, #{versusItemId}, #{userId}, #{userName}, #{odds}, #{betAmount}, #{status}, #{payBonus}, #{createTime})
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        delete from new_guess_bet where id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.yy.guess.po.NewGuessBet">
+        update new_guess_bet set
+        orderNumber = #{orderNumber}, versusId = #{versusId}, versusItemId = #{versusItemId}, userId = #{userId}, userName = #{userName}, odds = #{odds}, betAmount = #{betAmount}, status = #{status}, payBonus = #{payBonus}, createTime = #{createTime}
+        where id = #{id}
+    </update>
+
+    <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.NewGuessBet">
+        select id, orderNumber, versusId, versusItemId, userId, userName, odds, betAmount, status, payBonus, createTime from new_guess_bet
+        <if test="useWhere">
+            where
+            <foreach collection="conditions" index="index" item="obj">
+                <choose>
+                    <when test="index == 0">${obj.field} ${obj.operator} #{obj.value}</when>
+                    <otherwise>${obj.join} ${obj.field} ${obj.operator} #{obj.value}</otherwise>
+                </choose>
+            </foreach>
+        </if>
+
+        <if test="useSort">
+            order by
+            <foreach collection="sorts" item="obj" separator=",">
+                ${obj}
+            </foreach>
+        </if>
+
+        limit 0, 1
+    </select>
+
+    <select id="findById" parameterType="int" resultType="com.yy.guess.po.NewGuessBet">
+        select id, orderNumber, versusId, versusItemId, userId, userName, odds, betAmount, status, payBonus, createTime from new_guess_bet
+        where id = #{id}
+    </select>
+
+    <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.NewGuessBet">
+        select id, orderNumber, versusId, versusItemId, userId, userName, odds, betAmount, status, payBonus, createTime from new_guess_bet
+        <if test="useWhere"> <!-- 添加查询条件 -->
+            where
+            <foreach collection="conditions" index="index" item="obj">
+                <choose>
+                    <when test="index == 0">${obj.field} ${obj.operator} #{obj.value}</when>
+                    <otherwise>${obj.join} ${obj.field} ${obj.operator} #{obj.value}</otherwise>
+                </choose>
+            </foreach>
+        </if>
+
+        <if test="useSort"> <!-- 添加排序 -->
+            order by
+            <foreach collection="sorts" item="obj" separator=",">
+                ${obj}
+            </foreach>
+        </if>
+
+        <if test="page != null"> <!-- 添加分页 -->
+            limit ${page.beginIndex}, ${page.pageSize}
+        </if>
+    </select>
+
+    <select id="getCount" parameterType="com.yy.fast4j.QueryCondition" resultType="int">
+        select count(*) from new_guess_bet
+        <if test="useWhere">
+            where
+            <foreach collection="conditions" index="index" item="obj">
+                <choose>
+                    <when test="index == 0">${obj.field} ${obj.operator} #{obj.value}</when>
+                    <otherwise>${obj.join} ${obj.field} ${obj.operator} #{obj.value}</otherwise>
+                </choose>
+            </foreach>
+        </if>
+    </select>
+    <!--****************************************************************分隔线****************************************************************-->
+</mapper>

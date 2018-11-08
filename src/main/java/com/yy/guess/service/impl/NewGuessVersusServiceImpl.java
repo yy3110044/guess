@@ -1,11 +1,9 @@
 package com.yy.guess.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,8 @@ import com.yy.guess.po.NewGuessVersus;
 import com.yy.guess.po.NewGuessVersusItem;
 import com.yy.guess.po.enums.NewGuessVersusStatus;
 import com.yy.guess.service.NewGuessVersusService;
+import com.yy.guess.util.CachePre;
+import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.QueryCondition;
 
 @Repository("newGuessVersusService")
@@ -50,23 +50,20 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
     }
     /*****************************************************************分隔线************************************************************************/
 
-    public static final Map<Integer, NewGuessVersus> versusMap = new ConcurrentHashMap<>();
-    public static final Map<Integer, NewGuessVersusItem> versusItemMap = new ConcurrentHashMap<>();
-    
     @Override
     @PostConstruct
     public void initCacheMap() {
-    	versusMap.clear();
-    	versusItemMap.clear();
+    	CachePre.versusMap.clear();
+    	CachePre.versusItemMap.clear();
     	List<NewGuessVersus> versusList = mapper.getAllUnEndVersus();
     	for(NewGuessVersus versus : versusList) {
-    		versusMap.put(versus.getId(), versus);
+    		CachePre.versusMap.put(versus.getId(), versus);
     		List<NewGuessVersusItem> versusItemList = ngvim.query(new QueryCondition().addCondition("versusId", "=", versus.getId()));
     		for(NewGuessVersusItem versusItem : versusItemList) {
-    			versusItemMap.put(versusItem.getId(), versusItem);
+    			CachePre.versusItemMap.put(versusItem.getId(), versusItem);
     		}
     	}
-    	logger.info("初始化缓存，versus：" + versusMap.size() + "，versusItem：" + versusItemMap.size());
+    	logger.info("初始化缓存，versus：" + CachePre.versusMap.size() + "，versusItem：" + CachePre.versusItemMap.size());
     }
     
     @Override
@@ -83,9 +80,9 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		//设置缓存
 		versus = mapper.findById(versus.getId());
 		versusItemList = ngvim.query(new QueryCondition().addCondition("versusId", "=", versus.getId()));
-		versusMap.put(versus.getId(), versus);
+		CachePre.versusMap.put(versus.getId(), versus);
 		for(NewGuessVersusItem versusItem : versusItemList) {
-			versusItemMap.put(versusItem.getId(), versusItem);
+			CachePre.versusItemMap.put(versusItem.getId(), versusItem);
 		}
     }
     
@@ -105,7 +102,7 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		if(versus != null) {
 			mapper.plusChildVersusCount(-1, versus.getSuperVersusId()); //把父对阵的子对阵数量减一
 			
-			NewGuessVersus superVersus = versusMap.get(versus.getSuperVersusId());
+			NewGuessVersus superVersus = CachePre.versusMap.get(versus.getSuperVersusId());
 			if(superVersus != null) {//更新缓存
 				superVersus.setChildVersusCount(superVersus.getChildVersusCount() - 1);
 			}
@@ -120,7 +117,7 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 			if(versus.getStatus() == NewGuessVersusStatus.未开始 && current >= versus.getStartTime().getTime()) {
 				mapper.updateStatusAndBetPause(NewGuessVersusStatus.进行中, false, versus.getId());
 				//更改缓存
-				versus = versusMap.get(versus.getId());
+				versus = CachePre.versusMap.get(versus.getId());
 				if(versus != null) {
 					versus.setBetPause(false);
 					versus.setStatus(NewGuessVersusStatus.进行中);
@@ -131,10 +128,10 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 
 	@Override
 	public void cleanCache(int versusId) {
-		versusMap.remove(versusId);
+		CachePre.versusMap.remove(versusId);
 		List<Integer> versusItemIdList = ngvim.getVersusItemIdList(versusId);
 		for(Integer versusItemId : versusItemIdList) {
-			versusItemMap.remove(versusItemId);
+			CachePre.versusItemMap.remove(versusItemId);
 		}
 	}
 
@@ -144,7 +141,7 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		if(versus != null) {
 			if(versus.getStatus() == NewGuessVersusStatus.未开始 || versus.getStatus() == NewGuessVersusStatus.进行中) {
 				mapper.updateBetPause(betPause, versusId);
-				versus = versusMap.get(versusId);
+				versus = CachePre.versusMap.get(versusId);
 				if(versus != null) {
 					versus.setBetPause(betPause);
 				}
@@ -154,7 +151,7 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 
 	@Override
 	public NewGuessVersus getVersusCache(int versusId) {
-		NewGuessVersus versus = versusMap.get(versusId);
+		NewGuessVersus versus = CachePre.versusMap.get(versusId);
 		return versus;
 	}
 
@@ -163,7 +160,7 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		List<Integer> versusItemIdList = ngvim.getVersusItemIdList(versusId);
 		List<NewGuessVersusItem> versusItemList = new ArrayList<NewGuessVersusItem>();
 		for(Integer versusItemId : versusItemIdList) {
-			NewGuessVersusItem versusItem = versusItemMap.get(versusItemId);
+			NewGuessVersusItem versusItem = CachePre.versusItemMap.get(versusItemId);
 			if(versusItem != null) {
 				versusItemList.add(versusItem);
 			}
@@ -173,7 +170,84 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 
 	@Override
 	public NewGuessVersusItem getVersusItemCache(int versusItemId) {
-		NewGuessVersusItem versusItem = versusItemMap.get(versusItemId);
+		NewGuessVersusItem versusItem = CachePre.versusItemMap.get(versusItemId);
 		return versusItem;
+	}
+
+	@Override
+	public JsonResultMap getVersusItemStatusToCache(int versusItemId) {
+		NewGuessVersusItem versusItem = CachePre.versusItemMap.get(versusItemId);
+		if(versusItem != null) {
+			JsonResultMap result = new JsonResultMap();
+			NewGuessVersus versus = CachePre.versusMap.get(versusItem.getVersusId());
+			result.put("pause", versus.isBetPause());
+			result.put("odds", versusItem.isUseFixedOdds() ? versusItem.getFixedOdds() * versus.getReturnRate() : versusItem.getChangeOdds() * versus.getReturnRate());
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public JsonResultMap getVersusItemStatusToCache(int[] versusItemIds) {
+		JsonResultMap map = new JsonResultMap();
+		for(int versusItemId : versusItemIds) {
+			map.put(String.valueOf(versusItemId), this.getVersusItemStatusToCache(versusItemId));
+		}
+		return map;
+	}
+
+	@Override
+	public JsonResultMap[] getVersusItemStatusToCacheReturnArray(int[] versusItemIds) {
+		JsonResultMap[] result = new JsonResultMap[versusItemIds.length];
+		for(int i=0; i<versusItemIds.length; i++) {
+			result[i] = this.getVersusItemStatusToCache(versusItemIds[i]);
+		}
+		return result;
+	}
+
+	@Override
+	public JsonResultMap getVersusItemStatusToDatabase(int versusItemId) {
+		NewGuessVersusItem versusItem = ngvim.findById(versusItemId);
+		if(versusItem != null) {
+			JsonResultMap result = new JsonResultMap();
+			NewGuessVersus versus = mapper.findById(versusItem.getVersusId());
+			result.put("pause", versus.isBetPause());
+			result.put("odds", versusItem.isUseFixedOdds() ? versusItem.getFixedOdds() * versus.getReturnRate() : versusItem.getChangeOdds() * versus.getReturnRate());
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public JsonResultMap getVersusItemStatusToDatabase(int[] versusItemIds) {
+		JsonResultMap map = new JsonResultMap();
+		for(int versusItemId : versusItemIds) {
+			map.put(String.valueOf(versusItemId), this.getVersusItemStatusToDatabase(versusItemId));
+		}
+		return map;
+	}
+
+	@Override
+	public JsonResultMap[] getVersusItemStatusToDatabaseReturnArray(int[] versusItemIds) {
+		JsonResultMap[] result = new JsonResultMap[versusItemIds.length];
+		for(int i=0; i<versusItemIds.length; i++) {
+			result[i] = this.getVersusItemStatusToDatabase(versusItemIds[i]);
+		}
+		return result;
+	}
+
+	@Override
+	public void update(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int versusId) {
+		mapper.updateVersus(name, returnRate, betAmountMin, betAmountMax, startTime, versusId);
+		NewGuessVersus versus = CachePre.versusMap.get(versusId);
+		if(versus != null) { //更改缓存
+			versus.setName(name);
+			versus.setReturnRate(returnRate);
+			versus.setBetAmountMin(betAmountMin);
+			versus.setBetAmountMax(betAmountMax);
+			versus.setStartTime(startTime);
+		}
 	}
 }

@@ -188,6 +188,152 @@ public class VersusAdminController {
 		return new ResponseObject(100, "返回成功", versusItemList);
 	}
 	
+	//返回真实赔率
+	@RequestMapping("/getRealOdds")
+	public ResponseObject getRealOdds(HttpServletRequest req) {
+		String[] versusItemIds = req.getParameterValues("versusItemIds[]");
+		if(versusItemIds != null && versusItemIds.length > 0) {
+			int[] versusItemIdsInt = new int[versusItemIds.length];
+			for(int i=0; i<versusItemIds.length; i++) {
+				versusItemIdsInt[i] = Integer.parseInt(versusItemIds[i]);
+			}
+			JsonResultMap[] result = ngvs.getVersusItemStatusToDatabaseReturnArray(versusItemIdsInt);
+			return new ResponseObject(100, "返回成功", result);
+		} else {
+			return new ResponseObject(101, "versusItemId为空");
+		}
+	}
+	
+	//竞猜项修改
+	@RequestMapping("/versusItemUpdate")
+	public ResponseObject versusItemUpdate(@RequestParam int id,
+                                           @RequestParam String name,
+                                           @RequestParam boolean useFixedOdds,
+                                           @RequestParam double fixedOdds,
+                                           @RequestParam double changeOdds,
+                                           @RequestParam int changeOddsPlusStrategy,
+                                           @RequestParam double changeOddsPlusVal,
+                                           @RequestParam int changeOddsMinusStrategy,
+                                           @RequestParam double changeOddsMinusVal,
+                                           @RequestParam double changeOddsMin,
+                                           @RequestParam double changeOddsMax) {
+		NewGuessVersusItem versusItem = ngvis.findById(id);
+		if(versusItem == null) {
+			return new ResponseObject(101, "竞猜项不存在");
+		}
+		versusItem.setName(name);
+		versusItem.setUseFixedOdds(useFixedOdds);
+		if(useFixedOdds) {
+			versusItem.setFixedOdds(fixedOdds);
+		} else {
+			versusItem.setChangeOdds(changeOdds);
+		}
+
+		versusItem.setChangeOddsPlusStrategy(changeOddsPlusStrategy);
+		if(changeOddsPlusStrategy > 0) {
+			versusItem.setChangeOddsPlusValue(changeOddsPlusVal);
+		} else if(changeOddsPlusStrategy < 0) {
+			versusItem.setChangeOddsPlusRatio(changeOddsPlusVal);
+		}
+		
+		versusItem.setChangeOddsMinusStrategy(changeOddsMinusStrategy);
+		if(changeOddsMinusStrategy > 0) {
+			versusItem.setChangeOddsMinusValue(changeOddsMinusVal);
+		} else if(changeOddsMinusStrategy < 0) {
+			versusItem.setChangeOddsMinusRatio(changeOddsMinusVal);
+		}
+		
+		versusItem.setChangeOddsMin(changeOddsMin);
+		versusItem.setChangeOddsMax(changeOddsMax);
+		ngvis.update(versusItem);
+		return new ResponseObject(100, "修改成功");
+	}
+	
+	//修改某个versus下的所有竞猜项
+	@RequestMapping("/versusItemUpdateByVersusId")
+	public ResponseObject versusItemUpdateByVersusId(@RequestParam int versusId,
+                                                     Boolean useFixedOdds,
+                                                     Integer changeOddsPlusStrategy,
+                                                     Double changeOddsPlusVal,
+                                                     Integer changeOddsMinusStrategy,
+                                                     Double changeOddsMinusVal,
+                                                     Double changeOddsMin,
+                                                     Double changeOddsMax) {
+		List<NewGuessVersusItem> versusItemList = new ArrayList<NewGuessVersusItem>();
+		List<Integer> versusItemIdList = ngvis.getVersusItemIdList(versusId);
+		for(int versusItemId : versusItemIdList) {
+			NewGuessVersusItem versusItem = ngvis.findById(versusItemId);
+			if(versusItem != null) {
+				if(useFixedOdds != null) {
+					versusItem.setUseFixedOdds(useFixedOdds);
+				}
+				
+				if(changeOddsPlusStrategy != null) {
+					versusItem.setChangeOddsPlusStrategy(changeOddsPlusStrategy);
+					if(changeOddsPlusVal != null) {
+						if(changeOddsPlusStrategy > 0) {
+							versusItem.setChangeOddsPlusValue(changeOddsPlusVal);
+						} else if(changeOddsPlusStrategy < 0) {
+							versusItem.setChangeOddsPlusRatio(changeOddsPlusVal);
+						}
+					}
+				}
+				
+				if(changeOddsMinusStrategy != null) {
+					versusItem.setChangeOddsMinusStrategy(changeOddsMinusStrategy);
+					if(changeOddsMinusVal != null) {
+						if(changeOddsMinusStrategy > 0) {
+							versusItem.setChangeOddsMinusValue(changeOddsMinusVal);
+						} else if(changeOddsMinusStrategy < 0) {
+							versusItem.setChangeOddsMinusRatio(changeOddsMinusVal);
+						}
+					}
+				}
+
+				if(changeOddsMin != null) {
+					versusItem.setChangeOddsMin(changeOddsMin);
+				}
+				if(changeOddsMax != null) {
+					versusItem.setChangeOddsMax(changeOddsMax);
+				}
+				versusItemList.add(versusItem);
+			}
+		}
+		ngvis.update(versusItemList);
+		return new ResponseObject(100, "修改成功");
+	}
+	
+	//删除某个竞猜项
+	@RequestMapping("/versusItemDelete")
+	public ResponseObject versusItemDelete(@RequestParam int versusItemId) {
+		ngvis.delete(versusItemId);
+		return new ResponseObject(100, "删除成功");
+	}
+	
+	//修改versus
+	@RequestMapping("/versusUpdate")
+	public ResponseObject versusUpdate(@RequestParam int versusId,
+                                       @RequestParam String name,
+                                       @RequestParam double returnRate,
+                                       @RequestParam double betAmountMin,
+                                       @RequestParam double betAmountMax,
+                                       @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") @RequestParam Date startTime) {
+		NewGuessVersus versus = ngvs.findById(versusId);
+		versus.setName(name);
+		versus.setReturnRate(returnRate);
+		versus.setBetAmountMin(betAmountMin);
+		versus.setBetAmountMax(betAmountMax);
+		versus.setStartTime(startTime);
+		ngvs.update(name, returnRate, betAmountMin, betAmountMax, startTime, versusId);
+		return new ResponseObject(100, "修改成功");
+	}
+	
+	//设置versus结果
+	@RequestMapping("/versusResultSet")
+	public ResponseObject versusResultSet(@RequestParam int versusId, @RequestParam int resultItemId) {
+		//未完成，
+	}
+	
 	private List<JsonResultMap> getVersusList(QueryCondition qc) {
 		List<JsonResultMap> resultList = new ArrayList<JsonResultMap>();
 		List<NewGuessVersus> list = ngvs.query(qc);

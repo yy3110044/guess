@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.yy.guess.mapper.NewGuessVersusItemMapper;
 import com.yy.guess.po.NewGuessVersusItem;
 import com.yy.guess.service.NewGuessVersusItemService;
+import com.yy.guess.util.CachePre;
 import com.yy.fast4j.QueryCondition;
 
 @Repository("newGuessVersusItemService")
@@ -35,4 +36,30 @@ public class NewGuessVersusItemServiceImpl implements NewGuessVersusItemService 
         return mapper.getCount(qc);
     }
     /*****************************************************************分隔线************************************************************************/
+
+    @Override
+	public void delete(int versusItemId) {
+		mapper.delete(versusItemId); //删除数据库
+		CachePre.versusItemMap.remove(versusItemId); //删除缓存
+	}
+    
+	@Override
+	public void update(NewGuessVersusItem versusItem) {
+		mapper.update(versusItem);
+		if(CachePre.versusItemMap.containsKey(versusItem.getId())) {
+			CachePre.versusItemMap.put(versusItem.getId(), mapper.findById(versusItem.getId()));//更改缓存
+		}
+	}
+
+	@Override
+	public List<Integer> getVersusItemIdList(int versusId) {
+		return mapper.getVersusItemIdList(versusId);
+	}
+
+	@Override
+	public void update(List<NewGuessVersusItem> versusItemList) {
+		for(NewGuessVersusItem versusItem : versusItemList) {
+			this.update(versusItem);
+		}
+	}
 }

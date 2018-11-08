@@ -24,43 +24,64 @@ var globalChangeOddsMinusValue = 1;
 var globalChangeOddsMinusStrategy = 0;
 
 $(document).ready(function(){
-	addImageUploadEvent({
-		"inputId" : "uploadImageInput",
-		"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
-		"imgId" : "logoUrl",
-		"defaultImgUrl" : "images/sportDefaultLogo.png"
-	});
-	
-	if(!empty(superVersusId) && parseInt(superVersusId) > 0) {
+	if(!empty(superVersusId) && parseInt(superVersusId) > 0) { //有父竞猜
 		loadData({
 			"url" : "administration/v2/versusAdmin/versusGet",
 			"data" : {"versusId" : superVersusId},
 			"success" : function(data) {
-				if(data.code == 100) {
-					if(data.result != null) {
-						$("#fatherVersus").show();
-						$("#fatherVersus span").html(data.result.versus.name);
-					}
+				if(data.code == 100 && data.result != null) {
+					var versus = data.result.versus;
+					$("#fatherVersus").show();
+					$("#fatherVersus span").html(versus.name);
+					
+					addImageUploadEvent({
+						"inputId" : "uploadImageInput",
+						"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
+						"imgId" : "logoUrl",
+						"defaultImgUrl" : versus.logoUrl
+					});
+					
+					loadData({
+						"url" : "administration/v2/itemAdmin/getAll",
+						"success" : function(data) {
+							if(data.code == 100) {
+								var list = data.result;
+								var str = '<option value="">请选择类别</option>';
+								for(var i=0; i<list.length; i++) {
+									var obj = list[i];
+									str += '<option' + (obj.id==versus.itemId?' selected="selected"':'') + ' value="' + obj.id + ';' + obj.name + ';' + (obj.logoUrl == null ? "" : obj.logoUrl) + '">' + obj.name + '</option>';
+								}
+								$("#item").html(str);
+							}
+						},
+						"redirectUrl" : "admin/login.jsp?msg=" + encodeURI("请先登录")
+					});
 				}
 			}
 		});
-	}
-	
-	loadData({
-		"url" : "administration/v2/itemAdmin/getAll",
-		"success" : function(data) {
-			if(data.code == 100) {
-				var list = data.result;
-				var str = '<option value="">请选择类别</option>';
-				for(var i=0; i<list.length; i++) {
-					var obj = list[i];
-					str += '<option value="' + obj.id + ';' + obj.name + ';' + (obj.logoUrl == null ? "" : obj.logoUrl) + '">' + obj.name + '</option>';
+	} else { //没有父竞猜
+		addImageUploadEvent({
+			"inputId" : "uploadImageInput",
+			"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
+			"imgId" : "logoUrl",
+			"defaultImgUrl" : "images/sportDefaultLogo.png"
+		});
+		loadData({
+			"url" : "administration/v2/itemAdmin/getAll",
+			"success" : function(data) {
+				if(data.code == 100) {
+					var list = data.result;
+					var str = '<option value="">请选择类别</option>';
+					for(var i=0; i<list.length; i++) {
+						var obj = list[i];
+						str += '<option value="' + obj.id + ';' + obj.name + ';' + (obj.logoUrl == null ? "" : obj.logoUrl) + '">' + obj.name + '</option>';
+					}
+					$("#item").html(str);
 				}
-				$("#item").html(str);
-			}
-		},
-		"redirectUrl" : "admin/login.jsp?msg=" + encodeURI("请先登录")
-	});
+			},
+			"redirectUrl" : "admin/login.jsp?msg=" + encodeURI("请先登录")
+		});
+	}
 });
 
 var itemChange = function() {
@@ -230,8 +251,8 @@ var getVersusItemParam = function() {
 		var odds = $.trim(ts.find(".item-odds").val());
 		
 		var changeOddsPlusStrategy = parseInt($.trim(ts.find(".item-changeOddsPlusStrategy").val()));
-		var changeOddsPlusValue = 0;
-		var changeOddsPlusRatio = 0
+		var changeOddsPlusValue = globalChangeOddsPlusValue;
+		var changeOddsPlusRatio = globalChangeOddsPlusRatio;
 		if(changeOddsPlusStrategy != 0) {
 			var limitValue = $.trim(ts.find(".item-limitPlusValue").val());
 			if(empty(limitValue) || isNaN(limitValue)) {
@@ -247,8 +268,8 @@ var getVersusItemParam = function() {
 		}
 
 		var changeOddsMinusStrategy = parseInt($.trim(ts.find(".item-changeOddsMinusStrategy").val()));
-		var changeOddsMinusValue = 0;
-		var changeOddsMinusRatio = 0;
+		var changeOddsMinusValue = globalChangeOddsMinusValue;
+		var changeOddsMinusRatio = globalChangeOddsMinusRatio;
 		if(changeOddsMinusStrategy != 0) {
 			var limitValue = $.trim(ts.find(".item-limitMinusValue").val());
 			if(empty(limitValue) || isNaN(limitValue)) {

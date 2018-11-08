@@ -1,5 +1,6 @@
 package com.yy.guess.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
@@ -20,6 +21,9 @@ public interface NewGuessVersusMapper {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
     List<NewGuessVersus> getAllUnEndVersus(); //返回所有未结束的versus;
+    
+    @Update("update new_guess_versus set name = #{name}, returnRate = #{returnRate}, betAmountMin = #{betAmountMin}, betAmountMax = #{betAmountMax}, startTime = #{startTime} where id = #{versusId}")
+    void updateVersus(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int versusId);
     
     @Update("update new_guess_versus set childVersusCount = childVersusCount + #{count} where id = #{versusId}")
     void plusChildVersusCount(int count, int versusId);//增加下级对阵数

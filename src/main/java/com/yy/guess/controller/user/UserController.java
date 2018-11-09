@@ -19,7 +19,6 @@ import com.yy.guess.service.UserService;
  * @author 49803
  *
  */
-@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(value="/user", method=RequestMethod.POST)

@@ -13,7 +13,6 @@ import com.yy.guess.po.TradeFlow;
 import com.yy.guess.service.TradeFlowService;
 import com.yy.guess.util.QueryResult;
 
-@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(value="/user", method=RequestMethod.POST)

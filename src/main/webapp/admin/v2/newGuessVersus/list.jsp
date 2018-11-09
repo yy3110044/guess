@@ -679,7 +679,7 @@ var getVersusTrStr = function(versus, versusItemList, child, superVersusId) {
 	str += '<a href="javascript:;" onclick="viewVersusItem(' + versus.id + ', this)">查看竞猜项</a>';
 	str += '&nbsp;&nbsp;<a href="javascript:;" onclick="updateVersus(' + versus.id + ', this)">修改参数</a>';
 	str += '&nbsp;&nbsp;<a href="javascript:;" onclick="updateResult(' + versus.id + ', this)">修改结果</a>';
-	str += '&nbsp;&nbsp;<a href="javascript:;" onclick="viewVersusCache(' + versus.id + ', this)">查看缓存</a>';
+	//str += '&nbsp;&nbsp;<a href="javascript:;" onclick="viewVersusCache(' + versus.id + ', this)">查看缓存</a>';
 	if(!child) {
 		str += '&nbsp;&nbsp;<a href="javascript:;" onclick="getAllChildVersus(' + versus.id + ', this)">查看子竞猜</a>';
 		str += '&nbsp;&nbsp;<a href="admin/v2/newGuessVersus/add.jsp?superVersusId=' + versus.id + '" target="_blank">添加子竞猜</a>';

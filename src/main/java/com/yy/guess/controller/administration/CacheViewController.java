@@ -25,6 +25,7 @@ import com.yy.guess.util.CachePre;
  * @author 49803
  *
  */
+@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(value="administration", method=RequestMethod.POST)

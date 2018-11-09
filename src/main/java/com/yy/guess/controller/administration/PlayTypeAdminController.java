@@ -24,6 +24,7 @@ import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
 import com.yy.guess.service.PlayTypeService;
 
+@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(value="/administration", method=RequestMethod.POST)

@@ -18,6 +18,7 @@ import com.yy.guess.po.Bet;
 import com.yy.guess.po.enums.BetStatus;
 import com.yy.guess.service.BetService;
 
+@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(value="/administration", method=RequestMethod.POST)

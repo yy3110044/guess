@@ -37,6 +37,7 @@ import com.yy.guess.service.TeamService;
  * @author yy
  *
  */
+@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(value="/administration", method=RequestMethod.POST)

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.service.MatchVersusService;
 
+@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(value="/administration", method=RequestMethod.POST)

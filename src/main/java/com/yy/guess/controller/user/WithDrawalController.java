@@ -27,7 +27,6 @@ import com.yy.guess.service.UserWithdrawalService;
  * @author 49803
  *
  */
-@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(value="/user", method=RequestMethod.POST)

@@ -339,6 +339,13 @@ public class VersusAdminController {
 		return new ResponseObject(100, "修改成功");
 	}
 	
+	//重置versus
+	@RequestMapping("/versusReset")
+	public ResponseObject versusReset(@RequestParam int versusId) {
+		ngvs.reset(versusId);
+		return new ResponseObject(100, "重置成功");
+	}
+	
 	//设置versus结果
 	@RequestMapping("/versusSetResult")
 	public ResponseObject versusSetResult(@RequestParam int resultItemId, @RequestParam int versusId) {

@@ -48,4 +48,7 @@ public interface NewGuessVersusService {
     
     //更改结果
     ResponseObject updateResult(int resultItemId, int versusId);
+    
+    //重置竞猜
+    void reset(int versusId);
 }

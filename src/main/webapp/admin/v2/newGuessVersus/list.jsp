@@ -70,6 +70,7 @@ var viewVersusCache = function(versusId, e) {
 						str += '<td>' + versus.betAmountMin.toFixed(2) + '</td>';
 						str += '<td>' + versus.betAmountMax.toFixed(2) + '</td>';
 						str += '<td>¥' + versus.betAllAmount.toFixed(2) + '</td>';
+						str += '<td>¥' + versus.allPayBonus.toFixed(2) + '</td>';
 						str += '<td>' + versus.startTime + '</td>';
 						str += '<td>' + (versus.endTime == null ? "" : versus.endTime) + '</td>';
 						str += '<td>' + (versus.betPause ? '暂停' : '开启') + '</td>';
@@ -303,8 +304,8 @@ var viewVersusItem = function(versusId, e) {
 					
 					str += '<div class="itemDiv"><table class="table table-bordered table-striped table-hover my-table" style="text-align:center;width:auto;">';
 					str += '<thead>';
-					str += '<tr><th colspan="11">' + versus.name + '&nbsp;竞猜项详情</th><th><input type="button" value="关闭" onclick="$(this).parent().parent().parent().parent().parent().parent().parent().remove()"></th></tr>';
-					str += '<tr><th>竞猜名</th><th>下注金额</th><th>下注比例/公平赔率</th><th>赔率类型</th><th>固定赔率</th><th>变动赔率</th><th style="color:red;">实际赔率</th><th>赔率增加限制</th><th>赔率减少限制</th><th>变动下限</th><th>变动上限</th><th></th></tr>';
+					str += '<tr><th colspan="12">' + versus.name + '&nbsp;竞猜项详情</th><th><input type="button" value="关闭" onclick="$(this).parent().parent().parent().parent().parent().parent().parent().remove()"></th></tr>';
+					str += '<tr><th>竞猜名</th><th>下注金额</th><th>总奖金</th><th>下注比例/公平赔率</th><th>赔率类型</th><th>固定赔率</th><th>变动赔率</th><th style="color:red;">实际赔率</th><th>赔率增加限制</th><th>赔率减少限制</th><th>变动下限</th><th>变动上限</th><th></th></tr>';
 					str += '</thead>';
 					str += '<tbody>';
 					for(var i=0; i<versusItemList.length; i++) {
@@ -312,6 +313,7 @@ var viewVersusItem = function(versusId, e) {
 						str += '<tr data-versus-item-id="' + versusItem.id + '">';
 						str += '<td><input type="text" class="versus-item-name" value="' + versusItem.name + '"></td>';
 						str += '<td>¥' + versusItem.betAmount.toFixed(2) + '</td>';
+						str += '<td>¥' + versusItem.allPayBonus.toFixed(2) + '</td>';
 						str += '<td data-bet-amount="' + versusItem.betAmount + '" class="betAmountTd"></td>';
 						str += '<td><select class="versus-item-use-fixed-odds" style="width:55px;" onchange="useFixedOddsChange(this)"><option value="true"' + (versusItem.useFixedOdds?' selected="selected"':'') + '>固定</option><option value="false"' + (versusItem.useFixedOdds?'':' selected="selected"') + '>变动</option></select></td>';
 						str += '<td><input class="versus-item-fixed-odds" type="text" value="' + versusItem.fixedOdds + '"' + (versusItem.useFixedOdds?'':' readonly="readonly"') + ' style="width:50px;"></td>';
@@ -346,7 +348,7 @@ var viewVersusItem = function(versusId, e) {
 						str += '</tr>';
 					}
 					str += '<tr>';
-					str += '<td colspan="3"></td>';
+					str += '<td colspan="4"></td>';
 					str += '<td><select id="globalUseFixedOdds" style="width:55px;" onchange="globalUseFixedOddsChange(this)"><option value="" selected="selected">选择</option><option value="true">固定</option><option value="false">变动</option></select></td>';
 					str += '<td colspan="3"></td>';
 					str += '<td><select id="globalChangeOddsPlusStrategy" style="width:73px;" onchange="globalChangeOddsStrategyChange(\'versus-item-change-odds-plus-strategy\', this)"><option value="" selected="selected">选择</option><option value="0">不限制</option><option value="-1">百分比</option><option value="1">固定值</option></select>&nbsp;<input id="globalChangeOddsPlusVal" onclick="changeOddsLimitInput(\'versus-item-change-odds-plus-val\', this)" onblur="changeOddsLimitInput(\'versus-item-change-odds-plus-val\', this)" onkeyup="changeOddsLimitInput(\'versus-item-change-odds-plus-val\', this)" onfocus="changeOddsLimitInput(\'versus-item-change-odds-plus-val\', this)" type="text" style="width:50px;" placeholder="统一修改"></td>';
@@ -594,6 +596,19 @@ var getAllChildVersus = function(superVersusId, e) {
 	}
 }
 
+//重置竞猜
+var reset = function(versusId) {
+	if(confirm("重置之后，将会清空此竞猜的下注额，结果，并重新开启竞猜，确定操作吗？")) {
+		loadData({
+			"url" : "administration/v2/versusAdmin/versusReset",
+			"data" : {"versusId" : versusId},
+			"success" : function(data) {
+				showMsg(data.msg);
+			}
+		});
+	}
+};
+
 var query = function(pageSize, pageNo){
 	var itemId = $.trim($("#itemId").val());
 	var status = $.trim($("#status").val());
@@ -640,6 +655,7 @@ var getVersusTrStr = function(versus, versusItemList, child, superVersusId) {
 	str += '<td class="versusBetAmountMin">' + versus.betAmountMin.toFixed(2) + '</td>';
 	str += '<td class="versusBetAmountMax">' + versus.betAmountMax.toFixed(2) + '</td>';
 	str += '<td>¥' + versus.betAllAmount.toFixed(2) + '</td>';
+	str += '<td>¥' + versus.allPayBonus.toFixed(2) + '</td>';
 	str += '<td class="versusStartTime">' + versus.startTime + '</td>';
 	str += '<td>' + (versus.endTime == null ? "" : versus.endTime) + '</td>';
 	str += '<td><select onchange="betPauseChange(' + versus.id + ', this)" style="width:55px;"><option' + (versus.betPause?'':' selected="selected"') + ' value="false">开启</option><option' + (versus.betPause?' selected="selected"':'') + ' value="true">暂停</option></select></td>';
@@ -669,6 +685,7 @@ var getVersusTrStr = function(versus, versusItemList, child, superVersusId) {
 		str += '&nbsp;&nbsp;<a href="admin/v2/newGuessVersus/add.jsp?superVersusId=' + versus.id + '" target="_blank">添加子竞猜</a>';
 	}
 	str += '&nbsp;&nbsp;<a href="admin/v2/newGuessBet/list.jsp?versusId=' + versus.id + '" target="_blank">查看下注</a>';
+	str += '&nbsp;&nbsp;<a href="javascript:;" onclick="reset(' + versus.id + ')">重置</a>';
 	str += '&nbsp;&nbsp;<a href="javascript:;" onclick="deleteVersus(' + versus.id + ', this)">删除</a>';
 	str += '</td>';
 	str += '</tr>';
@@ -735,6 +752,7 @@ div.itemDiv{margin-top:3px;margin-bottom:3px;}
 			<td><strong>最低下注</strong></td>
 			<td><strong>最高下注</strong></td>
 			<td><strong>总下注额</strong></td>
+			<td><strong>总奖金</strong></td>
 			<td><strong>开始时间</strong></td>
 			<td><strong>结束时间</strong></td>
 			<td><strong>下注</strong></td>

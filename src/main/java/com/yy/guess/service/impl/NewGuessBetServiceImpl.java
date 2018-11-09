@@ -2,10 +2,10 @@ package com.yy.guess.service.impl;
 
 import java.util.List;
 import javax.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yy.guess.mapper.NewGuessBetMapper;
+import com.yy.guess.mapper.NewGuessVersusItemMapper;
 import com.yy.guess.mapper.NewGuessVersusMapper;
 import com.yy.guess.mapper.TradeFlowMapper;
 import com.yy.guess.mapper.UserMapper;
@@ -24,11 +24,14 @@ import com.yy.fast4j.QueryCondition;
 @Repository("newGuessBetService")
 @Transactional
 public class NewGuessBetServiceImpl implements NewGuessBetService {
-    @Autowired
+	@Resource
     private NewGuessBetMapper mapper;
     
     @Resource
     private NewGuessVersusMapper ngvm;
+    
+    @Resource
+    private NewGuessVersusItemMapper ngvim;
     
     @Resource
     private UserMapper um;
@@ -103,6 +106,9 @@ public class NewGuessBetServiceImpl implements NewGuessBetService {
 				double preBalance = um.getBalance(bet.getUserId());//用户原余额
 				um.plusBalance(amount, bet.getUserId());//更改用户余额
 				mapper.updateStatusAndPayBonus(NewGuessBetStatus.已猜中, amount, betId);//更改bet状态
+				
+				ngvm.plusAllPayBonus(amount, bet.getVersusId()); //更新总金额
+				ngvim.plusAllPayBonus(amount, bet.getVersusItemId());//更新总金额
 				
 				//添加流水记录
 				TradeFlow flow = new TradeFlow();

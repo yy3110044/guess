@@ -13,6 +13,7 @@ public class NewGuessVersus {
 	private double betAmountMin = 0.01;
 	private double betAmountMax = 99999;
 	private double betAllAmount;
+	private double allPayBonus;
 	private Date startTime;
 	private Date endTime;
 	private boolean betPause = false;
@@ -75,6 +76,12 @@ public class NewGuessVersus {
 	}
 	public void setBetAllAmount(double betAllAmount) {
 		this.betAllAmount = betAllAmount;
+	}
+	public double getAllPayBonus() {
+		return allPayBonus;
+	}
+	public void setAllPayBonus(double allPayBonus) {
+		this.allPayBonus = allPayBonus;
 	}
 	public Date getStartTime() {
 		return startTime;

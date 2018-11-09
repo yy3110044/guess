@@ -7,6 +7,7 @@ public class NewGuessVersusItem {
 	private String name;
 	private int versusId;
 	private double betAmount;
+	private double allPayBonus;
 	private boolean useFixedOdds = false;
 	private double fixedOdds;
 	private double changeOdds;
@@ -42,6 +43,12 @@ public class NewGuessVersusItem {
 	}
 	public void setBetAmount(double betAmount) {
 		this.betAmount = betAmount;
+	}
+	public double getAllPayBonus() {
+		return allPayBonus;
+	}
+	public void setAllPayBonus(double allPayBonus) {
+		this.allPayBonus = allPayBonus;
 	}
 	public boolean isUseFixedOdds() {
 		return useFixedOdds;

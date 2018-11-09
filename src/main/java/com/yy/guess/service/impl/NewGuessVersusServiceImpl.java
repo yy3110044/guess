@@ -300,4 +300,16 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		this.cleanCache(versusId);//清除缓存
 		return new ResponseObject(100, "修改成功");
 	}
+
+	@Override
+	public void reset(int versusId) {
+		mapper.reset(versusId);
+		ngvim.reset(versusId);
+		NewGuessVersus versus = mapper.findById(versusId);
+		List<NewGuessVersusItem> versusItemList = ngvim.query(new QueryCondition().addCondition("versusId", "=", versusId));
+		CachePre.versusMap.put(versus.getId(), versus);
+		for(NewGuessVersusItem versusItem : versusItemList) {
+			CachePre.versusItemMap.put(versusItem.getId(), versusItem);
+		}
+	}
 }

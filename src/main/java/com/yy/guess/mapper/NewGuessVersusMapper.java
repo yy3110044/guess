@@ -47,7 +47,7 @@ public interface NewGuessVersusMapper {
     @Update("update new_guess_versus set allPayBonus = allPayBonus + #{allPayBonus} where id = #{versusId}")
     void plusAllPayBonus(double allPayBonus, int versusId);
     
-    @Update("update new_guess_versus set betAllAmount = betAllAmount + #{new_guess_versus} where id = #{versusId}")
+    @Update("update new_guess_versus set betAllAmount = betAllAmount + #{betAllAmount} where id = #{versusId}")
     void plusBetAllAmount(double betAllAmount, int versusId);
     
     @Update("update new_guess_versus set betAllAmount = 0, allPayBonus = 0, endTime = null, betPause = 0, resultItemId = 0, resultItemName = null, status = '未开始' where id = #{versusId}")

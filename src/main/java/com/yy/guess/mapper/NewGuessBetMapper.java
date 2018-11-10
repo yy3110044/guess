@@ -4,7 +4,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-
 import com.yy.guess.po.NewGuessBet;
 import com.yy.guess.po.enums.NewGuessBetStatus;
 import com.yy.fast4j.QueryCondition;
@@ -23,7 +22,7 @@ public interface NewGuessBetMapper {
     @Select("select id from new_guess_bet where versusId = #{versusId} and status = #{status}")
     List<Integer> getBetIdList(int versusId, NewGuessBetStatus status);
     
-    @Update("update new_guess_bet set status = #{status}, payBonus = #{payBonus) where id = #{betId}")
+    @Update("update new_guess_bet set status = #{status}, payBonus = #{payBonus} where id = #{betId}")
     void updateStatusAndPayBonus(NewGuessBetStatus status, double payBonus, int betId);
     
     @Update("update new_guess_bet set status = #{status} where id = #{betId}")

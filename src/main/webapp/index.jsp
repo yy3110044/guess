@@ -43,7 +43,7 @@ a {
 }
 .banner {
   width: 100%;
-  background-image: url('https://raybet39.com/assets/img/bkg_pc.jpg');
+  background-image: url('https://staticimg.top/20181110/e28e618a-d8d6-4ee0-aecc-70db83d6954a.jpg');
   background-repeat: no-repeat;
   background-size: contain;
   background-position-x: center;
@@ -118,7 +118,7 @@ a {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background-image: url('https://raybet39.com/assets/img/qrcode_border.svg');
+  background-image: url('https://staticimg.top/20181110/e07b8260-79cf-47c0-a9f9-52545c2374e1.svg');
   background-size: contain;
   margin: 0 40px;
 }
@@ -129,7 +129,7 @@ a {
 
 @media (max-width: 768px) {
   .banner {
-    background-image: url('https://raybet39.com/assets/img/bkg_mobile.jpg');
+    background-image: url('https://staticimg.top/20181110/286e2104-7635-467b-a71c-e9c0afaba7a7.jpg');
   }
   .image-pc {
     display: none;
@@ -163,8 +163,8 @@ a {
 
 <body>
 	<section class="banner">
-		<img src="https://raybet39.com/assets/img/bkg_pc.jpg" width="100%" class="image-pc">
-		<img src="https://raybet39.com/assets/img/bkg_mobile.jpg" width="100%" class="image-mobile">
+		<img src="https://staticimg.top/20181110/6e3c4d9e-e334-4640-8c3d-bdcce7ca2b44.jpg" width="100%" class="image-pc">
+		<img src="https://staticimg.top:443/20181110/7ee30015-8ef6-434e-8d95-1bc6e91dd1dc.jpg" width="100%" class="image-mobile">
 	</section>
 
 	<section class="qrcode" id="h5_qrcode">

@@ -1,4 +1,4 @@
-package com.yy.guess.controller.user;
+package com.yy.guess.controller.user.v2;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

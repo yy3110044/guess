@@ -17,4 +17,5 @@ public interface NewGuessBetService {
     List<Integer> getBetIdList(int versusId, NewGuessBetStatus status);
     void settlement(int betId); //结算
     void refund(String description, int betId); //退款
+    NewGuessBet bet(int versusId, int versusItemId, double betAmount, int userId); //下注
 }

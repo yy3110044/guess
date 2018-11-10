@@ -31,6 +31,7 @@ import com.yy.guess.util.QueryResult;
  * @author 49803
  *
  */
+@Deprecated
 @CrossOrigin
 @RestController
 @RequestMapping(method=RequestMethod.POST)

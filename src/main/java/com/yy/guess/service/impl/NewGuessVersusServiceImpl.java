@@ -238,6 +238,18 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		}
 		return result;
 	}
+	
+	@Override
+	public double getOdds(int versusItemId) {
+		NewGuessVersusItem versusItem = ngvim.findById(versusItemId);
+		if(versusItem != null) {
+			NewGuessVersus versus = mapper.findById(versusItem.getVersusId());
+			if(versus != null) {
+				return versusItem.isUseFixedOdds() ? versusItem.getFixedOdds() * versus.getReturnRate() : versusItem.getChangeOdds() * versus.getReturnRate();
+			}
+		}
+		return 0;
+	}
 
 	@Override
 	public void update(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int versusId) {

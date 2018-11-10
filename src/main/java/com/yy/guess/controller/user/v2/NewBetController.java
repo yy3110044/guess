@@ -24,7 +24,7 @@ import com.yy.guess.util.Util;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value="/user/v2", method={RequestMethod.POST, RequestMethod.GET})
+@RequestMapping(value="/user/v2", method=RequestMethod.POST)
 public class NewBetController {
 	private static final Logger logger = LogManager.getLogger(NewBetController.class);
 

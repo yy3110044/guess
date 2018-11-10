@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 import com.yy.guess.po.NewGuessVersus;
 import com.yy.guess.po.NewGuessVersusItem;
+import com.yy.guess.util.QueryResult;
 import com.yy.fast4j.JsonResultMap;
+import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.ResponseObject;
 
@@ -14,7 +16,8 @@ public interface NewGuessVersusService {
     List<NewGuessVersus> query(QueryCondition qc);
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
-
+    QueryResult<NewGuessVersus> queryInItemId(List<Integer> itemIdList, int status, Date startTimeStart, Date startTimeEnd, Page page);
+    
     void update(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int versusId); //修改versus
     
     void initCacheMap(); //初始化缓存map

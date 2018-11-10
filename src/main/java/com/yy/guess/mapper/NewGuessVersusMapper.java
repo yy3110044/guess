@@ -2,13 +2,14 @@ package com.yy.guess.mapper;
 
 import java.util.Date;
 import java.util.List;
-
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import com.yy.guess.po.NewGuessVersus;
 import com.yy.guess.po.enums.NewGuessVersusStatus;
+import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 
 @Mapper
@@ -22,6 +23,16 @@ public interface NewGuessVersusMapper {
     int getCount(QueryCondition qc);
     /*****************************************************************分隔线************************************************************************/
     List<NewGuessVersus> getAllUnEndVersus(); //返回所有未结束的versus;
+    
+    List<NewGuessVersus> queryInItemId(@Param("itemIdList") List<Integer> itemIdList,
+    								   @Param("status") int status,
+    								   @Param("startTimeStart") Date startTimeStart,
+    								   @Param("startTimeEnd") Date startTimeEnd,
+    								   @Param("page") Page page);
+    int queryInItemIdCount(@Param("itemIdList") List<Integer> itemIdList,
+    					   @Param("status") int status,
+    					   @Param("startTimeStart") Date startTimeStart,
+    					   @Param("startTimeEnd") Date startTimeEnd);
     
     @Update("update new_guess_versus set name = #{name}, returnRate = #{returnRate}, betAmountMin = #{betAmountMin}, betAmountMax = #{betAmountMax}, startTime = #{startTime} where id = #{versusId}")
     void updateVersus(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int versusId);

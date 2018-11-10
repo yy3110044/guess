@@ -16,7 +16,9 @@ import com.yy.guess.po.NewGuessVersusItem;
 import com.yy.guess.po.enums.NewGuessVersusStatus;
 import com.yy.guess.service.NewGuessVersusService;
 import com.yy.guess.util.CachePre;
+import com.yy.guess.util.QueryResult;
 import com.yy.fast4j.JsonResultMap;
+import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.ResponseObject;
 
@@ -323,5 +325,12 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		for(NewGuessVersusItem versusItem : versusItemList) {
 			CachePre.versusItemMap.put(versusItem.getId(), versusItem);
 		}
+	}
+
+	@Override
+	public QueryResult<NewGuessVersus> queryInItemId(List<Integer> itemIdList, int status, Date startTimeStart, Date startTimeEnd, Page page) {
+		List<NewGuessVersus> list = mapper.queryInItemId(itemIdList, status, startTimeStart, startTimeEnd, page);
+		page.setRowCount(mapper.queryInItemIdCount(itemIdList, status, startTimeStart, startTimeEnd));
+		return new QueryResult<NewGuessVersus>(list, page);
 	}
 }

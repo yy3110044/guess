@@ -350,7 +350,9 @@ public class VersusAdminController {
 	@RequestMapping("/versusSetResult")
 	public ResponseObject versusSetResult(@RequestParam int resultItemId, @RequestParam int versusId) {
 		ResponseObject ro = ngvs.updateResult(resultItemId, versusId);
-		new Thread(new BetSettlementRunnable(versusId)).start();//开一个线程结算
+		if(ro.getCode() == 100) {
+			new Thread(new BetSettlementRunnable(versusId)).start();//开一个线程结算
+		}
 		return ro;
 	}
 	

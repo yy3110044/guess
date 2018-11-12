@@ -93,21 +93,22 @@
     
     <select id="queryInItemId" resultType="com.yy.guess.po.NewGuessVersus">
 		select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime from new_guess_versus
-        where true
+        where
         <if test="itemIdList != null and itemIdList.size > 0">
-        	AND itemId IN (<foreach collection="itemIdList" item="obj" separator=",">#{obj}</foreach>)
+        	itemId IN (<foreach collection="itemIdList" item="obj" separator=",">#{obj}</foreach>) AND
         </if>
         <choose>
-        	<when test="status &lt; 0">AND (status = '未开始' OR status = '进行中') AND</when><!-- 取未结束 -->
-        	<when test="status > 0">AND (status = '已结束' OR status = '流局') AND</when><!-- 取已结束 -->
+        	<when test="status &lt; 0">(status = '未开始' OR status = '进行中') AND</when><!-- 取未结束 -->
+        	<when test="status > 0">(status = '已结束' OR status = '流局') AND</when><!-- 取已结束 -->
         	<otherwise></otherwise>
         </choose>
         <if test="startTimeStart != null">
-			AND startTime >= #{startTimeStart}
+			startTime >= #{startTimeStart} AND
 		</if>
 		<if test="startTimeEnd != null">
-			AND startTime &lt;= #{startTimeEnd}
+			startTime &lt;= #{startTimeEnd} AND
 		</if>
+		superVersusId = 0
 		ORDER BY startTime ASC
 		<if test="page != null">
 			limit ${page.beginIndex}, ${page.pageSize}
@@ -116,20 +117,21 @@
     
     <select id="queryInItemIdCount" resultType="int">
     	select count(*) from new_guess_versus
-    	where true
+    	where
     	<if test="itemIdList != null and itemIdList.size > 0">
-        	AND itemId IN (<foreach collection="itemIdList" item="obj" separator=",">#{obj}</foreach>)
+        	itemId IN (<foreach collection="itemIdList" item="obj" separator=",">#{obj}</foreach>) AND
         </if>
         <choose>
-        	<when test="status &lt; 0">AND (status = '未开始' OR status = '进行中')</when><!-- 取未结束 -->
-        	<when test="status > 0">AND (status = '已结束' OR status = '流局')</when><!-- 取已结束 -->
+        	<when test="status &lt; 0">(status = '未开始' OR status = '进行中') AND</when><!-- 取未结束 -->
+        	<when test="status > 0">(status = '已结束' OR status = '流局') AND</when><!-- 取已结束 -->
         	<otherwise></otherwise>
         </choose>
         <if test="startTimeStart != null">
-			AND startTime >= #{startTimeStart}
+			startTime >= #{startTimeStart} AND
 		</if>
 		<if test="startTimeEnd != null">
-			AND startTime &lt;= #{startTimeEnd}
+			startTime &lt;= #{startTimeEnd} AND
 		</if>
+		superVersusId = 0
     </select>
 </mapper>

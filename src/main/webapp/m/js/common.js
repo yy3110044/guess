@@ -3,6 +3,9 @@ var empty = function(str) {
 };
 
 //不四舍五入保留两位小数
+var formatNumber = function(num) {
+	return (Math.floor(num * 100) / 100).toFixed(2);
+};
 var getMoneyStr = function(amount) {
 	return (Math.floor(amount * 100) / 100).toFixed(2);
 };

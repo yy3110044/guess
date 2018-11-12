@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.yy.fast4j.JsonResultMap;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.NewGuessBet;
@@ -78,9 +80,15 @@ public class NewBetController {
 			logger.error(e.toString());
 			throw e;
 		}
+		
+		NewGuessBet bet = null;
 		synchronized(cacheVersus) {//下注的操作同步化
-			NewGuessBet bet = ngbs.bet(versusId, versusItemId, betAmount, userId);
-			return new ResponseObject(100, "下注成功", bet);
+			bet = ngbs.bet(versusId, versusItemId, betAmount, userId);
 		}
+		JsonResultMap result = new JsonResultMap();
+		result.put("bet", bet);
+		result.put("versus", versus);
+		result.put("versusItem", versusItem);
+		return new ResponseObject(100, "下注成功", result);
 	}
 }

@@ -18,4 +18,4 @@
 <link rel="apple-touch-icon" sizes="192x192" href="m/images/logo/apple-touch-icon.png">
 <link href="m/css/app.css" rel="stylesheet">
 <script src="js/jquery.js"></script>
-<script src="m/js/common.js"></script>
+<script src="m/js/common.js?v=2"></script>

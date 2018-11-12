@@ -183,6 +183,7 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		if(versusItem != null) {
 			JsonResultMap result = new JsonResultMap();
 			NewGuessVersus versus = CachePre.versusMap.get(versusItem.getVersusId());
+			result.put("versusItemId", versusItemId);
 			result.put("pause", versus.isBetPause());
 			result.put("odds", versusItem.isUseFixedOdds() ? versusItem.getFixedOdds() * versus.getReturnRate() : versusItem.getChangeOdds() * versus.getReturnRate());
 			return result;
@@ -215,6 +216,7 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		if(versusItem != null) {
 			JsonResultMap result = new JsonResultMap();
 			NewGuessVersus versus = mapper.findById(versusItem.getVersusId());
+			result.put("versusItemId", versusItemId);
 			result.put("pause", versus.isBetPause());
 			result.put("odds", versusItem.isUseFixedOdds() ? versusItem.getFixedOdds() * versus.getReturnRate() : versusItem.getChangeOdds() * versus.getReturnRate());
 			return result;
@@ -237,6 +239,21 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		JsonResultMap[] result = new JsonResultMap[versusItemIds.length];
 		for(int i=0; i<versusItemIds.length; i++) {
 			result[i] = this.getVersusItemStatusToDatabase(versusItemIds[i]);
+		}
+		return result;
+	}
+	
+	@Override
+	public JsonResultMap getVersusAndVersusItemAndOddsToDatabase(int versusItemId) {
+		JsonResultMap result = new JsonResultMap();
+		NewGuessVersusItem versusItem = ngvim.findById(versusItemId);
+		NewGuessVersus versus = versusItem == null ? null : mapper.findById(versusItem.getVersusId());
+		result.put("versusItem", versusItem);
+		result.put("versus", versus);
+		if(versusItem != null && versus != null) {
+			result.put("odds", versusItem.isUseFixedOdds() ? versusItem.getFixedOdds() * versus.getReturnRate() : versusItem.getChangeOdds() * versus.getReturnRate());
+		} else {
+			result.put("odds", null);
 		}
 		return result;
 	}

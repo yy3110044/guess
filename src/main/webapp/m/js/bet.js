@@ -1,24 +1,557 @@
 /*全局参数*/
-var itemIds = null;//项目id数组，为null或长度为零表示加载所有
+var itemIds = new Array();//项目id数组，为null或长度为零表示加载所有
 var versusIndex = 2; //1、2、3、4
 var versusDate = null; //index为3、4时需要此参数
+var pageSize = 20;
+
+var originalIntervalSecond = 60;
+var intervalSecond = 60;
+
+var mescroll = null;//scroll对象
 
 //初始化数据方法
-var initData = function(intervalSeconds){
+var initData = function(index, seconds){
+	if(seconds != null) {
+		originalIntervalSecond = seconds;
+		intervalSecond = seconds;
+	}
+	
 	$("#vux-scroller-60yre").height($(window).height() - 132);//设置页面高度
 	loadAllItem(); //加载所有项目列表
 	loadSystemNotice(); //加载系统公告
 	getUnreadUserNoticeCount(); //加载未读信息数量
-	loadVersus(); //加载竞猜列表
+
+	//初始化scroll对象
+	mescroll = new MeScroll("vux-scroller-60yre", {
+		"down" : {
+			"use" : true,
+			"auto" : false, //是否在初始化完毕之后自动执行下拉回调callback; 默认true
+			"callback" : function(){
+				loadVersus(pageSize, 1, true);
+			}
+		},
+		"up" : {
+			"use" : true,
+			"auto" : false, //是否在初始化时以上拉加载的方式自动加载第一页数据; 默认false
+			"isBounce" : false, //此处禁止ios回弹
+			"htmlNodata" : '<div data-v-bf66ef20="" class="empty-list">暂时没有更多比赛了</div>',
+			"onScroll" : function(){
+				intervalSecond = originalIntervalSecond;
+			},
+			"callback" : function(page) {
+				loadVersus(pageSize, page.num + 1, true);
+			}
+		}
+	});
+	
+	if(index == "1") {
+		tabBarChange(1, $(".vux-tab-container .vux-tab-item").eq(0)[0]);
+	} else if(index == "2") {
+		tabBarChange(2, $(".vux-tab-container .vux-tab-item").eq(1)[0]);
+	} else if(index == "3") {
+		tabBarChange(3, $(".vux-tab-container .vux-tab-item").eq(2)[0]);
+	} else if(index == "4") {
+		tabBarChange(4, $(".vux-tab-container .vux-tab-item").eq(3)[0]);
+	} else {
+		tabBarChange(2, $(".vux-tab-container .vux-tab-item").eq(1)[0]);
+	}
+	
+	setInterval("loadVersusInterval()", 1000); //间隔加载对阵
+	setInterval("getUnreadUserNoticeCount();loadVersusOddsAndStatus();", originalIntervalSecond * 1000); //间隔未读信息数，和赔率信息
 };
 
 //加载versus
-var loadVersus = function(){
+var loadVersus = function(pageSize, pageNo, hideLoading){
+	loadData({
+		"url" : "v2/versusListM",
+		"data" : {
+			"pageSize" : pageSize,
+			"pageNo" : pageNo,
+			"index" : versusIndex,
+			"date" : versusDate,
+			"itemIds[]" : itemIds
+		},
+		"success" : function(data) {
+			if(data.code == 100) {
+				var list = data.result.list;
+				var page = data.result.page;
+				
+				var str = '';
+				if(list.length > 0) {
+					for(var i=0; i<list.length; i++) {
+						var obj = list[i];
+						var versus = obj.versus;
+						var versusItemList = obj.versusItemList;
+						var remainingTime = obj.remainingTime;
+						str += getMatchVersusStr(versus, versusItemList, remainingTime);
+					}
+				} else {
+					//结果为空
+				}
+				$("div.vux-tab-selected .match-number").html(page.rowCount);
+				if(pageNo == 1) { //第一页清空
+					if(mescroll != null) {
+						mescroll.scrollTo(0); //滚动到顶部
+						mescroll.setPageNum(1); //把页数重设为1
+					}
+					$("#betListContainer").empty();
+				}
+				$("#betListContainer").append(str);
+				if(mescroll != null) {
+					mescroll.endSuccess(page.pageSize, page.next);//在这里关闭加载提示
+				}
+			} else {
+				m_toast(data.msg);
+				if(mescroll != null) {
+					mescroll.endErr();//在这里关闭加载提示
+				}
+			}
+		},
+		"hideLoading" : hideLoading,
+		"complete" : function(data) {
+			loadVersusOddsAndStatus(); //加载赔率以及状态
+		},
+		"error" : function(data) {
+			if(mescroll != null) {
+				mescroll.endErr();//在这里关闭加载提示
+			}
+		}
+	});
+};
+var getMatchVersusStr = function(versus, versusItemList, remainingTime) {
 	var str = '';
-	str += 'itemIds：' + itemIds + "\n";
-	str += 'versusIndex：' + versusIndex + "\n";
-	str += 'versusDate：' + versusDate + "\n";
-	alert(str);
+	if("未开始" == versus.status || "进行中" == versus.status) {
+		str += '<div data-v-18da170e="" data-v-bf66ef20="" onclick="versusClick(' + versus.id + ')" class="home-match-card" style="height:auto !important;">';
+		str += '	<section data-v-18da170e="" class="card-header">';
+		str += '		<img data-v-18da170e="" src="' + versus.logoUrl + '" width="20px">';
+		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.name + '</div>';
+		str += '		<div data-v-18da170e="" class="match-round"></div>';
+		if(versus.childVersusCount > 0) {
+			str += '		<div data-v-18da170e="" class="play-count">+' + versus.childVersusCount + '</div>';
+		}
+		str += '	</section>';
+		
+		str += '	<div data-v-8d7d541a="" data-v-18da170e="" class="odds-group-title">';
+		str += '		<div data-v-8d7d541a="" class="empty-badge">&nbsp;</div>';
+		str += '		<div data-v-8d7d541a="" class="title">';
+		if("未开始" == versus.status) {
+			str += '<span style="color:#758bb5;">即将开始</span>&nbsp;&nbsp;<span style="color:#ffffff;">' + getRemainingTimeStr(remainingTime) + '后</span>';
+		} else if("进行中" == versus.status) {
+			if(versus.betPause) {
+				str += '<span style="color:#758bb5;">下注已暂停</span>';
+			} else {
+				str += '<span style="color:#758bb5;">已进行了</span>&nbsp;&nbsp;<span style="color:#ffffff;">' + getRemainingTimeStr(remainingTime) + '</span>';
+			}
+		}
+		str += '		</div>';
+		str += '		<div style="position:absolute;right:15px;color:#758bb5;">' + versus.itemName + '</div>';
+		str += '	</div>';
+		
+		for(var i=0; i<versusItemList.length; i++) {
+			var versusItem = versusItemList[i];
+			if(i % 2 == 0) {
+				str += '	<section data-v-18da170e="" class="card-footer">';
+			}
+			str += '		<div data-v-18da170e="" onclick="versusItemClick(' + versusItem.id + ', event)" class="card-odds-btn versus-item versus-item-' + versusItem.id + '" data-versus-item-id="' + versusItem.id + '">';
+			str += '			<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button">';
+			str += '				<div data-v-ba6efc5c="" class="button-dark-border">';
+			str += '					<div data-v-ba6efc5c="" class="button-content">';
+			str += '						<div data-v-ba6efc5c="" class="button-name">' + versusItem.name + '</div>';
+			str += '						<div data-v-ba6efc5c="" class="button-odds-content">';
+			str += '							<div data-v-ba6efc5c="" class="odds-rising-icon"></div>';
+			str += '							<div data-v-ba6efc5c="" class="btn-odds"><span data-v-ba6efc5c="" class="odds"></span></div>';
+			str += '							<div data-v-ba6efc5c="" class="odds-dropping-icon"></div>';
+			str += '						</div>';
+			str += '					</div>';
+			str += '				</div>';
+			str += '			</div>';
+			str += '		</div>';
+			if(i == 0) { //状态
+				str += '		<div data-v-18da170e="" class="match-status">';
+				str += '			<div data-v-18da170e="" class="' + (versus.status == '进行中' ? 'match-is-live' : 'match-is-early') + '">';
+				str += '				<div data-v-18da170e="" class="status-icon ' + (versus.status == '进行中' ? 'live-icon' : 'early-icon') + '"></div>';
+				str += '				<div data-v-18da170e="" class="match-status-text">' + versus.status + '</div>';
+				str += '			</div>';
+				str += '		</div>';
+			}
+			if((i % 2 != 0) || (versusItemList.length - 1 == i)) {
+				str += '	</section>';
+			}
+			
+		}
+		str += '</div>';
+	} else if("已结束" == versus.status || "流局" == versus.status) {
+		str += '<div data-v-18da170e="" data-v-bf66ef20="" onclick="versusClick(' + versus.id + ')" class="home-match-card" style="height:auto !important;">';
+		str += '	<section data-v-18da170e="" class="card-header">';
+		str += '		<img data-v-18da170e="" src="' + versus.logoUrl + '" width="20px">';
+		str += '		<div data-v-18da170e="" class="tournament-name">' + versus.name + '</div>';
+		str += '		<div data-v-18da170e="" class="match-round"></div>';
+		if(versus.childVersusCount > 0) {
+			str += '		<div data-v-18da170e="" class="play-count">+' + versus.childVersusCount + '</div>';
+		}
+		str += '	</section>';
+		
+		str += '	<div data-v-8d7d541a="" data-v-18da170e="" class="odds-group-title"><div data-v-8d7d541a="" class="empty-badge">&nbsp;</div><div data-v-8d7d541a="" class="title" style="color:#758bb5;">' + versus.itemName + '</div></div>';
+		
+		for(var i=0; i<versusItemList.length; i++) {
+			var versusItem = versusItemList[i];
+			var result = "";
+			if("流局" == versus.status) {
+				result = "liu-flag";
+			} else if ("已结束" == versus.status) {
+				if(versus.resultItemId == versusItem.id) {
+					result = "win-flag";
+				} else {
+					result = "lose-flag";
+				}
+			}
+			if(i % 2 == 0) {
+				str += '<section data-v-18da170e="" class="card-footer">';
+				str += '	<div data-v-18da170e="" class="card-odds-btn">';
+				str += '		<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button btn-over">';
+				str += '			<div data-v-ba6efc5c="" class="button-dark-border">';
+				str += '				<div data-v-ba6efc5c="" class="button-content"><div data-v-ba6efc5c="" class="button-name">' + versusItem.name + '</div></div>';
+				str += '			</div>';
+				str += '		</div>';
+				str += '	</div>';
+				str += '	<div data-v-18da170e="" class="match-status">';
+				str += '		<div data-v-18da170e="" class="match-flag">';
+				str += '			<div data-v-18da170e="" class="flag ' + result + '"></div>';
+			}
+			if(i % 2 != 0) {
+				str += '			<div data-v-18da170e="" class="flag ' + result + '"></div>';
+				str += '		</div>';
+				str += '	</div>';
+				str += '	<div data-v-18da170e="" class="card-odds-btn">';
+				str += '		<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button btn-over">';
+				str += '			<div data-v-ba6efc5c="" class="button-dark-border">';
+				str += '				<div data-v-ba6efc5c="" class="button-content"><div data-v-ba6efc5c="" class="button-name">' + versusItem.name + '</div></div>';
+				str += '			</div>';
+				str += '		</div>';
+				str += '	</div>';
+				str += '</section>';
+			}
+			if(i % 2 == 0 && (versusItemList.length - 1 == i)) {
+				str += '			<div data-v-18da170e="" class="flag"></div>';
+				str += '		</div>';
+				str += '	</div>';
+				str += '	<div data-v-18da170e="" class="card-odds-btn" style="visibility:hidden;">';
+				str += '		<div data-v-ba6efc5c="" data-v-18da170e="" class="home-match-card-button btn-over">';
+				str += '			<div data-v-ba6efc5c="" class="button-dark-border">';
+				str += '				<div data-v-ba6efc5c="" class="button-content"><div data-v-ba6efc5c="" class="button-name"></div></div>';
+				str += '			</div>';
+				str += '		</div>';
+				str += '	</div>';
+				str += '</section>';
+			}
+		}
+		str += '</div>';
+	}
+	return str;
+};
+//竞猜点击事件
+var versusClick = function(versusId) {
+	alert(versusId);
+};
+//竞猜项点击事件
+var versusItemClick = function(versusItemId, event) {
+	var btnE = $("div.versus-item-" + versusItemId + " div.home-match-card-button");
+	if(!btnE.hasClass("btn-locked")) {
+		if(btnE.hasClass("btn-selected")) {
+			numberInputClose();
+			$("div.versus-item div.btn-selected").removeClass("btn-selected");
+		} else {
+			numberInputOpen(versusItemId);//打开下注框
+			$("div.versus-item div.btn-selected").removeClass("btn-selected");
+			btnE.addClass("btn-selected");
+		}
+	}
+	event.stopPropagation();//阻止事件传递
+};
+
+/**********************************************下注框相关方法******************************************************************/
+//打开下注框方法
+var numberInputOpen = function(versusItemId) {
+	numberInputShow(); //先显示下注框
+	loadData({
+		"url" : "v2/getVersusAndVersusItemByVersusItemId",
+		"data" : {"versusItemId" : versusItemId},
+		"hideLoading" : true,
+		"success" : function(data) {
+			if(data.code == 100) {
+				numberInputDataAdd(data.result.versus, data.result.versusItem, data.result.odds, data.result.balance);
+			} else {
+				m_toast(data.msg);
+			}
+		}
+	});
+};
+//下注框关闭方法
+var numberInputClose = function() {
+	numberInputDataClean();//先清除数据
+	numberInputHide();//隐藏下注框
+	$("div.versus-item div.btn-selected").removeClass("btn-selected");
+};
+//下注框填充数据方法
+var numberInputDataAdd = function(versus, versusItem, odds, balance) {
+	$("#numberInputDiv").attr("data-versus-id", versus.id);
+	$("#numberInputDiv").attr("data-versus-item-id", versusItem.id);
+	$("#numberInputDiv .remove-all").html(versus.name);
+	$("#numberInputDiv #userBalanceDiv").html("¥" + formatNumber(balance));
+	$("#numberInputDiv #userBalanceDiv").attr("data-balance", balance);
+	$("#numberInputDiv #userBalanceDiv").attr("data-bet-amount-min", versus.betAmountMin);
+	$("#numberInputDiv #userBalanceDiv").attr("data-bet-amount-max", versus.betAmountMax);
+	$("#numberInputDiv .odds-name").html(versusItem.name);
+	$("#numberInputDiv .money-odds").html("赔率&nbsp;" + formatNumber(odds));
+	$("#numberInputDiv .money-odds").attr("data-odds", odds);
+	$("#numberInputDiv .money-odds").attr("data-current-versus-id", versusItem.id);
+	$("#numberInputDiv .return-amount").html("¥0.00");
+	$("#numberInputDiv .bet-slip-pop-note").hide();
+	$("#numberInputDiv .money-odds").removeClass("money-odds-change");
+	calculateAndShowOdds();//计算并显示赔率
+};
+//下注框数据清除方法
+var numberInputDataClean = function() {
+	$("#numberInputDiv").attr("data-versus-id", "");
+	$("#numberInputDiv").attr("data-versus-item-id", "");
+	$("#numberInputDiv .remove-all").empty();
+	$("#numberInputDiv #userBalanceDiv").empty();
+	$("#numberInputDiv #userBalanceDiv").attr("data-balance", "");
+	$("#numberInputDiv #userBalanceDiv").attr("data-bet-amount-min", "");
+	$("#numberInputDiv #userBalanceDiv").attr("data-bet-amount-max", "");
+	$("#numberInputDiv .odds-name").empty();
+	$("#numberInputDiv .money-odds").empty();
+	$("#numberInputDiv .money-odds").attr("data-odds", "");
+	$("#numberInputDiv .money-odds").attr("data-current-versus-id", "");
+	$("#numberInputDiv .return-amount").empty();
+	$("#numberInputDiv .bet-slip-pop-note").hide();
+	$("#numberInputDiv .money-odds").removeClass("money-odds-change");
+};
+//下注框显示方法
+var numberInputShow = function() {
+	$("#numberInputDiv").slideDown();
+};
+//下注框隐藏方法
+var numberInputHide = function() {
+	$("#numberInputDiv").slideUp();
+};
+//输入方法
+var numberInput = function(str) {
+	var userBalance = parseFloat($("#numberInputDiv #userBalanceDiv").attr("data-balance"));
+	var betAmountMin = parseFloat($("#numberInputDiv #userBalanceDiv").attr("data-bet-amount-min"));
+	var betAmountMax = parseFloat($("#numberInputDiv #userBalanceDiv").attr("data-bet-amount-max"));
+	
+	var inputValueSpan = $("#numberInputDiv #inputValueSpan");
+	var value = $.trim(inputValueSpan.attr("data-value"));
+	if("ok" == str) {//下注
+		if(empty(value)) {
+			m_toast("请输入下注金额");
+		} else {
+			loadData({
+				"url" : "user/v2/bet",
+				"data" : {
+					"versusId" : $("#numberInputDiv").attr("data-versus-id"),
+					"versusItemId" : $("#numberInputDiv").attr("data-versus-item-id"),
+					"betAmount" : value
+				},
+				"success" : function(data) {
+					if(data.code == 100) { //下注成功
+						var bet = data.result.bet;
+						var versus = data.result.versus;
+						var versusItem = data.result.versusItem;
+						betSuccessOpen(versus, versusItem, bet);
+					} else if(data.code == 106) { //余额不足
+						m_confirm("您的余额不足，是否前往充值？", function(){
+							window.location.href = 'm/usercenter/wallet/index.jsp';
+						});
+					} else if(data.code == 200) { //未登陆
+						m_confirm("您还未登录，请先登录", function(){
+							window.location.href = "m/login.jsp";
+						});
+					} else {
+						m_toast(data.msg);
+					}
+				}
+			});
+		}
+	} else if("max" == str) {
+		var tmp = parseInt((userBalance < betAmountMax ? userBalance : betAmountMax), 10);
+		if(tmp > 999999) {
+			tmp = 999999;
+		}
+		value = "" + tmp;
+	} else if("x" == str) {
+		if(!empty(value)) {
+			value = value.substring(0, value.length - 1);
+		}
+	} else {
+		if(value.length < 6) {
+			value = value + str;
+		}
+	}
+	if(!empty(value)) {
+		var amount = parseInt(value, 10);
+		if(amount > userBalance) {
+			inputValueSpan.parent().addClass("stake-input-over");
+		} else {
+			inputValueSpan.parent().removeClass("stake-input-over");
+		}
+		inputValueSpan.attr("class", "input-text");
+		inputValueSpan.html(amount);
+		inputValueSpan.attr("data-value", amount);
+		calculateAndShowOdds();//计算并显示赔率
+	} else {
+		inputValueSpan.parent().removeClass("stake-input-over");
+		inputValueSpan.attr("class", "input-placeholder");
+		$("#numberInputDiv .return-amount").html("¥0.00");
+		inputValueSpan.html("输入金额");
+		inputValueSpan.attr("data-value", "");
+	}
+}
+//下注成功页打开
+var betSuccessOpen = function(versus, versusItem, bet) {
+	$("#betSuccessDiv .versus-logo-url").css("background-image", "url('" + versus.logoUrl + "')");
+	$("#betSuccessDiv .versus-name").html(versus.name);
+	$("#betSuccessDiv .versus-item-name").html(versusItem.name);
+	$("#betSuccessDiv .bet-amount").html("¥" + formatNumber(bet.betAmount));
+	$("#betSuccessDiv .bet-odds").html(formatNumber(bet.odds));
+	$("#betSuccessDiv .bet-bonus").html("¥" + formatNumber(bet.betAmount * bet.odds));
+	$("#betSuccessDiv .bet-time").html(bet.createTime);
+	$("#betSuccessDiv .item-name").html(versus.itemName);
+	$("#betSuccessDiv").show();
+};
+//下注成功页关闭
+var betSuccessClose = function(){
+	$("#betSuccessDiv .versus-logo-url").css("background-image", "");
+	$("#betSuccessDiv .versus-name").html("");
+	$("#betSuccessDiv .versus-item-name").html("");
+	$("#betSuccessDiv .bet-amount").html("");
+	$("#betSuccessDiv .bet-odds").html("");
+	$("#betSuccessDiv .bet-bonus").html("");
+	$("#betSuccessDiv .bet-time").html("");
+	$("#betSuccessDiv .item-name").html("");
+	$("#numberInputDiv #inputValueSpan").attr("class", "input-placeholder");
+	$("#numberInputDiv #inputValueSpan").html("输入金额");
+	$("#numberInputDiv #inputValueSpan").attr("data-value", "");
+	$("#betSuccessDiv").hide();
+	numberInputClose();//关闭下注框
+};
+//计算赔率
+var calculateAndShowOdds = function() {
+	var odds = $.trim($("#numberInputDiv .money-odds").attr("data-odds"));
+	var amount = $.trim($("#numberInputDiv #inputValueSpan").attr("data-value"));
+	if(!empty(odds) && !empty(amount)) {
+		var oddsValue = parseFloat(odds) * parseFloat(amount);
+		$("#numberInputDiv .return-amount").html("¥" + formatNumber(oddsValue));
+	} else {
+		$("#numberInputDiv .return-amount").html("¥0.00");
+	}
+};
+//检查numberInputDivOdds
+var checkNumberInputDivOdds = function(obj) {
+	var oddsE = $("#numberInputDiv .money-odds");
+	if(oddsE.attr("data-current-versus-id") == obj.versusItemId) {
+		if(parseFloat(oddsE.attr("data-odds")) != obj.odds) {//赔率发生成变化
+			oddsE.addClass("money-odds-change");
+			oddsE.html("赔率&nbsp;" + formatNumber(obj.odds));
+			oddsE.attr("data-odds", obj.odds);
+			$("#numberInputDiv .bet-slip-pop-note").show();
+			calculateAndShowOdds();//计算赔率
+		}
+	}
+};
+/**********************************************下注框相关方法******************************************************************/
+
+//加载竞猜状态以及赔率
+var loadVersusOddsAndStatus = function() {
+	var versusItemIds = new Array();
+	$("div.versus-item").each(function(){
+		var versusItemId = $.trim($(this).attr("data-versus-item-id"));
+		if(!empty(versusItemId)) {
+			versusItemIds.push(versusItemId);
+		}
+	});
+	if(versusItemIds.length > 0) {
+		loadData({
+			"url" : "v2/getOddsAndStatus",
+			"hideLoading" : true,
+			"data" : {"versusItemIds[]" : versusItemIds},
+			"success" : function(data) {
+				if(data.code == 100) {
+					var list = data.result;
+					for(var i=0; i<list.length; i++) {
+						var obj = list[i];
+						showOddsAndStatus(list[i], $("div.versus-item-" + obj.versusItemId));
+						checkNumberInputDivOdds(list[i]);
+					}
+				} else {
+					m_toast(data.msg);
+				}
+			}
+		});
+	}
+};
+//显示赔率
+var versusItemOddsArray = new Array(); //赔率数组
+var showOddsAndStatus = function(obj, e) {
+	if(obj == null || obj.pause) { //对象为空，或者下注暂停了
+		e.find(".home-match-card-button").addClass("btn-locked");
+		e.find(".odds").empty();
+		e.removeClass("btn-odds-dropping");
+		e.removeClass("btn-odds-rising");
+	} else {
+		e.find(".home-match-card-button").removeClass("btn-locked");
+		var oddsSpan = e.find(".odds");
+		var oldOdds = versusItemOddsArray["versusItem" + obj.versusItemId];
+		if(oldOdds == null || oldOdds == obj.odds) { //赔率没变或者第一次加载赔率
+			oddsSpan.html(formatNumber(obj.odds));
+			e.removeClass("btn-odds-dropping");
+			e.removeClass("btn-odds-rising");
+		} else {
+			if(obj.odds > oldOdds) { //赔率涨了
+				oddsSpan.html(formatNumber(obj.odds));
+				e.removeClass("btn-odds-dropping");
+				e.addClass("btn-odds-rising");
+			} else if(obj.odds < oldOdds) { //赔率跌了
+				oddsSpan.html(formatNumber(obj.odds));
+				e.removeClass("btn-odds-rising");
+				e.addClass("btn-odds-dropping");
+			}
+		}
+		versusItemOddsArray["versusItem" + obj.versusItemId] = obj.odds;
+	}
+};
+
+//计算剩余时间字符串
+var getRemainingTimeStr = function(remainingTime){
+	if(remainingTime == null) {
+		return "";
+	}
+	remainingTime = Math.abs(remainingTime);
+	if(remainingTime <= 0) {
+		return "0秒";
+	} else if(remainingTime > 0 && remainingTime < 60000) { //小于一分(60秒)
+		return parseInt(remainingTime / 1000) + "秒";
+	} else if(remainingTime >= 60000 && remainingTime < 3600000) { //大于一分小于1小时(60分)
+		return parseInt(remainingTime / 1000 / 60) + "分钟";
+	} else if(remainingTime >= 3600000 && remainingTime < 86400000) { //大于1小时小于一天(24小时)
+		return parseInt(remainingTime / 1000 / 60 / 60) + "小时";
+	} else { //大于等于一天
+		return parseInt(remainingTime / 1000 / 60 / 60 / 24) + "天";
+	}
+};
+
+//间隔加载对阵方法
+var loadVersusInterval = function() {
+	if(!($("#numberInputDiv").is(":hidden"))) { //如果打开了输入框，则不计时
+		return;
+	}
+	if(intervalSecond > 0) {
+		intervalSecond --;
+	} else {
+		loadVersus(pageSize, 1, true);
+		intervalSecond = originalIntervalSecond;
+	}
 };
 
 //更新未读信息方法
@@ -48,7 +581,7 @@ var loadAllItem = function(){
 				var str = '';
 				for(var i=0; i<list.length; i++) {
 					var obj = list[i];
-					str += '<div data-v-cd1e9d3c="" onclick="itemSelect(' + obj.id + ', this)" data-item-id="' + obj.id + '" class="vux-checker-item vux-tap-active default-checker-item selected-all-games">';
+					str += '<div data-v-cd1e9d3c="" onclick="itemSelect(' + obj.id + ', this)" data-item-id="' + obj.id + '" class="guess-item vux-checker-item vux-tap-active default-checker-item selected-all-games">';
 					str += '	<div data-v-cd1e9d3c="" style="height:2px;">&nbsp;</div>';
 					str += '	<div data-v-cd1e9d3c="" class="games-info">';
 					str += '		<div data-v-cd1e9d3c="" class="games-icon" style="background-image: url(\'' + obj.logoUrl + '\');"></div>';
@@ -57,7 +590,7 @@ var loadAllItem = function(){
 					str += '	<div data-v-cd1e9d3c="" class="selected-checker-light"></div>';
 					str += '</div>';
 				}
-				$("div.vux-checker-item").remove();
+				$("div.guess-item").remove();
 				$("div.checker-content").append(str);
 			}
 		}
@@ -74,13 +607,13 @@ var tabBarChange = function(index, ts) {
 	$(ts).css("color", "rgb(255, 255, 255)");
 	if(1 == index) {
 		versusIndex = 1;
-		date = null;
+		versusDate = null;
 		loadSystemNotice(); //加载系统公告
 		e.css("left", "0%");
 		e.css("right", "75%");
 	} else if(2 == index) {
 		versusIndex = 2;
-		date = null;
+		versusDate = null;
 		loadSystemNotice(); //加载系统公告
 		e.css("left", "25%");
 		e.css("right", "50%");
@@ -95,7 +628,7 @@ var tabBarChange = function(index, ts) {
 		e.css("left", "75%");
 		e.css("right", "0%");
 	}
-	loadVersus();
+	loadVersus(pageSize, 1, false);
 };
 
 
@@ -186,7 +719,7 @@ var itemSelect = function(itemId, e){
 //确认选择
 var itemSelectOk = function(){
 	if($("#selected-all-item").hasClass("selected-checker-item")) {
-		itemIds = null;
+		itemIds = new Array();
 	} else {//全部
 		itemIds = new Array();
 		$("div.selected-checker-item").each(function(){
@@ -194,7 +727,7 @@ var itemSelectOk = function(){
 		});
 	}
 	closeItemSelect();
-	loadVersus();
+	loadVersus(pageSize, 1, false);
 };
 //运动项目选择
 var itemSelect = function(itemId, e){
@@ -275,7 +808,7 @@ var preDay = function(){//前一天
 		$("section.content-hearer #right-arrow-icon").addClass("arrow-right");
 		versusDate = preDateStr2;
 	}
-	loadVersus();
+	loadVersus(pageSize, 1, false);
 };
 var nextDay = function(){//后一天
 	var dateStrElement = $("section.content-hearer .home-date .dateStr");
@@ -313,7 +846,7 @@ var nextDay = function(){//后一天
 			versusDate = nextDateStr2;
 		}
 	}
-	loadVersus();
+	loadVersus(pageSize, 1, false);
 };
 var getDateStr = function(millis) {//返回字日期字符串
 	var date = new Date();

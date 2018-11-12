@@ -44,6 +44,9 @@ public interface NewGuessVersusService {
     JsonResultMap getVersusItemStatusToDatabase(int[] versusItemIds);
     JsonResultMap[] getVersusItemStatusToDatabaseReturnArray(int[] versusItemIds);
     
+    //从数据库中获取versus、versusItem、以以计算赔率
+    JsonResultMap getVersusAndVersusItemAndOddsToDatabase(int versusItemId);
+    
     //计算赔率
     double getOdds(int versusItemId);
     

@@ -100,10 +100,11 @@ var addUploadEvent = function(obj) {
  * obj.url：上传服务器url
  * obj.imgId：上传成功能的img元素id
  * obj.defaultImgUrl: 默认图片url
+ * obj.imgSytle：显示img的css
  */
 var addImageUploadEvent = function(obj) {
 	var inputEle = $("#" + obj.inputId);
-	inputEle.after('<span id="progressallSpan" style="color:green;"></span><div><img id="' + obj.imgId + '"' + (obj.defaultImgUrl == null ? '' : (' src="' + obj.defaultImgUrl + '"')) + '></div>');
+	inputEle.after('<span id="progressallSpan" style="color:green;"></span><div><img style="' + (obj.imgSytle == null ? "" : obj.imgSytle) + '" id="' + obj.imgId + '"' + (obj.defaultImgUrl == null ? '' : (' src="' + obj.defaultImgUrl + '"')) + '></div>');
 	obj.fileTypes = ["image/gif", "image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
 	obj.progressall = function(e, data){
 		var rate = parseInt(data.loaded / data.total * 100, 10);

@@ -38,6 +38,7 @@ $(document).ready(function(){
 						"inputId" : "uploadImageInput",
 						"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
 						"imgId" : "logoUrl",
+						"imgSytle" : "width:40px;height:40px;",
 						"defaultImgUrl" : versus.logoUrl
 					});
 					
@@ -64,6 +65,7 @@ $(document).ready(function(){
 			"inputId" : "uploadImageInput",
 			"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
 			"imgId" : "logoUrl",
+			"imgSytle" : "width:40px;height:40px;",
 			"defaultImgUrl" : "images/sportDefaultLogo.png"
 		});
 		loadData({

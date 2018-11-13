@@ -136,6 +136,30 @@ public class VersusInfoController {
 		result.put("balance", balance);
 		return new ResponseObject(100, "返回成功", result);
 	}
+	
+	//返回versus以及所有子versus
+	@RequestMapping("/getVersusAndChildVersusByVersusId")
+	public ResponseObject getVersusAndChildVersusByVersusId(@RequestParam int versusId) {
+		NewGuessVersus versus = ngvs.findById(versusId);
+		if(versus == null) {
+			return new ResponseObject(101, "竞猜不存在");
+		}
+		List<NewGuessVersus> childVersus = ngvs.query(new QueryCondition().addCondition("superVersusId", "=", versus.getId()));
+		
+		JsonResultMap parentVersus = new JsonResultMap();
+		parentVersus.put("versus", versus);
+		parentVersus.put("versusItemList", ngvis.query(new QueryCondition().addCondition("versusId", "=", versus.getId())));
+		
+		List<JsonResultMap> childVersusList = new ArrayList<JsonResultMap>();
+		for(NewGuessVersus v : childVersus) {
+			JsonResultMap map = new JsonResultMap();
+			map.put("versus", v);
+			map.put("versusItemList", ngvis.query(new QueryCondition().addCondition("versusId", "=", v.getId())));
+			childVersusList.add(map);
+		}
+		
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("versus", parentVersus).set("childVersusList", childVersusList));
+	}
 
 	//返回所有项目
 	@RequestMapping("/getAllItem")

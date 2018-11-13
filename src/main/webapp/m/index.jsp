@@ -20,7 +20,7 @@ if(userAgent.indexOf("MicroMessenger") >= 0) {
 </style>
 <script>
 $(document).ready(function(){
-	initData("${param.index}", <%=com.yy.guess.util.Util.getConfigCom(application).getClientLoadDataInterval()%>);/*初始化*/
+	initData("${param.index}", "${param.date}", <%=com.yy.guess.util.Util.getConfigCom(application).getClientLoadDataInterval()%>);/*初始化*/
 });
 </script>
 </head>
@@ -43,13 +43,13 @@ $(document).ready(function(){
 							<div data-v-de9ae73a="" class="vux-tab-wrap match-tab">
 								<div class="vux-tab-container">
 									<div class="vux-tab">
-										<div data-v-de9ae73a="" onclick="tabBarChange(1, this)" class="vux-tab-item" style="border:none;color:rgb(186, 206, 241);">今日&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(1, null, this)" class="vux-tab-item" style="border:none;color:rgb(186, 206, 241);">今日&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" onclick="tabBarChange(2, this)" class="vux-tab-item vux-tab-selected" style="border: none; color: rgb(255, 255, 255);">进行中&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(2, null, this)" class="vux-tab-item vux-tab-selected" style="border: none; color: rgb(255, 255, 255);">进行中&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" onclick="tabBarChange(3, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">赛前&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(3, null, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">赛前&nbsp;<span data-v-de9ae73a="" class="match-number"></span></div>
 										<span data-v-de9ae73a="" class="column-line"></span>
-										<div data-v-de9ae73a="" onclick="tabBarChange(4, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">已结束</div>
+										<div data-v-de9ae73a="" onclick="tabBarChange(4, null, this)" class="vux-tab-item" style="border: none; color: rgb(186, 206, 241);">已结束</div>
 										<span data-v-de9ae73a="" class="column-line"></span>
 										<div class="vux-tab-ink-bar vux-tab-ink-bar-transition-backward" style="display:block;height:22px;background-color:transparent;left:25%;right:50%;"></div>
 									</div>

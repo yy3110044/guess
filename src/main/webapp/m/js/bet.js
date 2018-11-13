@@ -2,7 +2,7 @@
 var itemIds = new Array();//项目id数组，为null或长度为零表示加载所有
 var versusIndex = 2; //1、2、3、4
 var versusDate = null; //index为3、4时需要此参数
-var pageSize = 20;
+var pageSize = 15;
 
 var originalIntervalSecond = 60;
 var intervalSecond = 60;
@@ -10,7 +10,7 @@ var intervalSecond = 60;
 var mescroll = null;//scroll对象
 
 //初始化数据方法
-var initData = function(index, seconds){
+var initData = function(index, date, seconds){
 	if(seconds != null) {
 		originalIntervalSecond = seconds;
 		intervalSecond = seconds;
@@ -18,7 +18,6 @@ var initData = function(index, seconds){
 	
 	$("#vux-scroller-60yre").height($(window).height() - 132);//设置页面高度
 	loadAllItem(); //加载所有项目列表
-	loadSystemNotice(); //加载系统公告
 	getUnreadUserNoticeCount(); //加载未读信息数量
 
 	//初始化scroll对象
@@ -45,15 +44,15 @@ var initData = function(index, seconds){
 	});
 	
 	if(index == "1") {
-		tabBarChange(1, $(".vux-tab-container .vux-tab-item").eq(0)[0]);
+		tabBarChange(1, date, $(".vux-tab-container .vux-tab-item").eq(0)[0]);
 	} else if(index == "2") {
-		tabBarChange(2, $(".vux-tab-container .vux-tab-item").eq(1)[0]);
+		tabBarChange(2, date, $(".vux-tab-container .vux-tab-item").eq(1)[0]);
 	} else if(index == "3") {
-		tabBarChange(3, $(".vux-tab-container .vux-tab-item").eq(2)[0]);
+		tabBarChange(3, date, $(".vux-tab-container .vux-tab-item").eq(2)[0]);
 	} else if(index == "4") {
-		tabBarChange(4, $(".vux-tab-container .vux-tab-item").eq(3)[0]);
+		tabBarChange(4, date, $(".vux-tab-container .vux-tab-item").eq(3)[0]);
 	} else {
-		tabBarChange(2, $(".vux-tab-container .vux-tab-item").eq(1)[0]);
+		tabBarChange(2, date, $(".vux-tab-container .vux-tab-item").eq(1)[0]);
 	}
 	
 	setInterval("loadVersusInterval()", 1000); //间隔加载对阵
@@ -251,7 +250,7 @@ var getMatchVersusStr = function(versus, versusItemList, remainingTime) {
 };
 //竞猜点击事件
 var versusClick = function(versusId) {
-	alert(versusId);
+	window.location.href = "m/betDetail.jsp?versusId=" + versusId + "&index=" + versusIndex + "&date=" + (empty(versusDate) ? "" : versusDate);
 };
 //竞猜项点击事件
 var versusItemClick = function(versusItemId, event) {
@@ -598,7 +597,7 @@ var loadAllItem = function(){
 };
 
 //滚动条变换、菜单切换
-var tabBarChange = function(index, ts) {
+var tabBarChange = function(index, date, ts) {
 	var e = $("div.vux-tab-ink-bar-transition-backward");
 	$("div.vux-tab-item").removeClass("vux-tab-selected");
 	$("div.vux-tab-item").css("color", "rgb(186, 206, 241)");
@@ -620,11 +619,17 @@ var tabBarChange = function(index, ts) {
 	} else if(3 == index) {
 		versusIndex = 3;
 		showDatePicker(); //显示时间选择器
+		if(!empty(date)) {
+			versusDate = date;
+		}
 		e.css("left", "50%");
 		e.css("right", "25%");
 	} else if(4 == index) {
 		versusIndex = 4;
 		showDatePicker(); //显示时间选择器
+		if(!empty(date)) {
+			versusDate = date;
+		}
 		e.css("left", "75%");
 		e.css("right", "0%");
 	}
@@ -891,3 +896,200 @@ var getDateStr = function(millis) {//返回字日期字符串
 	return dateStr;
 };
 /*****************************************时间选取器*******************************************/
+
+
+/*****************************************betDetail*******************************************/
+//初始化
+var betDetailInit = function(versusId, seconds) {
+	loadData({
+		"url" : "v2/getVersusAndChildVersusByVersusId",
+		"data" : {"versusId" : versusId},
+		"success" : function(data) {
+			if(data.code == 100) {
+				var versus = data.result.versus;
+				var childVersusList = data.result.childVersusList;
+				fillVersusData(versus, childVersusList);
+			} else {
+				m_toast(data.msg);
+			}
+		},
+		"complete" : function(data) {
+			loadVersusOddsAndStatus(); //加载赔率以及状态
+		}
+	});
+	setInterval("loadVersusOddsAndStatus();", seconds * 1000); //间隔加载赔率信息
+};
+//填充数据
+var fillVersusData = function(versus, childVersusList) {
+	$("#vux_view_box_body .betting-page").append(getVersusStr(versus));
+	if(childVersusList.length > 0) {
+		$("#vux_view_box_body .betting-page").append('<section data-v-31296f00="" class="betting-odds"><div data-v-31296f00="" class="stage-title"><div data-v-31296f00="" class="stage-border"></div>相关竞猜<div data-v-31296f00="" class="stage-border"></div></div></section>');
+		for(var i=0; i<childVersusList.length; i++) {
+			$("#vux_view_box_body .betting-page").append(getVersusStr(childVersusList[i]));
+		}
+	}
+};
+var getVersusStr = function(versus) {
+	var str = '';
+	if("未开始" == versus.versus.status || "进行中" == versus.versus.status) {
+		str += '<section data-v-31296f00="" class="betting-odds">';
+		str += '	<section data-v-31296f00="" class="info-title">';
+		str += '		<img data-v-31296f00="" src="' + versus.versus.logoUrl + '" width="20px">';
+		str += '		<div data-v-31296f00="" class="tournament-name">' + versus.versus.name + '</div>';
+		if("未开始" == versus.versus.status) {
+			str += '		<div data-v-31296f00="" class="match-round" style="color:#2197f4;">' + versus.versus.status + '</div>';
+		} else if("进行中" == versus.versus.status) {
+			str += '		<div data-v-31296f00="" class="match-round" style="color:#1ffdfa;">' + versus.versus.status + '</div>';
+		} else if("已结束" == versus.versus.status) {
+			str += '		<div data-v-31296f00="" class="match-round">' + versus.versus.status + '</div>';
+		} else if("流局" == versus.versus.status) {
+			str += '		<div data-v-31296f00="" class="match-round">' + versus.versus.status + '</div>';
+		} else {
+			str += '		<div data-v-31296f00="" class="match-round">' + versus.versus.status + '</div>';
+		}
+		str += '	</section>';
+		str += '	<div data-v-31296f00="" class="group-list">';
+		str += '		<div data-v-8d7d541a="" data-v-31296f00="" class="odds-group-title">';
+		str += '			<div data-v-8d7d541a="" class="empty-badge"></div>';
+		str += '			<div data-v-8d7d541a="" class="title" style="color:#758bb5;">' + versus.versus.itemName + '</div>';
+		str += '		</div>';
+		
+		for(var i=0; i<versus.versusItemList.length; i++) {//竞猜项
+			var versusItem = versus.versusItemList[i];
+			if(i % 2 == 0) {
+				str += '<div data-v-31296f00="" class="group-odds">';
+				str += '	<div data-v-31296f00="" onclick="versusItemClick(' + versusItem.id + ', event)" class="odds-btn versus-item versus-item-' + versusItem.id + '" data-versus-item-id="' + versusItem.id + '">';
+				str += '		<div data-v-549598f5="" data-v-31296f00="" class="home-match-card-button">';
+				str += '			<div data-v-549598f5="" class="button-dark-border">';
+				str += '				<div data-v-549598f5="" class="button-content btn-left">';
+				str += '					<div data-v-549598f5="" class="button-name">' + versusItem.name + '</div>';
+				str += '					<div data-v-549598f5="" class="button-odds-content">';
+				str += '						<div data-v-549598f5="" class="odds-rising-icon"></div>';
+				str += '						<div data-v-549598f5="" class="odds-dropping-icon"></div>';
+				str += '						<div data-v-549598f5="" class="btn-odds"><span data-v-549598f5="" class="odds"></span></div>';
+				str += '					</div>';
+				str += '				</div>';
+				str += '			</div>';
+				str += '		</div>';
+				str += '	</div>';
+			}
+			
+			if(i % 2 != 0) {
+				str += '	<div data-v-31296f00="" onclick="versusItemClick(' + versusItem.id + ', event)" class="odds-btn versus-item versus-item-' + versusItem.id + '" data-versus-item-id="' + versusItem.id + '">';
+				str += '		<div data-v-549598f5="" data-v-31296f00="" class="home-match-card-button">';
+				str += '			<div data-v-549598f5="" class="button-dark-border">';
+				str += '				<div data-v-549598f5="" class="button-content btn-right">';
+				str += '					<div data-v-549598f5="" class="button-odds-content">';
+				str += '						<div data-v-549598f5="" class="btn-odds"><span data-v-549598f5="" class="odds"></span></div>';
+				str += '						<div data-v-549598f5="" class="odds-rising-icon"></div>';
+				str += '						<div data-v-549598f5="" class="odds-dropping-icon"></div>';
+				str += '					</div>';
+				str += '					<div data-v-549598f5="" class="button-name">' + versusItem.name + '</div>';
+				str += '				</div>';
+				str += '			</div>';
+				str += '		</div>';
+				str += '	</div>';
+				str += '</div>';
+			}
+			
+			if((i % 2 == 0) && (versus.versusItemList.length - 1 == i)) {
+				str += '	<div data-v-31296f00="" class="odds-btn" style="visibility:hidden;">';
+				str += '		<div data-v-549598f5="" data-v-31296f00="" class="home-match-card-button">';
+				str += '			<div data-v-549598f5="" class="button-dark-border">';
+				str += '				<div data-v-549598f5="" class="button-content btn-right">';
+				str += '					<div data-v-549598f5="" class="button-odds-content">';
+				str += '						<div data-v-549598f5="" class="btn-odds"><span data-v-549598f5=""></span></div>';
+				str += '						<div data-v-549598f5="" class="odds-rising-icon"></div>';
+				str += '						<div data-v-549598f5="" class="odds-dropping-icon"></div>';
+				str += '					</div>';
+				str += '					<div data-v-549598f5="" class="button-name"></div>';
+				str += '				</div>';
+				str += '			</div>';
+				str += '		</div>';
+				str += '	</div>';
+				str += '</div>';
+			}
+		}
+		
+		str += '	</div>';
+		str += '</section>';
+	} else if("已结束" == versus.versus.status || "流局" == versus.versus.status) {
+		str += '<section data-v-31296f00="" class="betting-odds">';
+		str += '	<section data-v-31296f00="" class="info-title">';
+		str += '		<img data-v-31296f00="" src="' + versus.versus.logoUrl + '" width="20px">';
+		str += '		<div data-v-31296f00="" class="tournament-name">' + versus.versus.name + '</div>';
+		if("未开始" == versus.versus.status) {
+			str += '		<div data-v-31296f00="" class="match-round" style="color:#2197f4;">' + versus.versus.status + '</div>';
+		} else if("进行中" == versus.versus.status) {
+			str += '		<div data-v-31296f00="" class="match-round" style="color:#1ffdfa;">' + versus.versus.status + '</div>';
+		} else if("已结束" == versus.versus.status) {
+			str += '		<div data-v-31296f00="" class="match-round">' + versus.versus.status + '</div>';
+		} else if("流局" == versus.versus.status) {
+			str += '		<div data-v-31296f00="" class="match-round">' + versus.versus.status + '</div>';
+		} else {
+			str += '		<div data-v-31296f00="" class="match-round">' + versus.versus.status + '</div>';
+		}
+		str += '	</section>';
+		str += '	<div data-v-31296f00="" class="group-list">';
+		str += '		<div data-v-8d7d541a="" data-v-31296f00="" class="odds-group-title">';
+		str += '			<div data-v-8d7d541a="" class="empty-badge"></div>';
+		str += '			<div data-v-8d7d541a="" class="title" style="color:#758bb5;">' + versus.versus.itemName + '</div>';
+		str += '		</div>';
+		for(var i=0; i<versus.versusItemList.length; i++) {//竞猜项
+			var versusItem = versus.versusItemList[i];
+			var resultClass = "";
+			if(versus.versus.status == "流局") {
+				resultClass = "liu-icon";
+			} else {
+				if(versus.versus.resultItemId == versusItem.id) {
+					resultClass = "win-icon";
+				} else {
+					resultClass = "lose-icon";
+				}
+			}
+			if(i % 2 == 0) {
+				str += '<div data-v-31296f00="" class="group-odds">';
+				str += '	<div data-v-31296f00="" class="odds-btn">';
+				str += '		<div data-v-549598f5="" data-v-31296f00="" class="home-match-card-button btn-over">';
+				str += '			<div data-v-549598f5="" class="button-dark-border">';
+				str += '				<div data-v-549598f5="" class="button-content btn-left">';
+				str += '					<div data-v-549598f5="" class="button-name">' + versusItem.name + '</div>';
+				str += '					<div data-v-549598f5="" class="' + resultClass + '"></div>';
+				str += '				</div>';
+				str += '			</div>';
+				str += '		</div>';
+				str += '	</div>';
+			}
+			if(i % 2 != 0) {
+				str += '	<div data-v-31296f00="" class="odds-btn">';
+				str += '		<div data-v-549598f5="" data-v-31296f00="" class="home-match-card-button btn-over">';
+				str += '			<div data-v-549598f5="" class="button-dark-border">';
+				str += '				<div data-v-549598f5="" class="button-content btn-right">';
+				str += '					<div data-v-549598f5="" class="' + resultClass + '"></div>';
+				str += '					<div data-v-549598f5="" class="button-name">' + versusItem.name + '</div>';
+				str += '				</div>';
+				str += '			</div>';
+				str += '		</div>';
+				str += '	</div>';
+				str += '</div>';
+			}
+			if((i % 2 == 0) && (versus.versusItemList.length - 1 == i)) {
+				str += '	<div data-v-31296f00="" class="odds-btn" style="visibility:hidden;">';
+				str += '		<div data-v-549598f5="" data-v-31296f00="" class="home-match-card-button btn-over">';
+				str += '			<div data-v-549598f5="" class="button-dark-border">';
+				str += '				<div data-v-549598f5="" class="button-content btn-right">';
+				str += '					<div data-v-549598f5="" class=""></div>';
+				str += '					<div data-v-549598f5="" class="button-name"></div>';
+				str += '				</div>';
+				str += '			</div>';
+				str += '		</div>';
+				str += '	</div>';
+				str += '</div>';
+			}
+		}
+		str += '	</div>';
+		str += '</section>';
+	}
+	return str;
+};
+/*****************************************betDetail*******************************************/

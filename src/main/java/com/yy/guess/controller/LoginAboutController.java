@@ -97,7 +97,13 @@ public class LoginAboutController {
 	}
 	
 	@RequestMapping("/userLogout")
-	public ResponseObject userLogout(String token, HttpSession session) {
+	public ResponseObject userLogout(String token, HttpServletResponse resp, HttpSession session) {
+		Cookie userNameCookie = new Cookie("userName", null);
+		Cookie passWordCookie = new Cookie("passWord", null);
+		userNameCookie.setMaxAge(0);
+		passWordCookie.setMaxAge(0);
+		resp.addCookie(userNameCookie);
+		resp.addCookie(passWordCookie);
 		loginManager.appLogout(token);
 		loginManager.webLogout(session);
 		return new ResponseObject(100, "退出登陆成功");

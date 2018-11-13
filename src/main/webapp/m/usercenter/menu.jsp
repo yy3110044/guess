@@ -36,7 +36,7 @@
 							<div class="weui-cells vux-no-group-title">
 								<div onclick="window.location.href='m/usercenter/betRecord.jsp'" data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">
 									<div class="weui-cell__hd"><div data-v-0df6a7f4="" class="base-icon bettingrecord-icon"></div></div>
-									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">投注记录</label></p><span class="vux-label-desc"></span></div>
+									<div class="vux-cell-bd vux-cell-primary"><p><label class="vux-label">下注记录</label></p><span class="vux-label-desc"></span></div>
 									<div class="weui-cell__ft"></div>
 								</div>
 								<div onclick="window.location.href='m/usercenter/notice.jsp'" data-v-0df6a7f4="" class="weui-cell vux-tap-active weui-cell_access">

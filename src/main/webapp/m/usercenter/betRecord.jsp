@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%><!DOCTYPE html>
 <html>
 <head>
-<title>投注记录 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
+<title>下注记录 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <%@include file="/m/head-common.jsp"%>
 <script src="m/js/mescroll.min.js"></script>
 <script src="m/js/usercenter.js"></script>
@@ -16,7 +16,7 @@
 		<nav data-v-1db5fc32="" class="app-header">
 			<ul data-v-1db5fc32="">
 				<li data-v-1db5fc32="" onclick="window.location.href='m/usercenter/menu.jsp'" class="base-icon history-back"></li>
-				<li data-v-1db5fc32="">投注记录</li>
+				<li data-v-1db5fc32="">下注记录</li>
 				<li data-v-1db5fc32="" class="base-icon"></li>
 			</ul>
 		</nav>

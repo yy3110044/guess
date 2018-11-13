@@ -140,8 +140,6 @@ $(document).ready(function(){
 					} else {
 						if($("div.vux-tab-container .vux-tab-selected").index() == 0) {
 							str += '<div data-v-1545e424="" class="empty-note" style="padding-top:15px;padding-bottom:15px;min-height:30px">日前没有任何投注记录。<a href="m/index.jsp">前往投注</a></div>';
-						} else {
-							str += '<div data-v-1545e424="" class="empty-note" style="padding-top:15px;padding-bottom:15px;min-height:30px">没有更多记录了...</div>';
 						}
 					}
 					

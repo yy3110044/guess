@@ -134,4 +134,11 @@
 		</if>
 		superVersusId = 0
     </select>
+    
+    <select id="queryInIds" resultType="com.yy.guess.po.NewGuessVersus">
+    	select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime from new_guess_versus
+		<if test="idList != null and idList.size > 0">
+		where id in (<foreach collection="idList" item="obj" separator=",">#{obj}</foreach>)
+		</if>
+    </select>
 </mapper>

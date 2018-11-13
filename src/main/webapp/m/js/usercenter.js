@@ -45,8 +45,8 @@ $(document).ready(function(){
 		var mescroll = null;
 		var loadBetList = function(end, pageNo, hideLoading){
 			loadData({
-				"url" : "user/betList",
-				"data" : {"end" : end, "pageNo" : pageNo},
+				"url" : "user/v2/betList",
+				"data" : {"end" : end, "pageSize" : 15, "pageNo" : pageNo},
 				"hideLoading" : hideLoading,
 				"success" : function(data){
 					var list = data.result.list;
@@ -56,90 +56,76 @@ $(document).ready(function(){
 					if(list.length > 0) {
 						for(var i=0; i<list.length; i++) {
 							var obj = list[i];
-							if("已下注" == obj.status) {
-								str += '<div data-v-1545e424="" class="record-card bet-id-' + obj.id + ' versus-id-' + obj.versusId + ' play-type-id-' + obj.playTypeId + '">';
+							if("未结算" == obj.status) {
+								str += '<div data-v-1545e424="" class="record-card new-item" data-versus-id="' + obj.versusId + '" data-versus-item-id="' + obj.versusItemId + '">';
 								str += '	<div data-v-1545e424="" class="order-detail">';
 								str += '		<div data-v-1545e424="" class="detail-header">';
 								str += '			<div data-v-1545e424="" class="header-title-left">';
 								str += '				<img data-v-1545e424="" src="" class="game-icon">';
-								str += '				<span data-v-1545e424="" class="title"></span>';
+								str += '				<span data-v-1545e424="" class="title versus-name"></span>';
 								str += '			</div>';
-								str += '			<div data-v-1545e424=""><span data-v-1545e424="">' + (obj.bo > 0 ? '第' + obj.bo + '局' : '全场') + '</span><span data-v-1545e424=""></span></div>';
+								str += '			<div data-v-1545e424=""><span data-v-1545e424="" class="item-name"></span><span data-v-1545e424=""></span></div>';
 								str += '		</div>';
 								str += '		<div data-v-1545e424="" class="header-hr"></div>';
 								str += '		<div data-v-1545e424="" class="result-flag"></div>';
 								str += '		<div data-v-1545e424="" class="order-content">';
 								str += '			<div data-v-1545e424="" class="content-list">';
-								str += '				<div data-v-1545e424="" class="list-text team"></div>';
-								str += '				<div data-v-1545e424="" class="list-text bet-direction" data-bet-direction="' + obj.betDirection + '"></div>';
-								str += '				<div data-v-1545e424="" class="list-text start-time"></div>';
-								var odds = 0;
-								if("LEFT" == obj.betDirection) {
-									odds = obj.leftOdds;
-								} else if("RIGHT" == obj.betDirection) {
-									odds = obj.rightOdds;
-								}
-								str += '				<div data-v-1545e424="" class="list-text">赔率：' + odds.toFixed(2) + '</div>';
+								str += '				<div data-v-1545e424="" class="list-text">下注项目：<span class="versus-item-name"></span></div>';
+								str += '				<div data-v-1545e424="" class="list-text">下注赔率：' + formatNumber(obj.odds) + '</div>';
+								str += '				<div data-v-1545e424="" class="list-text">订单编号：' + obj.orderNumber + '</div>';
+								str += '				<div data-v-1545e424="" class="list-text">下注时间：' + obj.createTime + '</div>';
 								str += '			</div>';
 								str += '		</div>';
 								str += '	</div>';
 								str += '	<section data-v-1545e424="" class="order-info">';
-								str += '		<div data-v-1545e424="" class="parlay-title"><span data-v-1545e424="">' + (obj.bo > 0 ? '第' + obj.bo + '局' : '全场') + '</span><span data-v-1545e424="" class="odds-status order-open">' + (obj.status == '已下注' ? '未结算' : obj.status) + '</span></div>';
+								str += '		<div data-v-1545e424="" class="parlay-title"><span data-v-1545e424=""></span><span data-v-1545e424="" class="odds-status order-open">' + obj.status + '</span></div>';
 								str += '		<div data-v-1545e424="" class="info-content">';
-								str += '			<div data-v-1545e424="" class="bet-amount">投注金额：<span data-v-1545e424="" class="stake">' + obj.betAmount.toFixed(2) + '</span></div>';
-								str += '			<div data-v-1545e424="" class="profit">预计盈利：<span data-v-1545e424="" class="bonus-win">' + (odds * obj.betAmount).toFixed(2) + '</span></div>';
+								str += '			<div data-v-1545e424="" class="bet-amount">下注金额：<span data-v-1545e424="" class="stake">¥' + formatNumber(obj.betAmount) + '</span></div>';
+								str += '			<div data-v-1545e424="" class="profit">预计返还：<span data-v-1545e424="" class="bonus-win">¥' + formatNumber(obj.odds * obj.betAmount) + '</span></div>';
 								str += '		</div>';
-								str += '		<div data-v-1545e424="" style="height: 18px;"></div>';
-								str += '		<div data-v-1545e424="" class="info-content"><div data-v-1545e424="">订单号：' + obj.orderNumber + '</div><div data-v-1545e424="">' + obj.createTime + '</div></div>';
+								//str += '		<div data-v-1545e424="" style="height:18px;"></div>';
+								//str += '		<div data-v-1545e424="" class="info-content"><div data-v-1545e424="">订单号：</div><div data-v-1545e424=""></div></div>';
 								str += '	</section>';
 								str += '</div>';
 							} else {
-								str += '<div data-v-1545e424="" class="record-card bet-id-' + obj.id + ' versus-id-' + obj.versusId + ' play-type-id-' + obj.playTypeId + '">';
+								str += '<div data-v-1545e424="" class="record-card new-item" data-versus-id="' + obj.versusId + '" data-versus-item-id="' + obj.versusItemId + '">';
 								str += '	<div data-v-1545e424="" class="order-detail">';
 								str += '		<div data-v-1545e424="" class="detail-header">';
 								str += '			<div data-v-1545e424="" class="header-title-left">';
 								str += '				<img data-v-1545e424="" src="" class="game-icon">';
-								str += '				<span data-v-1545e424="" class="title"></span>';
+								str += '				<span data-v-1545e424="" class="title versus-name"></span>';
 								str += '			</div>';
-								str += '			<div data-v-1545e424=""><span data-v-1545e424="">' + (obj.bo > 0 ? '第' + obj.bo + '局' : '全场') + '</span><span data-v-1545e424=""></span></div>';
+								str += '			<div data-v-1545e424=""><span data-v-1545e424="" class="item-name"></span><span data-v-1545e424=""></span></div>';
 								str += '		</div>';
 								str += '		<div data-v-1545e424="" class="header-hr"></div>';
-								var flag = '';
-								if("已结算" == obj.status) {
-									flag = ' win-flag';
-								} else if("未猜中" == obj.status) {
-									flag = ' lose-flag';
-								}
+								var flag = "";
+								if("未猜中" == obj.status) {flag = " lose-flag";}
+								else if("已猜中" == obj.status) {flag = " win-flag";}
+								else if("已退回" == obj.status) {flag = " tui-flag";}
 								str += '		<div data-v-1545e424="" class="result-flag' + flag + '"></div>';
 								str += '		<div data-v-1545e424="" class="order-content">';
 								str += '			<div data-v-1545e424="" class="content-list">';
-								str += '				<div data-v-1545e424="" class="list-text team"></div>';
-								str += '				<div data-v-1545e424="" class="list-text bet-direction" data-bet-direction="' + obj.betDirection + '"></div>';
-								str += '				<div data-v-1545e424="" class="list-text start-time"></div>';
-								var odds = 0;
-								if("LEFT" == obj.betDirection) {
-									odds = obj.leftOdds;
-								} else if("RIGHT" == obj.betDirection) {
-									odds = obj.rightOdds;
-								}
-								str += '				<div data-v-1545e424="" class="list-text">赔率：' + odds.toFixed(2) + '</div>';
+								str += '				<div data-v-1545e424="" class="list-text">下注项目：<span class="versus-item-name"></span></div>';
+								str += '				<div data-v-1545e424="" class="list-text">下注赔率：' + formatNumber(obj.odds) + '</div>';
+								str += '				<div data-v-1545e424="" class="list-text">订单编号：' + obj.orderNumber + '</div>';
+								str += '				<div data-v-1545e424="" class="list-text">下注时间：' + obj.createTime + '</div>';
 								str += '			</div>';
 								str += '		</div>';
 								str += '	</div>';
 								str += '	<section data-v-1545e424="" class="order-info">';
-								str += '		<div data-v-1545e424="" class="parlay-title"><span data-v-1545e424="">' + (obj.bo > 0 ? '第' + obj.bo + '局' : '全场') + '</span><span data-v-1545e424="" class="odds-status order-close">' + obj.status + '</span></div>';
+								str += '		<div data-v-1545e424="" class="parlay-title"><span data-v-1545e424=""></span><span data-v-1545e424="" class="odds-status order-close">' + obj.status + '</span></div>';
 								str += '		<div data-v-1545e424="" class="info-content">';
-								str += '			<div data-v-1545e424="" class="bet-amount">投注金额：<span data-v-1545e424="" class="stake">' + obj.betAmount.toFixed(2) + '</span></div>';
-								if("已结算" == obj.status) {
-									str += '			<div data-v-1545e424="" class="profit">实际盈利：<span data-v-1545e424="" class="bonus-win">' + obj.realPayBonus.toFixed(2) + '</span></div>';
-								} else if("未猜中" == obj.status) {
-									str += '			<div data-v-1545e424="" class="profit">实际盈利：<span data-v-1545e424="" class="bonus-win">0.00</span></div>';
+								str += '			<div data-v-1545e424="" class="bet-amount">下注金额：<span data-v-1545e424="" class="stake">¥' + formatNumber(obj.betAmount) + '</span></div>';
+								if("未猜中" == obj.status) {
+									str += '			<div data-v-1545e424="" class="profit">返还金额：<span data-v-1545e424="" class="bonus-win">¥0.00</span></div>';
+								} else if("已猜中" == obj.status) {
+									str += '			<div data-v-1545e424="" class="profit">返还金额：<span data-v-1545e424="" class="bonus-win">¥' + formatNumber(obj.payBonus) + '</span></div>';
 								} else if("已退回" == obj.status) {
-									str += '			<div data-v-1545e424="" class="profit">退回金额：<span data-v-1545e424="" class="bonus-win">' + obj.betAmount.toFixed(2) + '</span></div>';
+									str += '			<div data-v-1545e424="" class="profit">退回金额：<span data-v-1545e424="" class="bonus-win">¥' + formatNumber(obj.betAmount) + '</span></div>';
 								}
 								str += '		</div>';
-								str += '		<div data-v-1545e424="" style="height:18px;"></div>';
-								str += '		<div data-v-1545e424="" class="info-content"><div data-v-1545e424="">订单号：' + obj.orderNumber + '</div><div data-v-1545e424="">' + obj.createTime + '</div></div>';
+								//str += '		<div data-v-1545e424="" style="height:18px;"></div>';
+								//str += '		<div data-v-1545e424="" class="info-content"><div data-v-1545e424="">订单号：</div><div data-v-1545e424=""></div></div>';
 								str += '	</section>';
 								str += '</div>';
 							}
@@ -166,32 +152,48 @@ $(document).ready(function(){
 						mescroll.endSuccess(page.pageSize, page.next);//在这里关闭加载提示
 					}
 				},
-				"complete" : function(data) {
-					var versusList = data.result.versusList;
-					var playTypeList = data.result.playTypeList;
-					if(versusList != null && versusList.length > 0) {
-						for(var i=0; i<versusList.length; i++) {
-							var obj = versusList[i];
-							var e = $("div.versus-id-" + obj.id);
-							e.find(".header-title-left img").attr("src", empty(obj.matchLogoUrl) ? obj.sportLogoUrl : obj.matchLogoUrl);
-							e.find(".header-title-left span").html(obj.sportName + "&nbsp;" + obj.matchName + "&nbsp;" + obj.name);
-							e.find(".team").html("对阵队伍：" + obj.leftTeamName + "&nbsp;VS&nbsp;" + obj.rightTeamName);
-							e.find(".start-time").html("开始时间：" + obj.startTime);
+				"complete" : function() {
+					var versusIds = new Array();
+					var versusItemIds = new Array();
+					$("div.new-item").each(function(){
+						var ts = $(this);
+						var versusId = $.trim(ts.attr("data-versus-id"));
+						if(!empty(versusId)) {
+							versusIds.push(versusId);
 						}
-					}
-					if(playTypeList != null && playTypeList.length > 0) {
-						for(var i=0; i<playTypeList.length; i++) {
-							var obj = playTypeList[i];
-							var e = $("div.play-type-id-" + obj.id);
-							var bde = e.find(".bet-direction");
-							var betDirection = $.trim(bde.attr("data-bet-direction"));
-							if("LEFT" == betDirection) {
-								bde.html("下注方：" + obj.name + '&nbsp;<span style="color:white;">' + obj.leftGuessName + '</span>');
-							} else if("RIGHT" == betDirection) {
-								bde.html("下注方：" + obj.name + '&nbsp;<span style="color:white;">' + obj.rightGuessName + '</span>');
+						var versusItemId = $.trim(ts.attr("data-versus-item-id"));
+						if(!empty(versusItemId)) {
+							versusItemIds.push(versusItemId);
+						}
+					});
+					loadData({
+						"url" : "v2/getVersusAndVersusItemByIds",
+						"data" : {
+							"versusIds[]" : versusIds,
+							"versusItemIds[]" : versusItemIds
+						},
+						"hideLoading" : true,
+						"success" : function(data) {
+							if(data.code == 100) {
+								var versusMap = data.result.versusMap;
+								var versusItemMap = data.result.versusItemMap;
+								$("div.new-item").each(function(){
+									var ts = $(this);
+									var versusId = $.trim(ts.attr("data-versus-id"));
+									var versusItemId = $.trim(ts.attr("data-versus-item-id"));
+									var versus = versusMap[versusId];
+									var versusItem = versusItemMap[versusItemId];
+									ts.find(".game-icon").attr("src", versus.logoUrl);
+									ts.find(".versus-name").html(versus.name);
+									ts.find(".item-name").html(versus.itemName);
+									ts.find(".versus-item-name").html(versusItem.name);
+									ts.removeClass("new-item");
+								});
+							} else {
+								m_toast(data.msg);
 							}
 						}
-					}
+					});
 				},
 				"error" : function() {
 					if(mescroll != null) {

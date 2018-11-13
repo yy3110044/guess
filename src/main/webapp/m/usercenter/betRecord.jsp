@@ -8,6 +8,7 @@
 <link href="m/js/mescroll.min.css" rel="stylesheet">
 <style type="text/css">
 #vux-scroller-6vidl::-webkit-scrollbar{display:none;width:0;height:0;}
+.tui-flag{background-image:url('m/images/tui.svg')}
 </style>
 </head>
 <body>

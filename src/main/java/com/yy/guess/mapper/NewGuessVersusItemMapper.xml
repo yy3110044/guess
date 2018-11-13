@@ -93,4 +93,11 @@
 			(#{obj.id}, #{obj.name}, #{obj.versusId}, #{obj.betAmount}, #{obj.allPayBonus}, #{obj.useFixedOdds}, #{obj.fixedOdds}, #{obj.changeOdds}, #{obj.changeOddsPlusRatio}, #{obj.changeOddsPlusValue}, #{obj.changeOddsPlusStrategy}, #{obj.changeOddsMinusRatio}, #{obj.changeOddsMinusValue}, #{obj.changeOddsMinusStrategy}, #{obj.changeOddsMin}, #{obj.changeOddsMax}, #{obj.createTime})
     	 </foreach>
     </insert>
+    
+    <select id="queryInIds" resultType="com.yy.guess.po.NewGuessVersusItem">
+    	select id, name, versusId, betAmount, allPayBonus, useFixedOdds, fixedOdds, changeOdds, changeOddsPlusRatio, changeOddsPlusValue, changeOddsPlusStrategy, changeOddsMinusRatio, changeOddsMinusValue, changeOddsMinusStrategy, changeOddsMin, changeOddsMax, createTime from new_guess_versus_item
+		<if test="idList != null and idList.size > 0">
+			where id in (<foreach collection="idList" item="obj" separator=",">#{obj}</foreach>)
+		</if>
+    </select>
 </mapper>

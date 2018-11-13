@@ -87,4 +87,9 @@ public class NewGuessVersusItemServiceImpl implements NewGuessVersusItemService 
 		}
 		return result;
 	}
+
+	@Override
+	public List<NewGuessVersusItem> queryInIds(List<Integer> idList) {
+		return mapper.queryInIds(idList);
+	}
 }

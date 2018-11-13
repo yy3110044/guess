@@ -60,4 +60,6 @@ public interface NewGuessVersusService {
     
     //重置竞猜
     void reset(int versusId);
+    
+    List<NewGuessVersus> queryInIds(List<Integer> idList);
 }

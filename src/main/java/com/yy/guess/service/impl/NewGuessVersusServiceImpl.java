@@ -350,4 +350,9 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 		page.setRowCount(mapper.queryInItemIdCount(itemIdList, status, startTimeStart, startTimeEnd));
 		return new QueryResult<NewGuessVersus>(list, page);
 	}
+
+	@Override
+	public List<NewGuessVersus> queryInIds(List<Integer> idList) {
+		return mapper.queryInIds(idList);
+	}
 }

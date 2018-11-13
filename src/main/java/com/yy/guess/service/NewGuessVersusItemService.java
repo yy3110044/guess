@@ -21,4 +21,6 @@ public interface NewGuessVersusItemService {
     String getVersusItemNameByVersusItemId(int versusItemId);
     String[] getVersusItemNamesByVersusItemIds(int[] versusItemIds);
     JsonResultMap[] getVersusItemNamesByVersusItemIdsReturnMap(int[] versusItemIds);
+    
+    List<NewGuessVersusItem> queryInIds(List<Integer> idList);
 }

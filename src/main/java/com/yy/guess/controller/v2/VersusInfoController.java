@@ -20,6 +20,7 @@ import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.ResponseObject;
 import com.yy.guess.po.NewGuessVersus;
+import com.yy.guess.po.NewGuessVersusItem;
 import com.yy.guess.service.NewGuessItemService;
 import com.yy.guess.service.NewGuessVersusItemService;
 import com.yy.guess.service.NewGuessVersusService;
@@ -165,5 +166,40 @@ public class VersusInfoController {
 	@RequestMapping("/getAllItem")
 	public ResponseObject getAllItem() {
 		return new ResponseObject(100, "返回成功", ngis.query(null));
+	}
+	
+	//根据versusIds versusItemIds返回 versus versusItem
+	@RequestMapping("/getVersusAndVersusItemByIds")
+	public ResponseObject getVersusAndVersusItemByIds(HttpServletRequest req) {
+		String[] versusIds = req.getParameterValues("versusIds[]");
+		JsonResultMap versusMap = new JsonResultMap();
+		if(versusIds != null && versusIds.length > 0) {
+			List<Integer> versusIdList = new ArrayList<Integer>();
+			for(String versusId : versusIds) {
+				versusIdList.add(Integer.valueOf(versusId));
+			}
+			List<NewGuessVersus> versusList = ngvs.queryInIds(versusIdList);
+			for(NewGuessVersus versus : versusList) {
+				versusMap.put(String.valueOf(versus.getId()), versus);
+			}
+		}
+
+		String[] versusItemIds = req.getParameterValues("versusItemIds[]");
+		JsonResultMap versusItemMap = new JsonResultMap();
+		if(versusItemIds != null && versusItemIds.length > 0) {
+			List<Integer> versusItemIdList = new ArrayList<Integer>();
+			for(String versusItemId : versusItemIds) {
+				versusItemIdList.add(Integer.valueOf(versusItemId));
+			}
+			List<NewGuessVersusItem> versusItemList = ngvis.queryInIds(versusItemIdList);
+			for(NewGuessVersusItem versusItem : versusItemList) {
+				versusItemMap.put(String.valueOf(versusItem.getId()), versusItem);
+			}
+		}
+		
+		JsonResultMap result = new JsonResultMap();
+		result.put("versusMap", versusMap);
+		result.put("versusItemMap", versusItemMap);
+		return new ResponseObject(100, "返回成功", result);
 	}
 }

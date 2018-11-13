@@ -22,6 +22,8 @@ public interface NewGuessVersusItemMapper {
     /*****************************************************************分隔线************************************************************************/
     void addList(@Param("versusItemList") List<NewGuessVersusItem> versusItemList);
     
+    List<NewGuessVersusItem> queryInIds(@Param("idList") List<Integer> idList);
+    
     @Delete("delete from new_guess_versus_item where versusId = #{versusId}")
     void deleteByVersusId(int versusId);
     

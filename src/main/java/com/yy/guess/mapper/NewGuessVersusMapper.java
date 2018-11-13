@@ -24,6 +24,8 @@ public interface NewGuessVersusMapper {
     /*****************************************************************分隔线************************************************************************/
     List<NewGuessVersus> getAllUnEndVersus(); //返回所有未结束的versus;
     
+    List<NewGuessVersus> queryInIds(@Param("idList") List<Integer> idList);
+    
     List<NewGuessVersus> queryInItemId(@Param("itemIdList") List<Integer> itemIdList,
     								   @Param("status") int status,
     								   @Param("startTimeStart") Date startTimeStart,

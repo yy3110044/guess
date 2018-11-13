@@ -1,5 +1,6 @@
 package com.yy.guess.controller.user.v2;
 
+import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
@@ -9,10 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.yy.fast4j.JsonResultMap;
+import com.yy.fast4j.Page;
 import com.yy.fast4j.QueryCondition;
 import com.yy.fast4j.ResponseObject;
+import com.yy.fast4j.QueryCondition.SortType;
 import com.yy.guess.po.NewGuessBet;
 import com.yy.guess.po.NewGuessVersus;
 import com.yy.guess.po.NewGuessVersusItem;
@@ -90,5 +92,26 @@ public class NewBetController {
 		result.put("versus", versus);
 		result.put("versusItem", versusItem);
 		return new ResponseObject(100, "下注成功", result);
+	}
+	
+	@RequestMapping("/betList")
+	public ResponseObject betList(@RequestParam(defaultValue="10") int pageSize,
+								  @RequestParam(defaultValue="1") int pageNo,
+								  @RequestParam(defaultValue="5") int showCount,
+								  @RequestParam boolean end,
+								  HttpServletRequest req) {
+		Integer userId = (Integer)req.getAttribute("userId");
+		QueryCondition qc = new QueryCondition();
+		qc.addCondition("userId", "=", userId);
+		if(end) {
+			qc.addCondition("status", "<>", "未结算");
+		} else {
+			qc.addCondition("status", "=", "未结算");
+		}
+		qc.addSort("id", SortType.DESC);
+		qc.setPage(new Page(pageSize, pageNo, showCount));
+		List<NewGuessBet> list = ngbs.query(qc);
+		Page page = qc.getPage(ngbs.getCount(qc));
+		return new ResponseObject(100, "返回成功", new JsonResultMap().set("list", list).set("page", page));
 	}
 }

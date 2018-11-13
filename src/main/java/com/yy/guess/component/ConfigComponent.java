@@ -67,6 +67,7 @@ public class ConfigComponent {
 	}
 
 	//返回平台抽成
+	@Deprecated
 	public double getPlatformRate() {
 		String str = configMap.get("platformRate");
 		return Double.parseDouble(str);

@@ -61,7 +61,7 @@ $(document).ready(function(){
 								str += '	<div data-v-1545e424="" class="order-detail">';
 								str += '		<div data-v-1545e424="" class="detail-header">';
 								str += '			<div data-v-1545e424="" class="header-title-left">';
-								str += '				<img data-v-1545e424="" src="" class="game-icon">';
+								str += '				<img data-v-1545e424="" src="images/sportDefaultLogo.png" class="game-icon">';
 								str += '				<span data-v-1545e424="" class="title versus-name"></span>';
 								str += '			</div>';
 								str += '			<div data-v-1545e424=""><span data-v-1545e424="" class="item-name"></span><span data-v-1545e424=""></span></div>';
@@ -92,7 +92,7 @@ $(document).ready(function(){
 								str += '	<div data-v-1545e424="" class="order-detail">';
 								str += '		<div data-v-1545e424="" class="detail-header">';
 								str += '			<div data-v-1545e424="" class="header-title-left">';
-								str += '				<img data-v-1545e424="" src="" class="game-icon">';
+								str += '				<img data-v-1545e424="" src="images/sportDefaultLogo.png" class="game-icon">';
 								str += '				<span data-v-1545e424="" class="title versus-name"></span>';
 								str += '			</div>';
 								str += '			<div data-v-1545e424=""><span data-v-1545e424="" class="item-name"></span><span data-v-1545e424=""></span></div>';
@@ -105,7 +105,14 @@ $(document).ready(function(){
 								str += '		<div data-v-1545e424="" class="result-flag' + flag + '"></div>';
 								str += '		<div data-v-1545e424="" class="order-content">';
 								str += '			<div data-v-1545e424="" class="content-list">';
-								str += '				<div data-v-1545e424="" class="list-text">下注项目：<span class="versus-item-name"></span></div>';
+
+								if("已猜中" == obj.status) {
+									str += '				<div data-v-1545e424="" class="list-text">下注项目：<span class="versus-item-name" style="color:#ffffff;"></span></div>';
+								} else {
+									str += '				<div data-v-1545e424="" class="list-text">下注项目：<span class="versus-item-name"></span></div>';
+									str += '				<div data-v-1545e424="" class="list-text">竞猜结果：<span class="versus-result-name" data-versus-id="' + obj.versusId + '" style="color:#ffffff;"></span></div>';
+								}
+
 								str += '				<div data-v-1545e424="" class="list-text">下注赔率：' + formatNumber(obj.odds) + '</div>';
 								str += '				<div data-v-1545e424="" class="list-text">订单编号：' + obj.orderNumber + '</div>';
 								str += '				<div data-v-1545e424="" class="list-text">下注时间：' + obj.createTime + '</div>';
@@ -194,6 +201,35 @@ $(document).ready(function(){
 							}
 						}
 					});
+					
+					//加载结果
+					var versusResultIds = new Array();
+					$("span.versus-result-name").each(function(){
+						var versusId = $.trim($(this).attr("data-versus-id"));
+						if(!empty(versusId)) {
+							versusResultIds.push(versusId);
+						}
+					});
+					if(versusResultIds.length > 0) {
+						loadData({
+							"url" : "v2/getVersusByIds",
+							"data" : {"versusIds[]" : versusResultIds},
+							"hideLoading" : true,
+							"success" : function(data) {
+								if(data.code == 100) {
+									var versusMap = data.result;
+									$("span.versus-result-name").each(function(){
+										var ts = $(this);
+										var versusId = $.trim(ts.attr("data-versus-id"));
+										var versus = versusMap[versusId];
+										ts.html(versus.resultItemName);
+									});
+								} else {
+									m_toast(data.msg);
+								}
+							}
+						});
+					}
 				},
 				"error" : function() {
 					if(mescroll != null) {

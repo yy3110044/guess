@@ -10,6 +10,10 @@
 <script type="text/javascript" src="admin/js/common.js"></script>
 <script>
 $(document).ready(function(){
+	loadConfig();
+});
+
+var loadConfig = function(){
 	loadData({
 		url : "administration/getAllConfigs",
 		success : function(data) {
@@ -18,17 +22,18 @@ $(document).ready(function(){
 				var str = '';
 				for(var i=0; i<list.length; i++) {
 					var obj = list[i];
-					str += '<tr>';
+					str += '<tr class="config-tr">';
 					str += '<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">' + obj.description + '：</td>';
 					str += '<td><input class="configInput" type="text" name="' + obj.name + '" value="' + obj.val + '" data-oldValue="' + obj.val + '" style="width:300px;"></td>';
 					str += '</tr>';
 				}
+				$("tr.config-tr").remove();
 				$("table.table-bordered").prepend(str);
 			}
 		},
 		redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
 	});
-});
+};
 
 var modify = function(){
 	if(confirm('确定修改？')) {
@@ -48,6 +53,9 @@ var modify = function(){
 			},
 			success : function(data) {
 				showMsg(data.msg);
+				if(data.code == 100) {
+					loadConfig();
+				}
 			},
 			redirectUrl : "admin/login.jsp?msg=" + encodeURI("请先登录")
 		});

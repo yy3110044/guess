@@ -202,4 +202,20 @@ public class VersusInfoController {
 		result.put("versusItemMap", versusItemMap);
 		return new ResponseObject(100, "返回成功", result);
 	}
+	@RequestMapping("/getVersusByIds")
+	public ResponseObject getVersusByIds(HttpServletRequest req) {
+		String[] versusIds = req.getParameterValues("versusIds[]");
+		JsonResultMap versusMap = new JsonResultMap();
+		if(versusIds != null && versusIds.length > 0) {
+			List<Integer> versusIdList = new ArrayList<Integer>();
+			for(String versusId : versusIds) {
+				versusIdList.add(Integer.valueOf(versusId));
+			}
+			List<NewGuessVersus> versusList = ngvs.queryInIds(versusIdList);
+			for(NewGuessVersus versus : versusList) {
+				versusMap.put(String.valueOf(versus.getId()), versus);
+			}
+		}
+		return new ResponseObject(100, "返回成功", versusMap);
+	}
 }

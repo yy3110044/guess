@@ -36,7 +36,7 @@
 						</div>
 					</section>
 					
-					<div data-v-ddc22438="" id="vux-scroller-kdi54" style="touch-action:auto;user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);position:relative;overflow:scroll;">
+					<div data-v-ddc22438="" id="vux-scroller-kdi54" class="mescroll" style="touch-action:auto;user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:rgba(0, 0, 0, 0);position:relative;overflow:scroll;">
 						<div class="xs-container" style="transform-origin: 0px 0px 0px; transform: translateY(0px) translateZ(0px);">
 							<div id="tradeFlowListDiv" data-v-ddc22438="" style="transform-origin: 0px 0px 0px; transform: translate(0px, 0px) scale(1) translateZ(0px);"></div>
 						</div>

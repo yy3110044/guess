@@ -124,7 +124,7 @@ public class NewGuessBetServiceImpl implements NewGuessBetService {
 				flow.setPreBalance(preBalance);
 				flow.setAmount(amount);
 				flow.setType(TradeType.返奖);
-				flow.setDescription("返奖¥：" + Util.formatNumber(amount));
+				flow.setDescription("返奖：¥" + Util.formatNumber(amount));
 				tfm.add(flow);
 				
 				//发送通知

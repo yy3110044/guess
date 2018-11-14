@@ -24,6 +24,22 @@ var globalChangeOddsMinusValue = 1;
 var globalChangeOddsMinusStrategy = 0;
 
 $(document).ready(function(){
+	//加载teamlogo input
+	addImageUploadEvent({
+		"inputId" : "leftTeamLogoInput",
+		"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
+		"imgId" : "leftTeamLogoUrl",
+		"imgSytle" : "width:72px;height:72px;",
+		"defaultImgUrl" : "images/sportDefaultLogo.png"
+	});
+	addImageUploadEvent({
+		"inputId" : "rightTeamLogoInput",
+		"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
+		"imgId" : "rightTeamLogoUrl",
+		"imgSytle" : "width:72px;height:72px;",
+		"defaultImgUrl" : "images/sportDefaultLogo.png"
+	});
+
 	if(!empty(superVersusId) && parseInt(superVersusId) > 0) { //有父竞猜
 		loadData({
 			"url" : "administration/v2/versusAdmin/versusGet",
@@ -370,6 +386,12 @@ var add = function() {
 			"betAmountMax" : parseFloat(betAmountMax),
 			"startTime" : startTime,
 			"superVersusId" : superVersusId,
+			"leftTeamScore" : $.trim($("#leftTeamScore").val()),
+			"rightTeamScore" : $.trim($("#rightTeamScore").val()),
+			"showTeamScore" : $.trim($("#showTeamScore").val()),
+			"leftTeamLogoUrl" : $.trim($("#leftTeamLogoUrl").attr("src")),
+			"rightTeamLogoUrl" : $.trim($("#rightTeamLogoUrl").attr("src")),
+			"showTeamLogo" : $.trim($("#showTeamLogo").val()),
 			"versusItems[]" : versusItemParam.params
 		},
 		"success" : function(data) {
@@ -427,6 +449,20 @@ var add = function() {
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">最高下注额：</td>
 			<td><input type="text" id="betAmountMax" value="<%=com.yy.guess.util.Util.getConfigCom(application).getBetAmountMax()%>"></td>
+		</tr>
+		<tr>
+			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">比分：</td>
+			<td><input type="number" id="leftTeamScore" style="text-align:right;width:50px;" value="0">&nbsp;:&nbsp;<input type="number" id="rightTeamScore" style="text-align:left;width:50px;" value="0">&nbsp;&nbsp;<select id="showTeamScore" style="width:80px;"><option value="true" selected="selected">显示比分</option><option value="false">隐藏比分</option></select></td>
+		</tr>
+		<tr>
+			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">图标：</td>
+			<td>
+				<div><input type="file" name="file" id="leftTeamLogoInput"></div>
+				<hr>
+				<div><input type="file" name="file" id="rightTeamLogoInput"></div>
+				<hr>
+				<div><select id="showTeamLogo" style="width:80px;"><option value="true" selected="selected">显示图标</option><option value="false">影藏图标</option></select></div>
+			</td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap" bgcolor="#f1f1f1">开始时间：</td>

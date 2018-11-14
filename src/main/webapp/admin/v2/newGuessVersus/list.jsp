@@ -64,6 +64,7 @@ var viewVersusCache = function(versusId, e) {
 						str += '<tr align="center" class="contentTr cacheTr cacheTrChild' + versus.id + ' children' + versus.id + '">';
 						str += '<td>' + versus.id + '</td>';
 						str += '<td>' + versus.name + '</td>';
+						str += '<td><a href="' + versus.leftTeamLogoUrl + '" target="_blank"><img style="width:30px;height:30px;" src="' + versus.leftTeamLogoUrl + '"></a>&nbsp;VS&nbsp;<a href="' + versus.rightTeamLogoUrl + '" target="_blank"><img style="width:30px;height:30px;" src="' + versus.rightTeamLogoUrl + '"></a></td>';
 						str += '<td><a href="' + versus.logoUrl + '" target="_blank"><img src="' + versus.logoUrl + '" style="width:30px;height:30px;"></a></td>';
 						str += '<td data-itemId=' + versus.itemId + '>' + versus.itemName + '</td>';
 						str += '<td>' + versus.returnRate + '</td>';
@@ -73,6 +74,7 @@ var viewVersusCache = function(versusId, e) {
 						str += '<td>¥' + versus.allPayBonus.toFixed(2) + '</td>';
 						str += '<td>' + versus.startTime + '</td>';
 						str += '<td>' + (versus.endTime == null ? "" : versus.endTime) + '</td>';
+						str += '<td>' + versus.leftTeamScore + '&nbsp;:&nbsp;' + versus.rightTeamScore + '&nbsp;' + (versus.showTeamScore ? '<span style="color:blue;">显示</span>' : '<span style="color:red;">隐藏</span>') + '</td>';
 						str += '<td>' + (versus.betPause ? '暂停' : '开启') + '</td>';
 						
 						if(versus.status == "未开始") {
@@ -434,6 +436,10 @@ var updateVersus = function(versusId, e) {
 					str += '<tr><td style="text-align:right;">最低下注：</td><td style="text-align:left;"><input id="updateVersusBetAmountMin" type="text" value="' + versus.betAmountMin + '" style="width:50px;"></td></tr>';
 					str += '<tr><td style="text-align:right;">最高下注：</td><td style="text-align:left;"><input id="updateVersusBetAmountMax" type="text" value="' + versus.betAmountMax + '" style="width:50px;"></td></tr>';
 					str += '<tr><td style="text-align:right;">开始时间：</td><td style="text-align:left;"><input id="updateVersusStartTime" type="text" class="laydate-icon" value="' + versus.startTime + '" onclick="laydate({istime:true,format:\'YYYY-MM-DD hh:mm:ss\'});" style="width:140px;cursor:pointer;" readonly="readonly"></td></tr>';
+					str += '<tr><td style="text-align:right;">修改比分：</td><td style="text-align:left;">';
+					str += '<input type="number" id="updateVersusLeftTeamScore" style="text-align:right;width:50px;" value="' + versus.leftTeamScore + '">&nbsp;:&nbsp;<input type="number" id="updateVersusRightTeamScore" style="text-align:left;width:50px;" value="' + versus.rightTeamScore + '">';
+					str += '&nbsp;&nbsp;<select id="updateVersusShowTeamScore" style="width:80px;"><option value="true"' + (versus.showTeamScore ? ' selected="selected"' : '') + '>显示比分</option><option value="false"' + (versus.showTeamScore ? '' : ' selected="selected"') + '>隐藏比分</option></select>';
+					str += '</td></tr>';
 					str += '<tr><td style="text-align:right;"></td><td style="text-align:left;"><input type="button" value="修改" onclick="updateVersus2(' + versus.id + ', this)">&nbsp;&nbsp;<input type="button" value="关闭" onclick="$(this).parent().parent().parent().parent().parent().parent().parent().remove()"></td></tr>';
 					str += '</table></div>';
 					str += '</td></tr>';
@@ -452,6 +458,9 @@ var updateVersus2 = function(versusId, e){
 	var betAmountMin = $.trim($("#updateVersusBetAmountMin").val());
 	var betAmountMax = $.trim($("#updateVersusBetAmountMax").val());
 	var startTime = $.trim($("#updateVersusStartTime").val());
+	var leftTeamScore = $.trim($("#updateVersusLeftTeamScore").val());
+	var rightTeamScore = $.trim($("#updateVersusRightTeamScore").val());
+	var showTeamScore = $.trim($("#updateVersusShowTeamScore").val());
 	if(empty(name)) {
 		showMsg("名称不能为空");
 		return;
@@ -476,7 +485,10 @@ var updateVersus2 = function(versusId, e){
 			"returnRate" : returnRate,
 			"betAmountMin" : betAmountMin,
 			"betAmountMax" : betAmountMax,
-			"startTime" : startTime
+			"startTime" : startTime,
+			"leftTeamScore" : leftTeamScore,
+			"rightTeamScore" : rightTeamScore,
+			"showTeamScore" : showTeamScore
 		},
 		"success" : function(data) {
 			showMsg(data.msg);
@@ -649,6 +661,7 @@ var getVersusTrStr = function(versus, versusItemList, child, superVersusId) {
 	str += '<tr align="center" class="contentTr' + (child ? (' childVersusTr' + superVersusId + ' childVersusTr') : '') + '">';
 	str += '<td>' + (child ? (superVersusId + '&nbsp;>&nbsp;') : '') + versus.id + '</td>';
 	str += '<td class="versusName">' + versus.name + '</td>';
+	str += '<td><a href="' + versus.leftTeamLogoUrl + '" target="_blank"><img style="width:30px;height:30px;" src="' + versus.leftTeamLogoUrl + '"></a>&nbsp;VS&nbsp;<a href="' + versus.rightTeamLogoUrl + '" target="_blank"><img style="width:30px;height:30px;" src="' + versus.rightTeamLogoUrl + '"></a></td>';
 	str += '<td><a href="' + versus.logoUrl + '" target="_blank"><img src="' + versus.logoUrl + '" style="width:30px;height:30px;"></a></td>';
 	str += '<td data-itemId=' + versus.itemId + '>' + versus.itemName + '</td>';
 	str += '<td class="versusReturnRate">' + versus.returnRate + '</td>';
@@ -658,6 +671,7 @@ var getVersusTrStr = function(versus, versusItemList, child, superVersusId) {
 	str += '<td>¥' + versus.allPayBonus.toFixed(2) + '</td>';
 	str += '<td class="versusStartTime">' + versus.startTime + '</td>';
 	str += '<td>' + (versus.endTime == null ? "" : versus.endTime) + '</td>';
+	str += '<td>' + versus.leftTeamScore + '&nbsp;:&nbsp;' + versus.rightTeamScore + '&nbsp;' + (versus.showTeamScore ? '<span style="color:blue;">显示</span>' : '<span style="color:red;">隐藏</span>') + '</td>';
 	str += '<td><select onchange="betPauseChange(' + versus.id + ', this)" style="width:55px;"><option' + (versus.betPause?'':' selected="selected"') + ' value="false">开启</option><option' + (versus.betPause?' selected="selected"':'') + ' value="true">暂停</option></select></td>';
 	
 	if(versus.status == "未开始") {
@@ -746,6 +760,7 @@ div.itemDiv{margin-top:3px;margin-bottom:3px;}
 		<tr align="center">
 			<td><strong>ID</strong></td>
 			<td><strong>名称</strong></td>
+			<td><strong>图标</strong></td>
 			<td><strong>logo</strong></td>
 			<td><strong>类目</strong></td>
 			<td><strong>返还率</strong></td>
@@ -755,6 +770,7 @@ div.itemDiv{margin-top:3px;margin-bottom:3px;}
 			<td><strong>总奖金</strong></td>
 			<td><strong>开始时间</strong></td>
 			<td><strong>结束时间</strong></td>
+			<td><strong>比分</strong></td>
 			<td><strong>下注</strong></td>
 			<td><strong>状态</strong></td>
 			<td><strong>结果</strong></td>

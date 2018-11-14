@@ -17,10 +17,11 @@ $(document).ready(function(){
 		"inputId" : "uploadImageInput",
 		"url" : "<%=com.yy.guess.util.Util.getConfigCom(application).getUploadUrl()%>",
 		"imgId" : "logoUrl",
+		"imgSytle" : "width:72px;heigth:72px;",
 		"defaultImgUrl" : "images/teamDefaultLogo.png"
 	});
 	loadData({
-		url : "administration/getAllSports",
+		url : "administration/v2/itemAdmin/getAll",
 		success : function(data) {
 			var list = data.result;
 			var str = '';

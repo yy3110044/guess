@@ -271,8 +271,8 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 	}
 
 	@Override
-	public void update(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int versusId) {
-		mapper.updateVersus(name, returnRate, betAmountMin, betAmountMax, startTime, versusId);
+	public void update(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int leftTeamScore, int rightTeamScore, boolean showTeamScore, int versusId) {
+		mapper.updateVersus(name, returnRate, betAmountMin, betAmountMax, startTime, leftTeamScore, rightTeamScore, showTeamScore, versusId);
 		NewGuessVersus versus = CachePre.versusMap.get(versusId);
 		if(versus != null) { //更改缓存
 			versus.setName(name);
@@ -280,6 +280,9 @@ public class NewGuessVersusServiceImpl implements NewGuessVersusService {
 			versus.setBetAmountMin(betAmountMin);
 			versus.setBetAmountMax(betAmountMax);
 			versus.setStartTime(startTime);
+			versus.setLeftTeamScore(leftTeamScore);
+			versus.setRightTeamScore(rightTeamScore);
+			versus.setShowTeamScore(showTeamScore);
 		}
 	}
 

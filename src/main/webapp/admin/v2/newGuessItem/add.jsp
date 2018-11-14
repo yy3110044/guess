@@ -46,7 +46,7 @@ var add = function() {
 			if(data.code == 100) {
 				$("#name").val("");
 				if(logoUrl != "images/sportDefaultLogo.png") {
-					$("#logoUrl").removeAttr("src");
+					$("#logoUrl").attr("src", "images/sportDefaultLogo.png");
 				}
 				$("#description").val("");
 			}

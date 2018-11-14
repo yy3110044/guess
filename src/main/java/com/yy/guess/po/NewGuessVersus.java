@@ -23,6 +23,12 @@ public class NewGuessVersus {
 	private int superVersusId = 0;
 	private int childVersusCount = 0;
 	private Date createTime = new Date();
+	private String leftTeamLogoUrl;
+	private String rightTeamLogoUrl;
+	private int leftTeamScore;
+	private int rightTeamScore;
+	private boolean showTeamLogo = true;
+	private boolean showTeamScore = true;
 	public int getId() {
 		return id;
 	}
@@ -136,5 +142,41 @@ public class NewGuessVersus {
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+	public String getLeftTeamLogoUrl() {
+		return leftTeamLogoUrl;
+	}
+	public void setLeftTeamLogoUrl(String leftTeamLogoUrl) {
+		this.leftTeamLogoUrl = leftTeamLogoUrl;
+	}
+	public String getRightTeamLogoUrl() {
+		return rightTeamLogoUrl;
+	}
+	public void setRightTeamLogoUrl(String rightTeamLogoUrl) {
+		this.rightTeamLogoUrl = rightTeamLogoUrl;
+	}
+	public int getLeftTeamScore() {
+		return leftTeamScore;
+	}
+	public void setLeftTeamScore(int leftTeamScore) {
+		this.leftTeamScore = leftTeamScore;
+	}
+	public int getRightTeamScore() {
+		return rightTeamScore;
+	}
+	public void setRightTeamScore(int rightTeamScore) {
+		this.rightTeamScore = rightTeamScore;
+	}
+	public boolean isShowTeamLogo() {
+		return showTeamLogo;
+	}
+	public void setShowTeamLogo(boolean showTeamLogo) {
+		this.showTeamLogo = showTeamLogo;
+	}
+	public boolean isShowTeamScore() {
+		return showTeamScore;
+	}
+	public void setShowTeamScore(boolean showTeamScore) {
+		this.showTeamScore = showTeamScore;
 	}
 }

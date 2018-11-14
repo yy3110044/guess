@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into new_guess_versus(id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime)
-        values(#{id}, #{name}, #{logoUrl}, #{itemId}, #{itemName}, #{returnRate}, #{betAmountMin}, #{betAmountMax}, #{betAllAmount}, #{allPayBonus}, #{startTime}, #{endTime}, #{betPause}, #{resultItemId}, #{resultItemName}, #{status}, #{superVersusId}, #{childVersusCount}, #{createTime})
+        insert into new_guess_versus(id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, showTeamLogo, showTeamScore)
+        values(#{id}, #{name}, #{logoUrl}, #{itemId}, #{itemName}, #{returnRate}, #{betAmountMin}, #{betAmountMax}, #{betAllAmount}, #{allPayBonus}, #{startTime}, #{endTime}, #{betPause}, #{resultItemId}, #{resultItemName}, #{status}, #{superVersusId}, #{childVersusCount}, #{createTime}, #{leftTeamLogoUrl}, #{rightTeamLogoUrl}, #{leftTeamScore}, #{rightTeamScore}, #{showTeamLogo}, #{showTeamScore})
     </insert>
 
     <delete id="delete" parameterType="int">
@@ -17,12 +17,12 @@
 
     <update id="update" parameterType="com.yy.guess.po.NewGuessVersus">
         update new_guess_versus set
-        name = #{name}, logoUrl = #{logoUrl}, itemId = #{itemId}, itemName = #{itemName}, returnRate = #{returnRate}, betAmountMin = #{betAmountMin}, betAmountMax = #{betAmountMax}, betAllAmount = #{betAllAmount}, allPayBonus = #{allPayBonus}, startTime = #{startTime}, endTime = #{endTime}, betPause = #{betPause}, resultItemId = #{resultItemId}, resultItemName = #{resultItemName}, status = #{status}, superVersusId = #{superVersusId}, childVersusCount = #{childVersusCount}, createTime = #{createTime}
+        name = #{name}, logoUrl = #{logoUrl}, itemId = #{itemId}, itemName = #{itemName}, returnRate = #{returnRate}, betAmountMin = #{betAmountMin}, betAmountMax = #{betAmountMax}, betAllAmount = #{betAllAmount}, allPayBonus = #{allPayBonus}, startTime = #{startTime}, endTime = #{endTime}, betPause = #{betPause}, resultItemId = #{resultItemId}, resultItemName = #{resultItemName}, status = #{status}, superVersusId = #{superVersusId}, childVersusCount = #{childVersusCount}, createTime = #{createTime}, leftTeamLogoUrl = #{leftTeamLogoUrl}, rightTeamLogoUrl = #{rightTeamLogoUrl}, leftTeamScore = #{leftTeamScore}, rightTeamScore = #{rightTeamScore}, showTeamLogo = #{showTeamLogo}, showTeamScore = #{showTeamScore}
         where id = #{id}
     </update>
 
     <select id="find" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.NewGuessVersus">
-        select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime from new_guess_versus
+        select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, showTeamLogo, showTeamScore from new_guess_versus
         <if test="useWhere">
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -44,12 +44,12 @@
     </select>
 
     <select id="findById" parameterType="int" resultType="com.yy.guess.po.NewGuessVersus">
-        select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime from new_guess_versus
+        select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, showTeamLogo, showTeamScore from new_guess_versus
         where id = #{id}
     </select>
 
     <select id="query" parameterType="com.yy.fast4j.QueryCondition" resultType="com.yy.guess.po.NewGuessVersus">
-        select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime from new_guess_versus
+        select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, showTeamLogo, showTeamScore from new_guess_versus
         <if test="useWhere"> <!-- 添加查询条件 -->
             where
             <foreach collection="conditions" index="index" item="obj">
@@ -87,12 +87,12 @@
     <!--****************************************************************分隔线****************************************************************-->
     
     <select id="getAllUnEndVersus" resultType="com.yy.guess.po.NewGuessVersus">
-		select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime from new_guess_versus
+		select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, showTeamLogo, showTeamScore from new_guess_versus
         where status = '未开始' or status = '进行中'
     </select>
     
     <select id="queryInItemId" resultType="com.yy.guess.po.NewGuessVersus">
-		select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime from new_guess_versus
+		select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, showTeamLogo, showTeamScore from new_guess_versus
         where
         <if test="itemIdList != null and itemIdList.size > 0">
         	itemId IN (<foreach collection="itemIdList" item="obj" separator=",">#{obj}</foreach>) AND
@@ -136,7 +136,7 @@
     </select>
     
     <select id="queryInIds" resultType="com.yy.guess.po.NewGuessVersus">
-    	select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime from new_guess_versus
+		select id, name, logoUrl, itemId, itemName, returnRate, betAmountMin, betAmountMax, betAllAmount, allPayBonus, startTime, endTime, betPause, resultItemId, resultItemName, status, superVersusId, childVersusCount, createTime, leftTeamLogoUrl, rightTeamLogoUrl, leftTeamScore, rightTeamScore, showTeamLogo, showTeamScore from new_guess_versus
 		<if test="idList != null and idList.size > 0">
 		where id in (<foreach collection="idList" item="obj" separator=",">#{obj}</foreach>)
 		</if>

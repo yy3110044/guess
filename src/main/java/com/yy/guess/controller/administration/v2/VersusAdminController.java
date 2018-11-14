@@ -87,6 +87,12 @@ public class VersusAdminController {
                                     @RequestParam double betAmountMax,
                                     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime,
                                     @RequestParam int superVersusId,
+                                    String leftTeamLogoUrl,
+                                    String rightTeamLogoUrl,
+                                    Integer leftTeamScore,
+                                    Integer rightTeamScore,
+                                    Boolean showTeamLogo,
+                                    Boolean showTeamScore,
                                     HttpServletRequest req) {
 		String[] versusItems = req.getParameterValues("versusItems[]");
 		if(versusItems == null || versusItems.length < 2) {
@@ -109,7 +115,13 @@ public class VersusAdminController {
 		versus.setStartTime(startTime == null ? new Date() : startTime);
 		versus.setBetPause(true);
 		versus.setSuperVersusId(superVersusId);
-
+		versus.setLeftTeamLogoUrl(leftTeamLogoUrl);
+		versus.setRightTeamLogoUrl(rightTeamLogoUrl);
+		if(leftTeamScore != null) versus.setLeftTeamScore(leftTeamScore);
+		if(rightTeamScore != null) versus.setRightTeamScore(rightTeamScore);
+		if(showTeamLogo != null) versus.setShowTeamLogo(showTeamLogo);
+		if(showTeamScore != null) versus.setShowTeamScore(showTeamScore);
+		
 		//生成versusItem对象列表
 		List<NewGuessVersusItem> versusItemList = new ArrayList<NewGuessVersusItem>();
 		for(String item : versusItems) {
@@ -328,14 +340,20 @@ public class VersusAdminController {
                                        @RequestParam double returnRate,
                                        @RequestParam double betAmountMin,
                                        @RequestParam double betAmountMax,
-                                       @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") @RequestParam Date startTime) {
+                                       @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") @RequestParam Date startTime,
+                                       @RequestParam int leftTeamScore,
+                                       @RequestParam int rightTeamScore,
+                                       @RequestParam boolean showTeamScore) {
 		NewGuessVersus versus = ngvs.findById(versusId);
 		versus.setName(name);
 		versus.setReturnRate(returnRate);
 		versus.setBetAmountMin(betAmountMin);
 		versus.setBetAmountMax(betAmountMax);
 		versus.setStartTime(startTime);
-		ngvs.update(name, returnRate, betAmountMin, betAmountMax, startTime, versusId);
+		versus.setLeftTeamScore(leftTeamScore);
+		versus.setRightTeamScore(rightTeamScore);
+		versus.setShowTeamScore(showTeamScore);
+		ngvs.update(name, returnRate, betAmountMin, betAmountMax, startTime, leftTeamScore, rightTeamScore, showTeamScore, versusId);
 		return new ResponseObject(100, "修改成功");
 	}
 	

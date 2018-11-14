@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,12 +26,14 @@ import com.yy.guess.playTemplate.GuessPlayTemplateFactory;
 import com.yy.guess.po.Match;
 import com.yy.guess.po.MatchVersus;
 import com.yy.guess.po.MatchVersusBo;
+import com.yy.guess.po.NewGuessItem;
 import com.yy.guess.po.Sport;
 import com.yy.guess.po.Team;
 import com.yy.guess.po.enums.MatchStatus;
 import com.yy.guess.service.MatchService;
 import com.yy.guess.service.MatchVersusBoService;
 import com.yy.guess.service.MatchVersusService;
+import com.yy.guess.service.NewGuessItemService;
 import com.yy.guess.service.SportService;
 import com.yy.guess.service.TeamService;
 
@@ -125,6 +130,8 @@ public class GuessAdminController {
 		return new ResponseObject(100, "返回成功", ss.query(null));
 	}
 	
+	@Resource
+	private NewGuessItemService ngis;
 	/**
 	 * 添加队伍
 	 * @param sportId
@@ -138,9 +145,9 @@ public class GuessAdminController {
                                   @RequestParam String name,
                                   @RequestParam String logoUrl,
                                   String description) {
-		Sport sport = ss.findById(sportId);
-		if(sport == null) {
-			return new ResponseObject(101, "运动项目不存在，请先添加");
+		NewGuessItem item = ngis.findById(sportId);
+		if(item == null) {
+			return new ResponseObject(101, "项目不存在，请先添加");
 		}
 		Team team = ts.find(new QueryCondition().addCondition("sportId", "=", sportId).addCondition("name", "=", name));
 		if(team != null) {
@@ -149,7 +156,7 @@ public class GuessAdminController {
 
 		team = new Team();
 		team.setSportId(sportId);
-		team.setSportName(sport.getName());
+		team.setSportName(item.getName());
 		team.setName(name);
 		team.setLogoUrl(logoUrl);
 		team.setDescription(description);

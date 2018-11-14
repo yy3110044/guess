@@ -3,7 +3,7 @@
 <head>
 <base href="${basePath}"/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>战队列表 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
+<title>队伍管理 - <%=com.yy.guess.util.Util.getConfigCom(application).getWebTitle()%></title>
 <link rel="stylesheet" href="admin/css/bootstrap.css">
 <link rel="stylesheet" href="admin/css/css.css">
 <script src="js/jquery.js"></script>
@@ -81,27 +81,27 @@ $(document).ready(function(){
 <%@include file="/admin/header.jsp"%>
 <div id="middle">
 <jsp:include page="/admin/left.jsp">
-	<jsp:param name="p" value="战队列表"/>
+	<jsp:param name="p" value="队伍管理"/>
 </jsp:include>
 	<div class="right">
 	<div class="right_cont">
 	<div class="breadcrumb">当前位置：
 		<a href="javascript:;">网站管理</a><span class="divider">/</span>
-		<a href="javascript:;">战队列表</a>
+		<a href="javascript:;">队伍管理</a>
 	</div>
-	<div class="title_right"><strong>战队列表</strong><span style="color:red;font-size:18px;padding-left:200px;" id="showMsg"></span></div>
+	<div class="title_right"><strong>队伍管理</strong><span style="color:red;font-size:18px;padding-left:200px;" id="showMsg"></span></div>
 	<table class="table table-bordered table-striped table-hover">
 		<tr>
 			<td colspan="99" style="padding:3px;line-height:30px;">
 				项目类型：<select id="sportId" style="width:100px;"></select>
 				&nbsp;&nbsp;<input type="button" value="查询" onclick="query(20, 1)">
-				&nbsp;&nbsp;<a href="admin/guess/teamAdd.jsp" target="_blank">添加战队</a>
+				&nbsp;&nbsp;<a href="admin/guess/teamAdd.jsp" target="_blank">添加队伍</a>
 			</td>
 		</tr>
 		<tr align="center">
 			<td><strong>id</strong></td>
 			<td><strong>项目类型</strong></td>
-			<td><strong>战队名</strong></td>
+			<td><strong>队伍名</strong></td>
 			<td><strong>logo图</strong></td>
 			<td><strong>简介</strong></td>
 			<td><strong>添加时间</strong></td>

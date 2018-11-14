@@ -18,7 +18,7 @@ public interface NewGuessVersusService {
     /*****************************************************************分隔线************************************************************************/
     QueryResult<NewGuessVersus> queryInItemId(List<Integer> itemIdList, int status, Date startTimeStart, Date startTimeEnd, Page page);
     
-    void update(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int versusId); //修改versus
+    void update(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int leftTeamScore, int rightTeamScore, boolean showTeamScore, int versusId); //修改versus
     
     void initCacheMap(); //初始化缓存map
     

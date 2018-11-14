@@ -36,8 +36,8 @@ public interface NewGuessVersusMapper {
     					   @Param("startTimeStart") Date startTimeStart,
     					   @Param("startTimeEnd") Date startTimeEnd);
     
-    @Update("update new_guess_versus set name = #{name}, returnRate = #{returnRate}, betAmountMin = #{betAmountMin}, betAmountMax = #{betAmountMax}, startTime = #{startTime} where id = #{versusId}")
-    void updateVersus(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int versusId);
+    @Update("update new_guess_versus set name = #{name}, returnRate = #{returnRate}, betAmountMin = #{betAmountMin}, betAmountMax = #{betAmountMax}, startTime = #{startTime}, leftTeamScore = #{leftTeamScore}, rightTeamScore = #{rightTeamScore}, showTeamScore = #{showTeamScore} where id = #{versusId}")
+    void updateVersus(String name, double returnRate, double betAmountMin, double betAmountMax, Date startTime, int leftTeamScore, int rightTeamScore, boolean showTeamScore, int versusId);
     
     @Update("update new_guess_versus set childVersusCount = childVersusCount + #{count} where id = #{versusId}")
     void plusChildVersusCount(int count, int versusId);//增加下级对阵数

@@ -21,6 +21,9 @@
 		<div>
 			<span>竞猜管理</span>
 			<a href="admin/v2/newGuessItem/list.jsp">项目列表</a>
+			<!--
+			<a href="admin/guess/teamList.jsp">队伍管理</a>
+			-->
 			<a href="admin/v2/newGuessVersus/list.jsp">竞猜列表</a>
 			<a href="admin/v2/newGuessBet/list.jsp">下注列表</a>
 		</div>

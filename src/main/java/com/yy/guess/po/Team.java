@@ -1,7 +1,7 @@
 package com.yy.guess.po;
 
 import java.util.Date;
-@Deprecated
+
 public class Team {
 	private int id;
 	private int sportId;

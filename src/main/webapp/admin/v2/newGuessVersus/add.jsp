@@ -49,6 +49,7 @@ $(document).ready(function(){
 					var versus = data.result.versus;
 					$("#fatherVersus").show();
 					$("#fatherVersus span").html(versus.name);
+					$("#startTime").val(versus.startTime);
 					
 					addImageUploadEvent({
 						"inputId" : "uploadImageInput",

@@ -591,7 +591,7 @@ var getAllChildVersus = function(superVersusId, e) {
 							var versusItemList = list[i].versusItemList;
 							str += getVersusTrStr(versus, versusItemList, true, superVersusId);
 						}
-						str += '<tr align="center" class="contentTr childVersusTr childVersusTr' + superVersusId + '"><td colspan="16"></td>';
+						str += '<tr align="center" class="contentTr childVersusTr childVersusTr' + superVersusId + '"><td colspan="18"></td>';
 						str += '<td>';
 						str += '<input type="button" value="关闭子竞猜" onclick="$(\'tr.childVersusTr\').remove()">';
 						str += '</td></tr>';
